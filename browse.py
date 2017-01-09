@@ -2,6 +2,12 @@
 
 import configparser
 import os
+import re
+
+
+GITHUB_SSH_URL = 'git@github.com:(?P<user>[\w\.@:\/~_-]+)/(?P<repository>[\w\.@:\/~_-]+)'
+GITHUB_HTTPS_URL = 'https://github.com/(?P<user>[\w\.@:\/~_-]+)/(?P<repository>[\w\.@:\/~_-]+)'
+HOST_REGEXES = [GITHUB_SSH_URL, GITHUB_HTTPS_URL]
 
 
 class GithubHost(object):
@@ -78,7 +84,17 @@ def get_git_url(git_config_file):
 
 
 def parse_git_url(git_url):
-    pass
+    for regex in HOST_REGEXES:
+        match = re.search(regex, git_url)
+        if match:
+            break
+    if not match:
+        raise ValueError("git url not parseable")
+    repository = match.group('repository')
+    if repository[-4:] == '.git':
+        repository = repository[:-4]
+    host = GithubHost(match.group('user'), repository)
+    return host
 
 
 def get_repository_host():

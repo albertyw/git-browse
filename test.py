@@ -98,6 +98,29 @@ class GetGitURL(unittest.TestCase):
             browse.get_git_url(self.current_directory)
 
 
+class ParseGitURL(unittest.TestCase):
+    def setUp(self):
+        self.ssh_url = 'git@github.com:albertyw/git-browse.git'
+        self.https_url = 'https://github.com/albertyw/git-browse'
+        self.broken_url = 'asdfasdf'
+
+    def test_ssh_url(self):
+        host = browse.parse_git_url(self.ssh_url)
+        self.assertTrue(host.__class__ is browse.GithubHost)
+        self.assertEqual(host.user, 'albertyw')
+        self.assertEqual(host.repository, 'git-browse')
+
+    def test_https_url(self):
+        host = browse.parse_git_url(self.https_url)
+        self.assertTrue(host.__class__ is browse.GithubHost)
+        self.assertEqual(host.user, 'albertyw')
+        self.assertEqual(host.repository, 'git-browse')
+
+    def test_broken_url(self):
+        with self.assertRaises(ValueError):
+            browse.parse_git_url(self.broken_url)
+
+
 class TestGetRepositoryHost(unittest.TestCase):
     pass
 
