@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import configparser
 import os
 
 
@@ -66,8 +67,25 @@ def get_git_config():
     raise FileNotFoundError('.git/config file not found')
 
 
-def get_repository_host():
+def get_git_url(git_config_file):
+    config = configparser.ConfigParser()
+    config.read(git_config_file)
+    try:
+        git_url = config['remote "origin"']['url']
+    except KeyError:
+        raise RuntimeError("git config file not parseable")
+    return git_url
+
+
+def parse_git_url(git_url):
     pass
+
+
+def get_repository_host():
+    git_config_file = get_git_config()
+    git_url = get_git_url(git_config_file)
+    repo_host = parse_git_url(git_url)
+    return repo_host
 
 
 def get_focus_object():

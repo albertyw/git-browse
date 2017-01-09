@@ -80,6 +80,24 @@ class GetGitconfig(unittest.TestCase):
             browse.get_git_config()
 
 
+class GetGitURL(unittest.TestCase):
+    def setUp(self):
+        self.current_directory = os.path.dirname(os.path.realpath(__file__))
+        self.git_config_file = os.path.join(
+            self.current_directory,
+            '.git',
+            'config'
+        )
+
+    def test_url(self):
+        git_url = browse.get_git_url(self.git_config_file)
+        self.assertEqual(git_url, 'git@github.com:albertyw/git-browse')
+
+    def test_bad_url(self):
+        with self.assertRaises(RuntimeError):
+            browse.get_git_url(self.current_directory)
+
+
 class TestGetRepositoryHost(unittest.TestCase):
     pass
 
