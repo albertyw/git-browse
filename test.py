@@ -1,3 +1,4 @@
+import os
 import unittest
 
 import browse
@@ -62,6 +63,21 @@ class FocusObject(unittest.TestCase):
     def test_is_not_directory(self):
         obj = browse.FocusObject('/asdf')
         self.assertFalse(obj.is_directory)
+
+
+class GetGitconfig(unittest.TestCase):
+    def test_get(self):
+        current_directory = os.path.dirname(os.path.realpath(__file__))
+        os.chdir(current_directory)
+        directory = browse.get_git_config()
+        expected = os.path.join(current_directory, '.git', 'config')
+        self.assertEqual(directory, expected)
+
+    def test_fail_get(self):
+        current_directory = os.sep
+        os.chdir(current_directory)
+        with self.assertRaises(FileNotFoundError):
+            browse.get_git_config()
 
 
 class TestGetRepositoryHost(unittest.TestCase):

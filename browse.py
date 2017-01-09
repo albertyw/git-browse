@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+import os
+
 
 class GithubHost(object):
     GITHUB_URL = "https://github.com/"
@@ -49,6 +51,19 @@ class FocusObject(object):
     @property
     def is_directory(self):
         return self.path[-1] == '/'
+
+
+def get_git_config():
+    current_directory = ''
+    new_directory = os.getcwd()
+    while current_directory != new_directory:
+        current_directory = new_directory
+        git_config = os.path.join(current_directory, '.git', 'config')
+        if os.path.exists(git_config):
+            return os.path.normpath(git_config)
+        new_directory = os.path.join(current_directory, '..')
+        new_directory = os.path.normpath(new_directory)
+    raise FileNotFoundError('.git/config file not found')
 
 
 def get_repository_host():
