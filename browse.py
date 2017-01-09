@@ -5,8 +5,10 @@ import os
 import re
 
 
-GITHUB_SSH_URL = 'git@github.com:(?P<user>[\w\.@:\/~_-]+)/(?P<repository>[\w\.@:\/~_-]+)'
-GITHUB_HTTPS_URL = 'https://github.com/(?P<user>[\w\.@:\/~_-]+)/(?P<repository>[\w\.@:\/~_-]+)'
+USER_REGEX = '(?P<user>[\w\.@:\/~_-]+)'
+REPOSITORY_REGEX = '(?P<repository>[\w\.@:\/~_-]+)'
+GITHUB_SSH_URL = 'git@github.com:%s/%s' % (USER_REGEX, REPOSITORY_REGEX)
+GITHUB_HTTPS_URL = 'https://github.com/%s/%s' % (USER_REGEX, REPOSITORY_REGEX)
 HOST_REGEXES = [GITHUB_SSH_URL, GITHUB_HTTPS_URL]
 
 

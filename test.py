@@ -65,7 +65,7 @@ class FocusObject(unittest.TestCase):
         self.assertFalse(obj.is_directory)
 
 
-class GetGitconfig(unittest.TestCase):
+class GetGitConfig(unittest.TestCase):
     def test_get(self):
         current_directory = os.path.dirname(os.path.realpath(__file__))
         os.chdir(current_directory)
@@ -122,7 +122,15 @@ class ParseGitURL(unittest.TestCase):
 
 
 class TestGetRepositoryHost(unittest.TestCase):
-    pass
+    def setUp(self):
+        self.current_directory = os.path.dirname(os.path.realpath(__file__))
+        os.chdir(self.current_directory)
+
+    def test_repository_host(self):
+        host = browse.get_repository_host()
+        self.assertTrue(host.__class__ is browse.GithubHost)
+        self.assertEqual(host.user, 'albertyw')
+        self.assertEqual(host.repository, 'git-browse')
 
 
 class TestGetFocusObject(unittest.TestCase):
