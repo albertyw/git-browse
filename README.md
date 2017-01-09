@@ -21,3 +21,13 @@ Usage
 ```
 Usage: python browse.py [object]
 ```
+
+Development
+-----------
+
+```bash
+pip install coverage flake8
+flake8
+coverage run -m unittest
+coverage report
+```
