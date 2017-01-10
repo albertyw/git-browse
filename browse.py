@@ -67,17 +67,23 @@ class FocusObject(object):
         return FocusObject(os.sep)
 
 
-def get_git_config():
+def get_repository_root():
     current_directory = ''
     new_directory = os.getcwd()
     while current_directory != new_directory:
         current_directory = new_directory
         git_config = os.path.join(current_directory, '.git', 'config')
         if os.path.exists(git_config):
-            return os.path.normpath(git_config)
+            return current_directory
         new_directory = os.path.join(current_directory, '..')
         new_directory = os.path.normpath(new_directory)
     raise FileNotFoundError('.git/config file not found')
+
+
+def get_git_config():
+    repository_root = get_repository_root()
+    git_config_path = os.path.join(repository_root, '.git', 'config')
+    return git_config_path
 
 
 def get_git_url(git_config_file):

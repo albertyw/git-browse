@@ -70,6 +70,20 @@ class FocusObject(unittest.TestCase):
         self.assertTrue(obj.is_root)
 
 
+class GetRepositoryRoot(unittest.TestCase):
+    def test_get(self):
+        current_directory = os.path.dirname(os.path.realpath(__file__))
+        os.chdir(current_directory)
+        directory = browse.get_repository_root()
+        self.assertEqual(directory, current_directory)
+
+    def test_fail_get(self):
+        current_directory = os.sep
+        os.chdir(current_directory)
+        with self.assertRaises(FileNotFoundError):
+            browse.get_repository_root()
+
+
 class GetGitConfig(unittest.TestCase):
     def test_get(self):
         current_directory = os.path.dirname(os.path.realpath(__file__))
@@ -77,12 +91,6 @@ class GetGitConfig(unittest.TestCase):
         directory = browse.get_git_config()
         expected = os.path.join(current_directory, '.git', 'config')
         self.assertEqual(directory, expected)
-
-    def test_fail_get(self):
-        current_directory = os.sep
-        os.chdir(current_directory)
-        with self.assertRaises(FileNotFoundError):
-            browse.get_git_config()
 
 
 class GetGitURL(unittest.TestCase):
