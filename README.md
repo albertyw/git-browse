@@ -17,22 +17,31 @@ command.
 Installation
 ------------
 
+You need to first clone this repository somewhere on your system (perhaps in
+your [dotfiles](https://github.com/albertyw/dotfiles)) repository.
+
 ```bash
-TODO
+git clone git@github.com:albertyw/git-browse $REPOSITORY_LOCATION
+git config --global \
+    alias.browse \
+    "!"$REPOSITORY_LOCATION"/browse.py --path=\${GIT_PREFIX:-./}"
 ```
 
 Usage
 -----
 
 ```
-Usage: python browse.py [object]
+Usage: git browse [object]
 ```
+
+If `[object]` is omitted, the root repository page will be opened.
+If `[object]` is a directory or file, then that object will be opened.
 
 Development
 -----------
 
 ```bash
-pip install coverage flake8
+pip install -r requirements-test.txt
 flake8
 coverage run -m unittest
 coverage report
