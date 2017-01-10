@@ -105,7 +105,8 @@ class GetGitURL(unittest.TestCase):
 
     def test_url(self):
         git_url = browse.get_git_url(self.git_config_file)
-        self.assertEqual(git_url, 'git@github.com:albertyw/git-browse')
+        expected = 'git@github.com:albertyw/git-browse'
+        self.assertEqual(git_url.replace('.git', ''), expected)
 
     def test_bad_url(self):
         with self.assertRaises(RuntimeError):
