@@ -1,4 +1,5 @@
 import os
+import sys
 import unittest
 from unittest.mock import patch
 
@@ -181,3 +182,29 @@ class TestOpenURL(unittest.TestCase):
     def test_open_url(self, mock_print):
         browse.open_url('asdf')
         mock_print.assert_called_with('asdf')
+
+
+class FullTest(unittest.TestCase):
+    def setUp(self):
+        self.original_sys_argv = sys.argv
+
+    def tearDown(self):
+        sys.argv = self.original_sys_argv
+
+    @patch("browse.open_url")
+    def test_default(self, mock_open_url):
+        sys.argv = ['asdf']
+        browse.main()
+        mock_open_url.assert_called_with('https://github.com/albertyw/git-browse')
+
+    @patch("browse.open_url")
+    def test_file(self, mock_open_url):
+        sys.argv = ['asdf', 'README.md']
+        browse.main()
+        mock_open_url.assert_called_with('https://github.com/albertyw/git-browse/blob/master/README.md')
+
+    @patch("browse.open_url")
+    def test_directory(self, mock_open_url):
+        sys.argv = ['asdf', '.']
+        browse.main()
+        mock_open_url.assert_called_with('https://github.com/albertyw/git-browse/tree/master/./')
