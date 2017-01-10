@@ -149,27 +149,27 @@ class TestGetRepositoryHost(unittest.TestCase):
 class TestGetFocusObject(unittest.TestCase):
     def test_default_focus_object(self):
         sys_argv = ['asdf']
-        focus_object = browse.get_focus_object(sys_argv)
+        focus_object = browse.get_focus_object(sys_argv, os.getcwd())
         self.assertTrue(focus_object.is_root)
         self.assertTrue(focus_object.is_directory)
 
     def test_file_focus_object(self):
         sys_argv = ['asdf', 'README.md']
-        focus_object = browse.get_focus_object(sys_argv)
+        focus_object = browse.get_focus_object(sys_argv, os.getcwd())
         self.assertFalse(focus_object.is_root)
         self.assertFalse(focus_object.is_directory)
         self.assertEqual(focus_object.path[-9:], 'README.md')
 
     def test_directory_focus_object(self):
         sys_argv = ['asdf', '.']
-        focus_object = browse.get_focus_object(sys_argv)
+        focus_object = browse.get_focus_object(sys_argv, os.getcwd())
         self.assertFalse(focus_object.is_root)
         self.assertTrue(focus_object.is_directory)
 
     def test_nonexistend_focus_object(self):
         sys_argv = ['asdf', 'asdf']
         with self.assertRaises(FileNotFoundError):
-            browse.get_focus_object(sys_argv)
+            browse.get_focus_object(sys_argv, os.getcwd())
 
 
 class TestOpenURL(unittest.TestCase):
@@ -237,14 +237,20 @@ class FullTest(unittest.TestCase):
     @patch("browse.open_url")
     def test_subdirectory(self, mock_open_url):
         sys_argv = ['asdf', 'test_dir']
-        expected = 'https://github.com/albertyw/git-browse/tree/master/test_dir/'
+        expected = (
+            'https://github.com/albertyw/git-browse/'
+            'tree/master/test_dir/'
+        )
         self.check_main(sys_argv, expected, mock_open_url)
 
     @patch("browse.open_url")
     def test_chdir_subdirectory(self, mock_open_url):
         os.chdir(self.test_directory)
         sys_argv = ['asdf', '.']
-        expected = 'https://github.com/albertyw/git-browse/tree/master/test_dir/'
+        expected = (
+            'https://github.com/albertyw/git-browse/'
+            'tree/master/test_dir/'
+        )
         self.check_main(sys_argv, expected, mock_open_url)
 
     def check_main(self, sys_argv, expected, mock_open_url):

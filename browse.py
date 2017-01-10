@@ -117,11 +117,21 @@ def get_repository_host():
     return repo_host
 
 
-def get_focus_object(sys_argv):
+def get_focus_object_path(sys_argv):
+    for argv in sys_argv:
+        if argv[:7] == '--path=':
+            path_override = argv[7:]
+            path = os.path.join(os.getcwd(), path_override)
+            sys_argv.remove(argv)
+            return path
+    return os.getcwd()
+
+
+def get_focus_object(sys_argv, path):
     focus_object = sys_argv[1:]
     if not focus_object:
         return FocusObject.default()
-    directory = os.getcwd()
+    directory = path
     object_path = os.path.join(directory, focus_object[0])
     object_path = os.path.normpath(object_path)
     if not os.path.exists(object_path):
@@ -139,7 +149,8 @@ def open_url(url):
 
 def main():
     host = get_repository_host()
-    focus_object = get_focus_object(sys.argv)
+    path = get_focus_object_path(sys.argv)
+    focus_object = get_focus_object(sys.argv, path=path)
     url = host.get_url(focus_object)
     open_url(url)
 
