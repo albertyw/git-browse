@@ -126,7 +126,7 @@ def get_focus_object(sys_argv):
 
 
 def open_url(url):
-    pass
+    print(url)
 
 
 def main():

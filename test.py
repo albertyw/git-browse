@@ -1,5 +1,6 @@
 import os
 import unittest
+from unittest.mock import patch
 
 import browse
 
@@ -168,4 +169,7 @@ class TestGetFocusObject(unittest.TestCase):
 
 
 class TestOpenURL(unittest.TestCase):
-    pass
+    @patch("builtins.print", autospec=True)
+    def test_open_url(self, mock_print):
+        browse.open_url('asdf')
+        mock_print.assert_called_with('asdf')
