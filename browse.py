@@ -3,6 +3,7 @@
 import configparser
 import os
 import re
+import sys
 
 
 USER_REGEX = '(?P<user>[\w\.@:\/~_-]+)'
@@ -61,6 +62,10 @@ class FocusObject(object):
     def is_directory(self):
         return self.path[-1] == '/'
 
+    @staticmethod
+    def default():
+        return FocusObject('/')
+
 
 def get_git_config():
     current_directory = ''
@@ -106,8 +111,18 @@ def get_repository_host():
     return repo_host
 
 
-def get_focus_object():
-    pass
+def get_focus_object(sys_argv):
+    focus_object = sys_argv[1:]
+    if not focus_object:
+        return FocusObject.default()
+    directory = os.getcwd()
+    object_path = os.path.join(directory, focus_object[0])
+    object_path = os.path.normpath(object_path)
+    if not os.path.exists(object_path):
+        raise FileNotFoundError("specified file does not exist")
+    if os.path.isdir(object_path) and object_path[-1] != os.sep:
+        object_path += os.sep
+    return FocusObject(object_path)
 
 
 def open_url(url):
@@ -116,7 +131,7 @@ def open_url(url):
 
 def main():
     host = get_repository_host()
-    focus_object = get_focus_object()
+    focus_object = get_focus_object(sys.argv)
     url = host.get_url(focus_object)
     open_url(url)
 

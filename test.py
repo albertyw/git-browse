@@ -64,6 +64,10 @@ class FocusObject(unittest.TestCase):
         obj = browse.FocusObject('/asdf')
         self.assertFalse(obj.is_directory)
 
+    def test_default(self):
+        obj = browse.FocusObject.default()
+        self.assertTrue(obj.is_root)
+
 
 class GetGitConfig(unittest.TestCase):
     def test_get(self):
@@ -134,7 +138,33 @@ class TestGetRepositoryHost(unittest.TestCase):
 
 
 class TestGetFocusObject(unittest.TestCase):
-    pass
+    def setUp(self):
+        self.current_directory = os.path.dirname(os.path.realpath(__file__))
+        os.chdir(self.current_directory)
+
+    def test_default_focus_object(self):
+        sys_argv = ['asdf']
+        focus_object = browse.get_focus_object(sys_argv)
+        self.assertTrue(focus_object.is_root)
+        self.assertTrue(focus_object.is_directory)
+
+    def test_file_focus_object(self):
+        sys_argv = ['asdf', 'README.md']
+        focus_object = browse.get_focus_object(sys_argv)
+        self.assertFalse(focus_object.is_root)
+        self.assertFalse(focus_object.is_directory)
+        self.assertEqual(focus_object.path[-9:], 'README.md')
+
+    def test_directory_focus_object(self):
+        sys_argv = ['asdf', '.']
+        focus_object = browse.get_focus_object(sys_argv)
+        self.assertFalse(focus_object.is_root)
+        self.assertTrue(focus_object.is_directory)
+
+    def test_nonexistend_focus_object(self):
+        sys_argv = ['asdf', 'asdf']
+        with self.assertRaises(FileNotFoundError):
+            browse.get_focus_object(sys_argv)
 
 
 class TestOpenURL(unittest.TestCase):
