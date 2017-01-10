@@ -1,4 +1,5 @@
 import os
+import shutil
 import sys
 import unittest
 from unittest.mock import patch
@@ -181,9 +182,17 @@ class TestOpenURL(unittest.TestCase):
 class FullTest(unittest.TestCase):
     def setUp(self):
         self.original_sys_argv = sys.argv
+        self.current_directory = os.path.dirname(os.path.realpath(__file__))
+        self.test_directory = os.path.join(self.current_directory, 'test_dir')
+        test_file = os.path.join(self.test_directory, 'test_file')
+        os.makedirs(self.test_directory, exist_ok=True)
+        with open(test_file, 'w'):
+            pass
 
     def tearDown(self):
         sys.argv = self.original_sys_argv
+        os.chdir(self.current_directory)
+        shutil.rmtree(self.test_directory)
 
     @patch("browse.open_url")
     def test_default(self, mock_open_url):
@@ -201,9 +210,41 @@ class FullTest(unittest.TestCase):
         self.check_main(sys_argv, expected, mock_open_url)
 
     @patch("browse.open_url")
+    def test_subdirectory_file(self, mock_open_url):
+        sys_argv = ['asdf', 'test_dir/test_file']
+        expected = (
+            'https://github.com/albertyw/git-browse/'
+            'blob/master/test_dir/test_file'
+        )
+        self.check_main(sys_argv, expected, mock_open_url)
+
+    @patch("browse.open_url")
+    def test_chdir_subdirectory_file(self, mock_open_url):
+        os.chdir(self.test_directory)
+        sys_argv = ['asdf', 'test_file']
+        expected = (
+            'https://github.com/albertyw/git-browse/'
+            'blob/master/test_dir/test_file'
+        )
+        self.check_main(sys_argv, expected, mock_open_url)
+
+    @patch("browse.open_url")
     def test_directory(self, mock_open_url):
         sys_argv = ['asdf', '.']
         expected = 'https://github.com/albertyw/git-browse/tree/master/./'
+        self.check_main(sys_argv, expected, mock_open_url)
+
+    @patch("browse.open_url")
+    def test_subdirectory(self, mock_open_url):
+        sys_argv = ['asdf', 'test_dir']
+        expected = 'https://github.com/albertyw/git-browse/tree/master/test_dir/'
+        self.check_main(sys_argv, expected, mock_open_url)
+
+    @patch("browse.open_url")
+    def test_chdir_subdirectory(self, mock_open_url):
+        os.chdir(self.test_directory)
+        sys_argv = ['asdf', '.']
+        expected = 'https://github.com/albertyw/git-browse/tree/master/test_dir/'
         self.check_main(sys_argv, expected, mock_open_url)
 
     def check_main(self, sys_argv, expected, mock_open_url):
