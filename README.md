@@ -1,5 +1,8 @@
 Git Browse
 ==========
+
+[ ![Codeship Status for albertyw/git-browse](https://codeship.com/projects/fbd67810-b952-0134-2c2e-166255a25182/status?branch=master)](https://codeship.com/projects/194945)
+
 Open repositories, directories, and files in the browser
 
 This is a script that can be added as a gitconfig alias to easily browse
