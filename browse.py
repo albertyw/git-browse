@@ -36,14 +36,14 @@ class GithubHost(object):
         return repository_url
 
     def directory_url(self, repository_url, focus_object):
-        repository_url = "%s/tree/master%s" % (
+        repository_url = "%s/tree/master/%s" % (
             repository_url,
             focus_object.path
         )
         return repository_url
 
     def file_url(self, repository_url, focus_object):
-        repository_url = "%s/blob/master%s" % (
+        repository_url = "%s/blob/master/%s" % (
             repository_url,
             focus_object.path
         )
@@ -126,6 +126,7 @@ def get_focus_object(sys_argv):
     object_path = os.path.normpath(object_path)
     if not os.path.exists(object_path):
         raise FileNotFoundError("specified file does not exist")
+    object_path = os.path.relpath(object_path, get_repository_root())
     if os.path.isdir(object_path) and object_path[-1] != os.sep:
         object_path += os.sep
     return FocusObject(object_path)

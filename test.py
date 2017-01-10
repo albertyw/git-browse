@@ -25,7 +25,7 @@ class TestGithubHost(unittest.TestCase):
         self.assertEqual(url, self.repository_url)
 
     def test_directory_url(self):
-        self.focus_object.path = '/asdf/'
+        self.focus_object.path = 'asdf/'
         url = self.github_host.directory_url(
             self.repository_url,
             self.focus_object
@@ -36,7 +36,7 @@ class TestGithubHost(unittest.TestCase):
         )
 
     def test_file_url(self):
-        self.focus_object.path = '/README.md'
+        self.focus_object.path = 'README.md'
         url = self.github_host.file_url(self.repository_url, self.focus_object)
         self.assertEqual(
             url,
