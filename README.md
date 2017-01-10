@@ -2,6 +2,7 @@ Git Browse
 ==========
 
 [ ![Codeship Status for albertyw/git-browse](https://codeship.com/projects/fbd67810-b952-0134-2c2e-166255a25182/status?branch=master)](https://codeship.com/projects/194945)
+[![Dependency Status](https://gemnasium.com/badges/github.com/albertyw/git-browse.svg)](https://gemnasium.com/github.com/albertyw/git-browse)
 
 Open repositories, directories, and files in the browser
 
