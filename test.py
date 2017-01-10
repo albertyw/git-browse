@@ -195,16 +195,22 @@ class FullTest(unittest.TestCase):
     def test_default(self, mock_open_url):
         sys.argv = ['asdf']
         browse.main()
-        mock_open_url.assert_called_with('https://github.com/albertyw/git-browse')
+        expected = 'https://github.com/albertyw/git-browse'
+        mock_open_url.assert_called_with(expected)
 
     @patch("browse.open_url")
     def test_file(self, mock_open_url):
         sys.argv = ['asdf', 'README.md']
         browse.main()
-        mock_open_url.assert_called_with('https://github.com/albertyw/git-browse/blob/master/README.md')
+        expected = (
+            'https://github.com/albertyw/git-browse/'
+            'blob/master/README.md'
+        )
+        mock_open_url.assert_called_with(expected)
 
     @patch("browse.open_url")
     def test_directory(self, mock_open_url):
         sys.argv = ['asdf', '.']
         browse.main()
-        mock_open_url.assert_called_with('https://github.com/albertyw/git-browse/tree/master/./')
+        expected = 'https://github.com/albertyw/git-browse/tree/master/./'
+        mock_open_url.assert_called_with(expected)
