@@ -56,15 +56,15 @@ class FocusObject(object):
 
     @property
     def is_root(self):
-        return self.path == '/'
+        return self.path == os.sep
 
     @property
     def is_directory(self):
-        return self.path[-1] == '/'
+        return self.path[-1] == os.sep
 
     @staticmethod
     def default():
-        return FocusObject('/')
+        return FocusObject(os.sep)
 
 
 def get_git_config():
