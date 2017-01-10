@@ -121,12 +121,13 @@ class ParseGitURL(unittest.TestCase):
 
     def test_ssh_url(self):
         host = browse.parse_git_url(self.ssh_url)
-        self.assertTrue(host.__class__ is browse.GithubHost)
-        self.assertEqual(host.user, 'albertyw')
-        self.assertEqual(host.repository, 'git-browse')
+        self.check_host(host)
 
     def test_https_url(self):
         host = browse.parse_git_url(self.https_url)
+        self.check_host(host)
+
+    def check_host(self, host):
         self.assertTrue(host.__class__ is browse.GithubHost)
         self.assertEqual(host.user, 'albertyw')
         self.assertEqual(host.repository, 'git-browse')
@@ -137,10 +138,6 @@ class ParseGitURL(unittest.TestCase):
 
 
 class TestGetRepositoryHost(unittest.TestCase):
-    def setUp(self):
-        self.current_directory = os.path.dirname(os.path.realpath(__file__))
-        os.chdir(self.current_directory)
-
     def test_repository_host(self):
         host = browse.get_repository_host()
         self.assertTrue(host.__class__ is browse.GithubHost)
@@ -149,10 +146,6 @@ class TestGetRepositoryHost(unittest.TestCase):
 
 
 class TestGetFocusObject(unittest.TestCase):
-    def setUp(self):
-        self.current_directory = os.path.dirname(os.path.realpath(__file__))
-        os.chdir(self.current_directory)
-
     def test_default_focus_object(self):
         sys_argv = ['asdf']
         focus_object = browse.get_focus_object(sys_argv)
@@ -194,24 +187,26 @@ class FullTest(unittest.TestCase):
 
     @patch("browse.open_url")
     def test_default(self, mock_open_url):
-        sys.argv = ['asdf']
-        browse.main()
+        sys_argv = ['asdf']
         expected = 'https://github.com/albertyw/git-browse'
-        mock_open_url.assert_called_with(expected)
+        self.check_main(sys_argv, expected, mock_open_url)
 
     @patch("browse.open_url")
     def test_file(self, mock_open_url):
-        sys.argv = ['asdf', 'README.md']
-        browse.main()
+        sys_argv = ['asdf', 'README.md']
         expected = (
             'https://github.com/albertyw/git-browse/'
             'blob/master/README.md'
         )
-        mock_open_url.assert_called_with(expected)
+        self.check_main(sys_argv, expected, mock_open_url)
 
     @patch("browse.open_url")
     def test_directory(self, mock_open_url):
-        sys.argv = ['asdf', '.']
-        browse.main()
+        sys_argv = ['asdf', '.']
         expected = 'https://github.com/albertyw/git-browse/tree/master/./'
+        self.check_main(sys_argv, expected, mock_open_url)
+
+    def check_main(self, sys_argv, expected, mock_open_url):
+        sys.argv = sys_argv
+        browse.main()
         mock_open_url.assert_called_with(expected)
