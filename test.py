@@ -146,6 +146,21 @@ class TestGetRepositoryHost(unittest.TestCase):
         self.assertEqual(host.repository, 'git-browse')
 
 
+class TestGetFocusObjectPath(unittest.TestCase):
+    def setUp(self):
+        self.current_directory = os.path.dirname(os.path.realpath(__file__))
+        os.chdir(self.current_directory)
+
+    def test_get_cwd(self):
+        path = browse.get_focus_object_path(['asdf'])
+        self.assertEqual(path, self.current_directory)
+
+    def test_get_path_override(self):
+        override_path = '/asdf'
+        path = browse.get_focus_object_path(['--path='+override_path])
+        self.assertEqual(path, override_path)
+
+
 class TestGetFocusObject(unittest.TestCase):
     def test_default_focus_object(self):
         sys_argv = ['asdf']
