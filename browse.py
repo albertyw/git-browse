@@ -147,7 +147,7 @@ def get_focus_object(sys_argv, path):
 
 def open_url(url):
     print(url)
-    if sys.platform == 'darwin': # pragma: no cover
+    if sys.platform == 'darwin':
         webbrowser.open(url)
 
 
