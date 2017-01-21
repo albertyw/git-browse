@@ -3,6 +3,7 @@
 import configparser
 import os
 import re
+import subprocess
 import sys
 import webbrowser
 
@@ -177,6 +178,9 @@ def get_focus_object(sys_argv, path):
 
 def open_url(url):
     print(url)
+    if url.__class__ is list:
+        subprocess.call(url)
+        return
     if sys.platform == 'darwin':
         webbrowser.open(url)
 
