@@ -4,6 +4,7 @@ import configparser
 import os
 import re
 import sys
+import webbrowser
 
 
 USER_REGEX = '(?P<user>[\w\.@:\/~_-]+)'
@@ -146,6 +147,8 @@ def get_focus_object(sys_argv, path):
 
 def open_url(url):
     print(url)
+    if sys.platform == 'darwin': # pragma: no cover
+        webbrowser.open(url)
 
 
 def main():
