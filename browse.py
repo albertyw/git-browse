@@ -135,7 +135,8 @@ def get_focus_object(sys_argv, path):
     object_path = os.path.join(directory, focus_object[0])
     object_path = os.path.normpath(object_path)
     if not os.path.exists(object_path):
-        raise FileNotFoundError("specified file does not exist")
+        error = "specified file does not exist: %s" % object_path
+        raise FileNotFoundError(error)
     is_dir = os.path.isdir(object_path) and object_path[-1] != os.sep
     object_path = os.path.relpath(object_path, get_repository_root())
     if is_dir:
