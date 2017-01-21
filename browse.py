@@ -20,6 +20,14 @@ class GithubHost(object):
         self.user = user
         self.repository = repository
 
+    @staticmethod
+    def create(url_regex_match):
+        repository = url_regex_match.group('repository')
+        if repository[-4:] == '.git':
+            repository = repository[:-4]
+        user = url_regex_match.group('user')
+        return GithubHost(user, repository)
+
     def get_url(self, focus_object):
         repository_url = "%s%s/%s" % (
             self.GITHUB_URL,
@@ -109,10 +117,7 @@ def parse_git_url(git_url):
             break
     if not match:
         raise ValueError("git url not parseable")
-    repository = match.group('repository')
-    if repository[-4:] == '.git':
-        repository = repository[:-4]
-    host = host_class(match.group('user'), repository)
+    host = host_class.create(match)
     return host
 
 
