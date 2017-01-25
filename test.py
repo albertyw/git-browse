@@ -6,6 +6,8 @@ from unittest.mock import patch
 
 import browse
 
+BASE_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
+
 
 class TestGithubHost(unittest.TestCase):
     def setUp(self):
@@ -74,32 +76,28 @@ class FocusObject(unittest.TestCase):
 
 class GetRepositoryRoot(unittest.TestCase):
     def test_get(self):
-        current_directory = os.path.dirname(os.path.realpath(__file__))
-        os.chdir(current_directory)
+        os.chdir(BASE_DIRECTORY)
         directory = browse.get_repository_root()
-        self.assertEqual(directory, current_directory)
+        self.assertEqual(directory, BASE_DIRECTORY)
 
     def test_fail_get(self):
-        current_directory = os.sep
-        os.chdir(current_directory)
+        os.chdir(os.sep)
         with self.assertRaises(FileNotFoundError):
             browse.get_repository_root()
 
 
 class GetGitConfig(unittest.TestCase):
     def test_get(self):
-        current_directory = os.path.dirname(os.path.realpath(__file__))
-        os.chdir(current_directory)
+        os.chdir(BASE_DIRECTORY)
         directory = browse.get_git_config()
-        expected = os.path.join(current_directory, '.git', 'config')
+        expected = os.path.join(BASE_DIRECTORY, '.git', 'config')
         self.assertEqual(directory, expected)
 
 
 class GetGitURL(unittest.TestCase):
     def setUp(self):
-        self.current_directory = os.path.dirname(os.path.realpath(__file__))
         self.git_config_file = os.path.join(
-            self.current_directory,
+            BASE_DIRECTORY,
             '.git',
             'config'
         )
@@ -111,7 +109,7 @@ class GetGitURL(unittest.TestCase):
 
     def test_bad_url(self):
         with self.assertRaises(RuntimeError):
-            browse.get_git_url(self.current_directory)
+            browse.get_git_url(BASE_DIRECTORY)
 
 
 class ParseGitURL(unittest.TestCase):
@@ -148,12 +146,11 @@ class TestGetRepositoryHost(unittest.TestCase):
 
 class TestGetFocusObjectPath(unittest.TestCase):
     def setUp(self):
-        self.current_directory = os.path.dirname(os.path.realpath(__file__))
-        os.chdir(self.current_directory)
+        os.chdir(BASE_DIRECTORY)
 
     def test_get_cwd(self):
         path = browse.get_focus_object_path(['asdf'])
-        self.assertEqual(path, self.current_directory)
+        self.assertEqual(path, BASE_DIRECTORY)
 
     def test_get_path_override(self):
         override_path = '/asdf'
@@ -197,8 +194,7 @@ class TestOpenURL(unittest.TestCase):
 class FullTest(unittest.TestCase):
     def setUp(self):
         self.original_sys_argv = sys.argv
-        self.current_directory = os.path.dirname(os.path.realpath(__file__))
-        self.test_directory = os.path.join(self.current_directory, 'test_dir')
+        self.test_directory = os.path.join(BASE_DIRECTORY, 'test_dir')
         test_file = os.path.join(self.test_directory, 'test_file')
         os.makedirs(self.test_directory, exist_ok=True)
         with open(test_file, 'w'):
@@ -206,7 +202,7 @@ class FullTest(unittest.TestCase):
 
     def tearDown(self):
         sys.argv = self.original_sys_argv
-        os.chdir(self.current_directory)
+        os.chdir(BASE_DIRECTORY)
         shutil.rmtree(self.test_directory)
 
     @patch("browse.open_url")
