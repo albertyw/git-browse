@@ -3,6 +3,7 @@
 import configparser
 import os
 import re
+import subprocess
 import sys
 import webbrowser
 
@@ -11,6 +12,7 @@ USER_REGEX = '(?P<user>[\w\.@:\/~_-]+)'
 REPOSITORY_REGEX = '(?P<repository>[\w\.@:\/~_-]+)'
 GITHUB_SSH_URL = 'git@github.com:%s/%s' % (USER_REGEX, REPOSITORY_REGEX)
 GITHUB_HTTPS_URL = 'https://github.com/%s/%s' % (USER_REGEX, REPOSITORY_REGEX)
+UBER_PHABRICATOR_SSH_URL = 'gitolite@code.uber.internal'
 
 
 class GithubHost(object):
@@ -58,9 +60,29 @@ class GithubHost(object):
         return repository_url
 
 
+class UberPhabricatorHost(object):
+    def __init__(self, user, repository):
+        pass
+
+    @staticmethod
+    def create(url_regex_match):
+        return UberPhabricatorHost(None, None)
+
+    def get_url(self, focus_object):
+        path = focus_object.path
+        # arc browse requires an object, provide the root object by default
+        if focus_object.is_root():
+            path = '.'
+        command = ['arc', 'browse']
+        if path:
+            command.append(path)
+        return command
+
+
 HOST_REGEXES = {
     GITHUB_SSH_URL: GithubHost,
     GITHUB_HTTPS_URL: GithubHost,
+    UBER_PHABRICATOR_SSH_URL: UberPhabricatorHost,
 }
 
 
@@ -156,6 +178,9 @@ def get_focus_object(sys_argv, path):
 
 def open_url(url):
     print(url)
+    if url.__class__ is list:
+        subprocess.call(url)
+        return
     if sys.platform == 'darwin':
         webbrowser.open(url)
 
