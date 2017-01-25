@@ -1,5 +1,5 @@
 # Always prefer setuptools over distutils
-from setuptools import setup
+from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
@@ -41,11 +41,13 @@ setup(
 
     keywords='github phabricator repository browser',
 
-    packages=[],
+    packages=find_packages("git_browse", exclude=["tests"]),
 
-    py_modules=["browse"],
+    py_modules=["git_browse.browse"],
 
     install_requires=[],
+
+    test_suite="git_browse.tests",
 
     # testing requires flake8 and coverage but they're listed separately
     # because they need to wrap setup.py
@@ -60,7 +62,7 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'git_browse=browse:main',
+            'git_browse=git_browse.browse:main',
         ],
     },
 )
