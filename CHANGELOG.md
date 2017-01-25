@@ -1,3 +1,9 @@
+v1.2.0 (2017-01-24)
+===================
+
+ - Add support for uber phabricator through arcanist client
+
+
 v1.1.1 (2017-01-24)
 ===================
 
