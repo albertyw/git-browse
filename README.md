@@ -42,7 +42,7 @@ Development
 
 ```bash
 pip install -r requirements-test.txt
-flake8
-coverage run -m unittest
+coverage run setup.py test
 coverage report
+flake8
 ```
