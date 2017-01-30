@@ -8,3 +8,4 @@ exclude_lines =
   production
   if __name__ == "__main__":
   if sys.platform == 'darwin':
+  if url.__class__ is list:
