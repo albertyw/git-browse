@@ -46,3 +46,12 @@ coverage run setup.py test
 coverage report
 flake8
 ```
+
+Publishing
+----------
+
+```bash
+pip install twine
+python setup.py sdist bdist_wheel
+twine upload dist/*
+```
