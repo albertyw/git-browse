@@ -12,7 +12,8 @@ This is a script that can be added as a gitconfig alias to easily browse
 repositories on Git hosting services (e.g. github).  It is built to model
 [arcanist's] (https://github.com/phacility/arcanist)
 [browse](https://github.com/phacility/arcanist/blob/master/src/workflow/ArcanistBrowseWorkflow.php)
-command.
+command.  It is specifically designed to have no dependencies so it should be
+easily installable and very portable.
 
 Installation
 ------------
@@ -24,7 +25,7 @@ your [dotfiles](https://github.com/albertyw/dotfiles)) repository.
 git clone git@github.com:albertyw/git-browse $REPOSITORY_LOCATION
 git config --global \
     alias.browse \
-    "!"$REPOSITORY_LOCATION"/browse.py --path=\${GIT_PREFIX:-./}"
+    "!"$REPOSITORY_LOCATION"/git_browse/browse.py --path=\${GIT_PREFIX:-./}"
 ```
 
 Usage
