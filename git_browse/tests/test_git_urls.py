@@ -1,7 +1,7 @@
 import os
 import unittest
 
-import browse
+from git_browse import browse
 
 
 directory = os.path.dirname(os.path.realpath(__file__))

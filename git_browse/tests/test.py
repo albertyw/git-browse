@@ -4,7 +4,7 @@ import sys
 import unittest
 from unittest.mock import patch
 
-import browse
+from git_browse import browse
 
 directory = os.path.dirname(os.path.realpath(__file__))
 BASE_DIRECTORY = os.path.normpath(os.path.join(directory, '..', '..'))
@@ -206,13 +206,13 @@ class FullTest(unittest.TestCase):
         os.chdir(BASE_DIRECTORY)
         shutil.rmtree(self.test_directory)
 
-    @patch("browse.open_url")
+    @patch("git_browse.browse.open_url")
     def test_default(self, mock_open_url):
         sys_argv = ['asdf']
         expected = 'https://github.com/albertyw/git-browse'
         self.check_main(sys_argv, expected, mock_open_url)
 
-    @patch("browse.open_url")
+    @patch("git_browse.browse.open_url")
     def test_file(self, mock_open_url):
         sys_argv = ['asdf', 'README.md']
         expected = (
@@ -221,7 +221,7 @@ class FullTest(unittest.TestCase):
         )
         self.check_main(sys_argv, expected, mock_open_url)
 
-    @patch("browse.open_url")
+    @patch("git_browse.browse.open_url")
     def test_subdirectory_file(self, mock_open_url):
         sys_argv = ['asdf', 'test_dir/test_file']
         expected = (
@@ -230,7 +230,7 @@ class FullTest(unittest.TestCase):
         )
         self.check_main(sys_argv, expected, mock_open_url)
 
-    @patch("browse.open_url")
+    @patch("git_browse.browse.open_url")
     def test_chdir_subdirectory_file(self, mock_open_url):
         os.chdir(self.test_directory)
         sys_argv = ['asdf', 'test_file']
@@ -240,13 +240,13 @@ class FullTest(unittest.TestCase):
         )
         self.check_main(sys_argv, expected, mock_open_url)
 
-    @patch("browse.open_url")
+    @patch("git_browse.browse.open_url")
     def test_directory(self, mock_open_url):
         sys_argv = ['asdf', '.']
         expected = 'https://github.com/albertyw/git-browse/tree/master/./'
         self.check_main(sys_argv, expected, mock_open_url)
 
-    @patch("browse.open_url")
+    @patch("git_browse.browse.open_url")
     def test_subdirectory(self, mock_open_url):
         sys_argv = ['asdf', 'test_dir']
         expected = (
@@ -255,7 +255,7 @@ class FullTest(unittest.TestCase):
         )
         self.check_main(sys_argv, expected, mock_open_url)
 
-    @patch("browse.open_url")
+    @patch("git_browse.browse.open_url")
     def test_chdir_subdirectory(self, mock_open_url):
         os.chdir(self.test_directory)
         sys_argv = ['asdf', '.']
