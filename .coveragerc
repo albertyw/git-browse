@@ -1,6 +1,8 @@
 [run]
 source=.
-omit=.virtualenv
+omit =
+  .virtualenv
+  setup.py
 
 [report]
 exclude_lines =
