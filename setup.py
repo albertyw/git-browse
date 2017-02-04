@@ -12,7 +12,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 setup(
     name='git-browse',
 
-    version='1.2.0',
+    version='2.0.0',
 
     description='Open repositories, directories, and files in the browser',
     long_description=long_description,

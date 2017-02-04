@@ -1,3 +1,11 @@
+v2.0.0 (2017-02-04)
+===================
+
+ - First release as a python package
+ - Major refactors of repository structure
+ - Bring test coverage back to 100%
+
+
 v1.2.0 (2017-01-24)
 ===================
 
