@@ -1,6 +1,9 @@
 Git Browse
 ==========
 
+[![PyPI](https://img.shields.io/pypi/v/git-browse.svg)](https://github.com/albertyw/git-browse)
+[![PyPI](https://img.shields.io/pypi/pyversions/git-browse.svg)]()
+
 [ ![Codeship Status for albertyw/git-browse](https://codeship.com/projects/fbd67810-b952-0134-2c2e-166255a25182/status?branch=master)](https://codeship.com/projects/194945)
 [![Dependency Status](https://gemnasium.com/badges/github.com/albertyw/git-browse.svg)](https://gemnasium.com/github.com/albertyw/git-browse)
 [![Code Climate](https://codeclimate.com/github/albertyw/git-browse/badges/gpa.svg)](https://codeclimate.com/github/albertyw/git-browse)
