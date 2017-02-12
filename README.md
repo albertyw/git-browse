@@ -55,7 +55,8 @@ Publishing
 ----------
 
 ```bash
-pip install twine
+sudo apt-get install pandoc
+pip install twine pypandoc
 python setup.py sdist bdist_wheel
 twine upload dist/*
 ```
