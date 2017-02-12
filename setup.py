@@ -12,7 +12,7 @@ long_description = pypandoc.convert('README.md', 'rst')
 setup(
     name='git-browse',
 
-    version='2.0.0',
+    version='2.0.1',
 
     description='Open repositories, directories, and files in the browser',
     long_description=long_description,

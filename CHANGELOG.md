@@ -1,3 +1,11 @@
+v2.0.1 (2017-02-11)
+===================
+
+ - Update development dependencies
+ - Fix formatting on PyPI by converting markdown readme to reStructuredText
+ - Officially support python 3.6
+
+
 v2.0.0 (2017-02-04)
 ===================
 
