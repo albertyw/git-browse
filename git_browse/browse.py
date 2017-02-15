@@ -38,7 +38,7 @@ class GithubHost(object):
         )
         if focus_object.is_root():
             return self.root_url(repository_url, focus_object)
-        if focus_object.is_directory:
+        if focus_object.is_directory():
             return self.directory_url(repository_url, focus_object)
         return self.file_url(repository_url, focus_object)
 
@@ -93,7 +93,6 @@ class FocusObject(object):
     def is_root(self):
         return self.path == os.sep
 
-    @property
     def is_directory(self):
         return self.path[-1] == os.sep
 

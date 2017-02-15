@@ -64,11 +64,11 @@ class FocusObject(unittest.TestCase):
 
     def test_is_directory(self):
         obj = browse.FocusObject('/asdf/')
-        self.assertTrue(obj.is_directory)
+        self.assertTrue(obj.is_directory())
 
     def test_is_not_directory(self):
         obj = browse.FocusObject('/asdf')
-        self.assertFalse(obj.is_directory)
+        self.assertFalse(obj.is_directory())
 
     def test_default(self):
         obj = browse.FocusObject.default()
@@ -164,20 +164,20 @@ class TestGetFocusObject(unittest.TestCase):
         sys_argv = ['asdf']
         focus_object = browse.get_focus_object(sys_argv, os.getcwd())
         self.assertTrue(focus_object.is_root())
-        self.assertTrue(focus_object.is_directory)
+        self.assertTrue(focus_object.is_directory())
 
     def test_file_focus_object(self):
         sys_argv = ['asdf', 'README.md']
         focus_object = browse.get_focus_object(sys_argv, os.getcwd())
         self.assertFalse(focus_object.is_root())
-        self.assertFalse(focus_object.is_directory)
+        self.assertFalse(focus_object.is_directory())
         self.assertEqual(focus_object.path[-9:], 'README.md')
 
     def test_directory_focus_object(self):
         sys_argv = ['asdf', '.']
         focus_object = browse.get_focus_object(sys_argv, os.getcwd())
         self.assertFalse(focus_object.is_root())
-        self.assertTrue(focus_object.is_directory)
+        self.assertTrue(focus_object.is_directory())
 
     def test_nonexistend_focus_object(self):
         sys_argv = ['asdf', 'asdf']
