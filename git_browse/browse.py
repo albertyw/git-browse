@@ -78,10 +78,13 @@ class UberPhabricatorHost(object):
         return UberPhabricatorHost(None, None)
 
     def get_url(self, focus_object):
-        path = focus_object.path
-        # arc browse requires an object, provide the root object by default
-        if focus_object.is_root():
-            path = '.'
+        if focus_object.is_commit_hash():
+            path = focus_object.commit_hash
+        else:
+            path = focus_object.path
+            # arc browse requires an object, provide the root object by default
+            if focus_object.is_root():
+                path = '.'
         command = ['arc', 'browse']
         if path:
             command.append(path)
