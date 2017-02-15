@@ -36,11 +36,20 @@ class GithubHost(object):
             self.user,
             self.repository
         )
+        if focus_object.is_commit_hash():
+            return self.commit_hash_url(repository_url, focus_object)
         if focus_object.is_root():
             return self.root_url(repository_url, focus_object)
         if focus_object.is_directory():
             return self.directory_url(repository_url, focus_object)
         return self.file_url(repository_url, focus_object)
+
+    def commit_hash_url(self, repository_url, focus_hash):
+        repository_url = "%s/commit/%s" % (
+            repository_url,
+            focus_hash.commit_hash
+        )
+        return repository_url
 
     def root_url(self, repository_url, focus_object):
         return repository_url
@@ -90,6 +99,9 @@ class FocusObject(object):
     def __init__(self, path):
         self.path = path
 
+    def is_commit_hash(self):
+        return False
+
     def is_root(self):
         return self.path == os.sep
 
@@ -104,6 +116,9 @@ class FocusObject(object):
 class FocusHash(object):
     def __init__(self, commit_hash):
         self.commit_hash = commit_hash
+
+    def is_commit_hash(self):
+        return True
 
 
 def get_repository_root():
