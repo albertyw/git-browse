@@ -75,6 +75,11 @@ class FocusObject(unittest.TestCase):
         self.assertTrue(obj.is_root())
 
 
+class FocusHash(unittest.TestCase):
+    def test_init(self):
+        obj = browse.FocusHash('abcde')
+
+
 class GetRepositoryRoot(unittest.TestCase):
     def test_get(self):
         os.chdir(BASE_DIRECTORY)
@@ -179,10 +184,28 @@ class TestGetFocusObject(unittest.TestCase):
         self.assertFalse(focus_object.is_root())
         self.assertTrue(focus_object.is_directory())
 
+    def test_get_focus_hash(self):
+        sys_argv = ['asdf', 'v2.0.0']
+        focus_object = browse.get_focus_object(sys_argv, os.getcwd())
+        self.assertTrue(focus_object.__class__ is browse.FocusHash)
+
     def test_nonexistend_focus_object(self):
         sys_argv = ['asdf', 'asdf']
         with self.assertRaises(FileNotFoundError):
             browse.get_focus_object(sys_argv, os.getcwd())
+
+
+class TestGetCommitHash(unittest.TestCase):
+    def test_get_unknown_hash(self):
+        focus_object = '!@#$'
+        focus_hash = browse.get_commit_hash(focus_object)
+        self.assertEqual(focus_hash, None)
+
+    def test_get_hash(self):
+        focus_object = 'v2.0.0'
+        focus_hash = browse.get_commit_hash(focus_object)
+        self.assertTrue(focus_hash.__class__ is browse.FocusHash)
+        self.assertTrue(focus_hash.commit_hash)
 
 
 class TestOpenURL(unittest.TestCase):

@@ -101,6 +101,11 @@ class FocusObject(object):
         return FocusObject(os.sep)
 
 
+class FocusHash(object):
+    def __init__(self, commit_hash):
+        self.commit_hash = commit_hash
+
+
 def get_repository_root():
     current_directory = ''
     new_directory = os.getcwd()
@@ -166,6 +171,9 @@ def get_focus_object(sys_argv, path):
     object_path = os.path.join(directory, focus_object[0])
     object_path = os.path.normpath(object_path)
     if not os.path.exists(object_path):
+        focus_hash = get_commit_hash(focus_object[0])
+        if focus_hash:
+            return focus_hash
         error = "specified file does not exist: %s" % object_path
         raise FileNotFoundError(error)
     is_dir = os.path.isdir(object_path) and object_path[-1] != os.sep
@@ -173,6 +181,20 @@ def get_focus_object(sys_argv, path):
     if is_dir:
         object_path += os.sep
     return FocusObject(object_path)
+
+
+def get_commit_hash(focus_object):
+    command = ['git', 'show', focus_object]
+    process = subprocess.run(
+        command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE
+    )
+    if process.returncode != 0:
+        return None
+    output = process.stdout.decode('utf-8')
+    commit_hash = output.split("\n")[0].split(" ")[1]
+    return FocusHash(commit_hash)
 
 
 def open_url(url):
