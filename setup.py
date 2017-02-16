@@ -1,13 +1,17 @@
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
+from codecs import open
 from os import path
 
-import pypandoc
-
-here = path.abspath(path.dirname(__file__))
-
 # Get the long description from the README file
-long_description = pypandoc.convert('README.md', 'rst')
+try:
+    import pypandoc
+    long_description = pypandoc.convert('README.md', 'rst')
+except ImportError:
+    print("pypandoc not installed, not converting markdown to rst")
+    here = path.abspath(path.dirname(__file__))
+    with open(path.join(here, 'README.md'), encoding='utf-8') as f:
+        long_description = f.read()
 
 setup(
     name='git-browse',
