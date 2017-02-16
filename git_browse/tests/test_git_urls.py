@@ -69,6 +69,11 @@ GIT_URLS = [
         'gitolite@code.uber.internal:a/b',
         TEST_DIR,
         ['arc', 'browse', TEST_DIR+'/']
+    ),
+    (
+        'gitolite@code.uber.internal:a/b',
+        'v2.0.0',
+        ['arc', 'browse', 'f5631b4c423f2fa5c9c4b64853607f1727d4b7a9']
     )
 ]
 
