@@ -15,6 +15,7 @@ class TestGithubHost(unittest.TestCase):
         self.github_host = browse.GithubHost('albertyw', 'git-browse')
         self.repository_url = 'https://github.com/albertyw/git-browse'
         self.focus_object = browse.FocusObject('/')
+        self.focus_hash = browse.FocusHash('v2.0.0')
 
     def test_init(self):
         host = browse.GithubHost('user', 'repository')
@@ -48,6 +49,16 @@ class TestGithubHost(unittest.TestCase):
             'https://github.com/albertyw/git-browse/blob/master/README.md'
         )
 
+    def test_commit_hash_url(self):
+        url = self.github_host.commit_hash_url(
+            self.repository_url,
+            self.focus_hash
+        )
+        self.assertEqual(
+            url,
+            'https://github.com/albertyw/git-browse/commit/v2.0.0'
+        )
+
 
 class FocusObject(unittest.TestCase):
     def test_init(self):
@@ -78,6 +89,11 @@ class FocusObject(unittest.TestCase):
 class FocusHash(unittest.TestCase):
     def test_init(self):
         obj = browse.FocusHash('abcde')
+        self.assertEqual(obj.commit_hash, 'abcde')
+
+    def test_is_commit_hash(self):
+        obj = browse.FocusHash('abcde')
+        self.assertTrue(obj.is_commit_hash())
 
 
 class GetRepositoryRoot(unittest.TestCase):

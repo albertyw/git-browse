@@ -50,6 +50,12 @@ GIT_URLS = [
         'https://github.com/albertyw/git-browse/tree/master/testdir/'
     ),
     (
+        'git@github.com:albertyw/git-browse',
+        'v2.0.0',
+        'https://github.com/albertyw/git-browse/commit/' +
+        'f5631b4c423f2fa5c9c4b64853607f1727d4b7a9'
+    ),
+    (
         'gitolite@code.uber.internal:a/b',
         None,
         ['arc', 'browse', '.']
