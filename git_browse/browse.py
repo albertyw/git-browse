@@ -30,19 +30,19 @@ class GithubHost(object):
         user = url_regex_match.group('user')
         return GithubHost(user, repository)
 
-    def get_url(self, focus_object):
+    def get_url(self, git_object):
         repository_url = "%s%s/%s" % (
             self.GITHUB_URL,
             self.user,
             self.repository
         )
-        if focus_object.is_commit_hash():
-            return self.commit_hash_url(repository_url, focus_object)
-        if focus_object.is_root():
-            return self.root_url(repository_url, focus_object)
-        if focus_object.is_directory():
-            return self.directory_url(repository_url, focus_object)
-        return self.file_url(repository_url, focus_object)
+        if git_object.is_commit_hash():
+            return self.commit_hash_url(repository_url, git_object)
+        if git_object.is_root():
+            return self.root_url(repository_url, git_object)
+        if git_object.is_directory():
+            return self.directory_url(repository_url, git_object)
+        return self.file_url(repository_url, git_object)
 
     def commit_hash_url(self, repository_url, focus_hash):
         repository_url = "%s/commit/%s" % (
@@ -77,10 +77,10 @@ class UberPhabricatorHost(object):
     def create(url_regex_match):
         return UberPhabricatorHost(None, None)
 
-    def get_url(self, focus_object):
-        path = focus_object.identifier
+    def get_url(self, git_object):
+        path = git_object.identifier
         # arc browse requires an object, provide the root object by default
-        if focus_object.is_root():
+        if git_object.is_root():
             path = '.'
         command = ['arc', 'browse']
         if path:
@@ -203,8 +203,8 @@ def get_git_object(sys_argv, path):
     return FocusObject(object_path)
 
 
-def get_commit_hash(focus_object):
-    command = ['git', 'show', focus_object]
+def get_commit_hash(identifier):
+    command = ['git', 'show', identifier]
     process = subprocess.Popen(
         command,
         stdout=subprocess.PIPE,
