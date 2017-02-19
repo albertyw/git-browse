@@ -16,7 +16,7 @@ except ImportError:
 setup(
     name='git-browse',
 
-    version='2.0.1',
+    version='2.1.0',
 
     description='Open repositories, directories, and files in the browser',
     long_description=long_description,

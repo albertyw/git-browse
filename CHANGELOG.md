@@ -1,3 +1,11 @@
+v2.1.0 (2017-02-19)
+===================
+
+ - Support browsing commit hashes
+ - Refactors
+ - Fix dependency on pypandoc
+
+
 v2.0.1 (2017-02-11)
 ===================
 
