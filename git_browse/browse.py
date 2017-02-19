@@ -47,7 +47,7 @@ class GithubHost(object):
     def commit_hash_url(self, repository_url, focus_hash):
         repository_url = "%s/commit/%s" % (
             repository_url,
-            focus_hash.commit_hash
+            focus_hash.identifier
         )
         return repository_url
 
@@ -78,13 +78,10 @@ class UberPhabricatorHost(object):
         return UberPhabricatorHost(None, None)
 
     def get_url(self, focus_object):
-        if focus_object.is_commit_hash():
-            path = focus_object.commit_hash
-        else:
-            path = focus_object.identifier
-            # arc browse requires an object, provide the root object by default
-            if focus_object.is_root():
-                path = '.'
+        path = focus_object.identifier
+        # arc browse requires an object, provide the root object by default
+        if focus_object.is_root():
+            path = '.'
         command = ['arc', 'browse']
         if path:
             command.append(path)
@@ -102,11 +99,17 @@ class GitObject(object):
     def __init__(self, identifier):
         self.identifier = identifier
 
+    def is_commit_hash(self):
+        False
+
+    def is_root(self):
+        False
+
+    def is_directory(self):
+        False
+
 
 class FocusObject(GitObject):
-    def is_commit_hash(self):
-        return False
-
     def is_root(self):
         return self.identifier == os.sep
 
@@ -118,10 +121,7 @@ class FocusObject(GitObject):
         return FocusObject(os.sep)
 
 
-class FocusHash(object):
-    def __init__(self, commit_hash):
-        self.commit_hash = commit_hash
-
+class FocusHash(GitObject):
     def is_commit_hash(self):
         return True
 

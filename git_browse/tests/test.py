@@ -89,7 +89,7 @@ class FocusObject(unittest.TestCase):
 class FocusHash(unittest.TestCase):
     def test_init(self):
         obj = browse.FocusHash('abcde')
-        self.assertEqual(obj.commit_hash, 'abcde')
+        self.assertEqual(obj.identifier, 'abcde')
 
     def test_is_commit_hash(self):
         obj = browse.FocusHash('abcde')
@@ -221,7 +221,7 @@ class TestGetCommitHash(unittest.TestCase):
         focus_object = 'v2.0.0'
         focus_hash = browse.get_commit_hash(focus_object)
         self.assertTrue(focus_hash.__class__ is browse.FocusHash)
-        self.assertTrue(focus_hash.commit_hash)
+        self.assertTrue(focus_hash.identifier)
 
 
 class TestOpenURL(unittest.TestCase):
