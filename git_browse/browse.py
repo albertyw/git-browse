@@ -30,24 +30,24 @@ class GithubHost(object):
         user = url_regex_match.group('user')
         return GithubHost(user, repository)
 
-    def get_url(self, focus_object):
+    def get_url(self, git_object):
         repository_url = "%s%s/%s" % (
             self.GITHUB_URL,
             self.user,
             self.repository
         )
-        if focus_object.is_commit_hash():
-            return self.commit_hash_url(repository_url, focus_object)
-        if focus_object.is_root():
-            return self.root_url(repository_url, focus_object)
-        if focus_object.is_directory():
-            return self.directory_url(repository_url, focus_object)
-        return self.file_url(repository_url, focus_object)
+        if git_object.is_commit_hash():
+            return self.commit_hash_url(repository_url, git_object)
+        if git_object.is_root():
+            return self.root_url(repository_url, git_object)
+        if git_object.is_directory():
+            return self.directory_url(repository_url, git_object)
+        return self.file_url(repository_url, git_object)
 
     def commit_hash_url(self, repository_url, focus_hash):
         repository_url = "%s/commit/%s" % (
             repository_url,
-            focus_hash.commit_hash
+            focus_hash.identifier
         )
         return repository_url
 
@@ -57,14 +57,14 @@ class GithubHost(object):
     def directory_url(self, repository_url, focus_object):
         repository_url = "%s/tree/master/%s" % (
             repository_url,
-            focus_object.path
+            focus_object.identifier
         )
         return repository_url
 
     def file_url(self, repository_url, focus_object):
         repository_url = "%s/blob/master/%s" % (
             repository_url,
-            focus_object.path
+            focus_object.identifier
         )
         return repository_url
 
@@ -77,14 +77,11 @@ class UberPhabricatorHost(object):
     def create(url_regex_match):
         return UberPhabricatorHost(None, None)
 
-    def get_url(self, focus_object):
-        if focus_object.is_commit_hash():
-            path = focus_object.commit_hash
-        else:
-            path = focus_object.path
-            # arc browse requires an object, provide the root object by default
-            if focus_object.is_root():
-                path = '.'
+    def get_url(self, git_object):
+        path = git_object.identifier
+        # arc browse requires an object, provide the root object by default
+        if git_object.is_root():
+            path = '.'
         command = ['arc', 'browse']
         if path:
             command.append(path)
@@ -98,28 +95,33 @@ HOST_REGEXES = {
 }
 
 
-class FocusObject(object):
-    def __init__(self, path):
-        self.path = path
+class GitObject(object):
+    def __init__(self, identifier):
+        self.identifier = identifier
 
     def is_commit_hash(self):
-        return False
+        False
 
     def is_root(self):
-        return self.path == os.sep
+        False
 
     def is_directory(self):
-        return self.path[-1] == os.sep
+        False
+
+
+class FocusObject(GitObject):
+    def is_root(self):
+        return self.identifier == os.sep
+
+    def is_directory(self):
+        return self.identifier[-1] == os.sep
 
     @staticmethod
     def default():
         return FocusObject(os.sep)
 
 
-class FocusHash(object):
-    def __init__(self, commit_hash):
-        self.commit_hash = commit_hash
-
+class FocusHash(GitObject):
     def is_commit_hash(self):
         return True
 
@@ -181,7 +183,7 @@ def get_focus_object_path(sys_argv):
     return os.getcwd()
 
 
-def get_focus_object(sys_argv, path):
+def get_git_object(sys_argv, path):
     focus_object = sys_argv[1:]
     if not focus_object:
         return FocusObject.default()
@@ -201,8 +203,8 @@ def get_focus_object(sys_argv, path):
     return FocusObject(object_path)
 
 
-def get_commit_hash(focus_object):
-    command = ['git', 'show', focus_object]
+def get_commit_hash(identifier):
+    command = ['git', 'show', identifier]
     process = subprocess.Popen(
         command,
         stdout=subprocess.PIPE,
@@ -228,8 +230,8 @@ def open_url(url):
 def main():
     host = get_repository_host()
     path = get_focus_object_path(sys.argv)
-    focus_object = get_focus_object(sys.argv, path=path)
-    url = host.get_url(focus_object)
+    git_object = get_git_object(sys.argv, path=path)
+    url = host.get_url(git_object)
     open_url(url)
 
 
