@@ -94,7 +94,7 @@ def generate_test(*test_data):
         sys_argv = ['git-browse.py']
         if target_path:
             sys_argv.append(target_path)
-        focus_object = browse.get_focus_object(sys_argv, REPO_PATH)
+        focus_object = browse.get_git_object(sys_argv, REPO_PATH)
         url = host.get_url(focus_object)
         self.assertEqual(host_url, url)
     return test

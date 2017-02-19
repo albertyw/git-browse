@@ -183,32 +183,32 @@ class TestGetFocusObjectPath(unittest.TestCase):
 class TestGetFocusObject(unittest.TestCase):
     def test_default_focus_object(self):
         sys_argv = ['asdf']
-        focus_object = browse.get_focus_object(sys_argv, os.getcwd())
+        focus_object = browse.get_git_object(sys_argv, os.getcwd())
         self.assertTrue(focus_object.is_root())
         self.assertTrue(focus_object.is_directory())
 
     def test_file_focus_object(self):
         sys_argv = ['asdf', 'README.md']
-        focus_object = browse.get_focus_object(sys_argv, os.getcwd())
+        focus_object = browse.get_git_object(sys_argv, os.getcwd())
         self.assertFalse(focus_object.is_root())
         self.assertFalse(focus_object.is_directory())
         self.assertEqual(focus_object.identifier[-9:], 'README.md')
 
     def test_directory_focus_object(self):
         sys_argv = ['asdf', '.']
-        focus_object = browse.get_focus_object(sys_argv, os.getcwd())
+        focus_object = browse.get_git_object(sys_argv, os.getcwd())
         self.assertFalse(focus_object.is_root())
         self.assertTrue(focus_object.is_directory())
 
     def test_get_focus_hash(self):
         sys_argv = ['asdf', 'v2.0.0']
-        focus_object = browse.get_focus_object(sys_argv, os.getcwd())
+        focus_object = browse.get_git_object(sys_argv, os.getcwd())
         self.assertTrue(focus_object.__class__ is browse.FocusHash)
 
     def test_nonexistend_focus_object(self):
         sys_argv = ['asdf', 'asdf']
         with self.assertRaises(FileNotFoundError):
-            browse.get_focus_object(sys_argv, os.getcwd())
+            browse.get_git_object(sys_argv, os.getcwd())
 
 
 class TestGetCommitHash(unittest.TestCase):

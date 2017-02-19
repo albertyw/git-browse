@@ -183,7 +183,7 @@ def get_focus_object_path(sys_argv):
     return os.getcwd()
 
 
-def get_focus_object(sys_argv, path):
+def get_git_object(sys_argv, path):
     focus_object = sys_argv[1:]
     if not focus_object:
         return FocusObject.default()
@@ -230,8 +230,8 @@ def open_url(url):
 def main():
     host = get_repository_host()
     path = get_focus_object_path(sys.argv)
-    focus_object = get_focus_object(sys.argv, path=path)
-    url = host.get_url(focus_object)
+    git_object = get_git_object(sys.argv, path=path)
+    url = host.get_url(git_object)
     open_url(url)
 
 
