@@ -31,7 +31,7 @@ class TestGithubHost(unittest.TestCase):
         self.assertEqual(url, self.repository_url)
 
     def test_directory_url(self):
-        self.focus_object.path = 'asdf/'
+        self.focus_object.identifier = 'asdf/'
         url = self.github_host.directory_url(
             self.repository_url,
             self.focus_object
@@ -42,7 +42,7 @@ class TestGithubHost(unittest.TestCase):
         )
 
     def test_file_url(self):
-        self.focus_object.path = 'README.md'
+        self.focus_object.identifier = 'README.md'
         url = self.github_host.file_url(self.repository_url, self.focus_object)
         self.assertEqual(
             url,
@@ -63,7 +63,7 @@ class TestGithubHost(unittest.TestCase):
 class FocusObject(unittest.TestCase):
     def test_init(self):
         obj = browse.FocusObject('/asdf')
-        self.assertEqual(obj.path, '/asdf')
+        self.assertEqual(obj.identifier, '/asdf')
 
     def test_is_root(self):
         obj = browse.FocusObject('/')
@@ -192,7 +192,7 @@ class TestGetFocusObject(unittest.TestCase):
         focus_object = browse.get_focus_object(sys_argv, os.getcwd())
         self.assertFalse(focus_object.is_root())
         self.assertFalse(focus_object.is_directory())
-        self.assertEqual(focus_object.path[-9:], 'README.md')
+        self.assertEqual(focus_object.identifier[-9:], 'README.md')
 
     def test_directory_focus_object(self):
         sys_argv = ['asdf', '.']

@@ -57,14 +57,14 @@ class GithubHost(object):
     def directory_url(self, repository_url, focus_object):
         repository_url = "%s/tree/master/%s" % (
             repository_url,
-            focus_object.path
+            focus_object.identifier
         )
         return repository_url
 
     def file_url(self, repository_url, focus_object):
         repository_url = "%s/blob/master/%s" % (
             repository_url,
-            focus_object.path
+            focus_object.identifier
         )
         return repository_url
 
@@ -81,7 +81,7 @@ class UberPhabricatorHost(object):
         if focus_object.is_commit_hash():
             path = focus_object.commit_hash
         else:
-            path = focus_object.path
+            path = focus_object.identifier
             # arc browse requires an object, provide the root object by default
             if focus_object.is_root():
                 path = '.'
@@ -98,18 +98,20 @@ HOST_REGEXES = {
 }
 
 
-class FocusObject(object):
-    def __init__(self, path):
-        self.path = path
+class GitObject(object):
+    def __init__(self, identifier):
+        self.identifier = identifier
 
+
+class FocusObject(GitObject):
     def is_commit_hash(self):
         return False
 
     def is_root(self):
-        return self.path == os.sep
+        return self.identifier == os.sep
 
     def is_directory(self):
-        return self.path[-1] == os.sep
+        return self.identifier[-1] == os.sep
 
     @staticmethod
     def default():
