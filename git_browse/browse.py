@@ -36,11 +36,20 @@ class GithubHost(object):
             self.user,
             self.repository
         )
+        if focus_object.is_commit_hash():
+            return self.commit_hash_url(repository_url, focus_object)
         if focus_object.is_root():
             return self.root_url(repository_url, focus_object)
         if focus_object.is_directory():
             return self.directory_url(repository_url, focus_object)
         return self.file_url(repository_url, focus_object)
+
+    def commit_hash_url(self, repository_url, focus_hash):
+        repository_url = "%s/commit/%s" % (
+            repository_url,
+            focus_hash.commit_hash
+        )
+        return repository_url
 
     def root_url(self, repository_url, focus_object):
         return repository_url
@@ -69,10 +78,13 @@ class UberPhabricatorHost(object):
         return UberPhabricatorHost(None, None)
 
     def get_url(self, focus_object):
-        path = focus_object.path
-        # arc browse requires an object, provide the root object by default
-        if focus_object.is_root():
-            path = '.'
+        if focus_object.is_commit_hash():
+            path = focus_object.commit_hash
+        else:
+            path = focus_object.path
+            # arc browse requires an object, provide the root object by default
+            if focus_object.is_root():
+                path = '.'
         command = ['arc', 'browse']
         if path:
             command.append(path)
@@ -90,6 +102,9 @@ class FocusObject(object):
     def __init__(self, path):
         self.path = path
 
+    def is_commit_hash(self):
+        return False
+
     def is_root(self):
         return self.path == os.sep
 
@@ -99,6 +114,14 @@ class FocusObject(object):
     @staticmethod
     def default():
         return FocusObject(os.sep)
+
+
+class FocusHash(object):
+    def __init__(self, commit_hash):
+        self.commit_hash = commit_hash
+
+    def is_commit_hash(self):
+        return True
 
 
 def get_repository_root():
@@ -166,6 +189,9 @@ def get_focus_object(sys_argv, path):
     object_path = os.path.join(directory, focus_object[0])
     object_path = os.path.normpath(object_path)
     if not os.path.exists(object_path):
+        focus_hash = get_commit_hash(focus_object[0])
+        if focus_hash:
+            return focus_hash
         error = "specified file does not exist: %s" % object_path
         raise FileNotFoundError(error)
     is_dir = os.path.isdir(object_path) and object_path[-1] != os.sep
@@ -173,6 +199,21 @@ def get_focus_object(sys_argv, path):
     if is_dir:
         object_path += os.sep
     return FocusObject(object_path)
+
+
+def get_commit_hash(focus_object):
+    command = ['git', 'show', focus_object]
+    process = subprocess.Popen(
+        command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        universal_newlines=True
+    )
+    out, err = process.communicate()
+    if process.returncode != 0:
+        return None
+    commit_hash = out.split("\n")[0].split(" ")[1]
+    return FocusHash(commit_hash)
 
 
 def open_url(url):
