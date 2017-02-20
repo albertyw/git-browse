@@ -18,6 +18,9 @@ repositories on Git hosting services (e.g. github).  It is built to model
 command.  It is specifically designed to have no dependencies so it should be
 easily installable and very portable.
 
+If you're looking to browse different github repositories, you might like
+[hub browse](https://github.com/github/hub/blob/master/commands/browse.go).
+
 Installation
 ------------
 
