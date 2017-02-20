@@ -40,6 +40,16 @@ Usage: git browse [object]
 
 If `[object]` is omitted, the root repository page will be opened.
 If `[object]` is a directory or file, then that object will be opened.
+If `[object]` is a commit hash, then that commit hash will be opened.
+
+### Examples
+
+| Command                 | Opens |
+|-------------------------|-------|
+| `git browse`            | https://github.com/albertyw/git-browse |
+| `git browse README.md`  | https://github.com/albertyw/git-browse/blob/master/README.md |
+| `git browse git_browse` | https://github.com/albertyw/git-browse/tree/master/git_browse/ |
+| `git browse v1.1.1`     | https://github.com/albertyw/git-browse/commit/80b219dee0aaa86b378993cbf88511126b813c5f |
 
 Development
 -----------
