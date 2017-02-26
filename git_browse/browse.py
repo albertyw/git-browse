@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
-import configparser
+try:
+    import configparser
+except ImportError:
+    raise ImportError("Must be using Python 3")
+
 import os
 import re
 import subprocess
