@@ -60,6 +60,12 @@ class TestGithubHost(unittest.TestCase):
         )
 
 
+class GitObject(unittest.TestCase):
+    def test_is_directory(self):
+        obj = browse.GitObject('/asdf')
+        self.assertFalse(obj.is_directory())
+
+
 class FocusObject(unittest.TestCase):
     def test_init(self):
         obj = browse.FocusObject('/asdf')
