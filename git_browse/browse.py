@@ -104,13 +104,13 @@ class GitObject(object):
         self.identifier = identifier
 
     def is_commit_hash(self):
-        False
+        return False
 
     def is_root(self):
-        False
+        return False
 
     def is_directory(self):
-        False
+        return False
 
 
 class FocusObject(GitObject):
