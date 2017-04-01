@@ -16,7 +16,6 @@ USER_REGEX = '(?P<user>[\w\.@:\/~_-]+)'
 REPOSITORY_REGEX = '(?P<repository>[\w\.@:\/~_-]+)'
 GITHUB_SSH_URL = 'git@github.com:%s/%s' % (USER_REGEX, REPOSITORY_REGEX)
 GITHUB_HTTPS_URL = 'https://github.com/%s/%s' % (USER_REGEX, REPOSITORY_REGEX)
-UBER_PHABRICATOR_SSH_URL = 'gitolite@code.uber.internal'
 
 
 class GithubHost(object):
@@ -72,14 +71,19 @@ class GithubHost(object):
         )
         return repository_url
 
+    def valid_focus_object(self, arg):
+        return None
 
-class UberPhabricatorHost(object):
+
+class PhabricatorHost(object):
+    PHABRICATOR_OBJECT_REGEX = '^[DT][0-9]+$'
+
     def __init__(self, user, repository):
         pass
 
     @staticmethod
-    def create(url_regex_match):
-        return UberPhabricatorHost(None, None)
+    def create(url_regex_match=None):
+        return PhabricatorHost(None, None)
 
     def get_url(self, git_object):
         path = git_object.identifier
@@ -91,11 +95,15 @@ class UberPhabricatorHost(object):
             command.append(path)
         return command
 
+    def valid_focus_object(self, arg):
+        if re.search(self.PHABRICATOR_OBJECT_REGEX, arg):
+            return PhabricatorObject(arg)
+        return None
+
 
 HOST_REGEXES = {
     GITHUB_SSH_URL: GithubHost,
     GITHUB_HTTPS_URL: GithubHost,
-    UBER_PHABRICATOR_SSH_URL: UberPhabricatorHost,
 }
 
 
@@ -130,6 +138,10 @@ class FocusHash(GitObject):
         return True
 
 
+class PhabricatorObject(GitObject):
+    pass
+
+
 def get_repository_root():
     current_directory = ''
     new_directory = os.getcwd()
@@ -147,6 +159,13 @@ def get_git_config():
     repository_root = get_repository_root()
     git_config_path = os.path.join(repository_root, '.git', 'config')
     return git_config_path
+
+
+def check_phabricator_url():
+    repository_root = get_repository_root()
+    arcconfig_path = os.path.join(repository_root, '.arcconfig')
+    if os.path.exists(arcconfig_path):
+        return PhabricatorHost.create()
 
 
 def get_git_url(git_config_file):
@@ -171,6 +190,9 @@ def parse_git_url(git_url):
 
 
 def get_repository_host():
+    repo_host = check_phabricator_url()
+    if repo_host:
+        return repo_host
     git_config_file = get_git_config()
     git_url = get_git_url(git_config_file)
     repo_host = parse_git_url(git_url)
@@ -187,7 +209,7 @@ def get_focus_object_path(sys_argv):
     return os.getcwd()
 
 
-def get_git_object(sys_argv, path):
+def get_git_object(sys_argv, path, host):
     focus_object = sys_argv[1:]
     if not focus_object:
         return FocusObject.default()
@@ -198,6 +220,9 @@ def get_git_object(sys_argv, path):
         focus_hash = get_commit_hash(focus_object[0])
         if focus_hash:
             return focus_hash
+        host_focus_object = host.valid_focus_object(focus_object[0])
+        if host_focus_object:
+            return host_focus_object
         error = "specified file does not exist: %s" % object_path
         raise FileNotFoundError(error)
     is_dir = os.path.isdir(object_path) and object_path[-1] != os.sep
@@ -234,7 +259,7 @@ def open_url(url):
 def main():
     host = get_repository_host()
     path = get_focus_object_path(sys.argv)
-    git_object = get_git_object(sys.argv, path=path)
+    git_object = get_git_object(sys.argv, path, host)
     url = host.get_url(git_object)
     open_url(url)
 
