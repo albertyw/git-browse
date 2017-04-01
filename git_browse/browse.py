@@ -71,8 +71,13 @@ class GithubHost(object):
         )
         return repository_url
 
+    def valid_focus_object(self, arg):
+        return None
+
 
 class PhabricatorHost(object):
+    PHABRICATOR_OBJECT_REGEX = '^[DT][0-9]+$'
+
     def __init__(self, user, repository):
         pass
 
@@ -89,6 +94,11 @@ class PhabricatorHost(object):
         if path:
             command.append(path)
         return command
+
+    def valid_focus_object(self, arg):
+        if re.search(self.PHABRICATOR_OBJECT_REGEX, arg):
+            return PhabricatorObject(arg)
+        return None
 
 
 HOST_REGEXES = {
@@ -126,6 +136,10 @@ class FocusObject(GitObject):
 class FocusHash(GitObject):
     def is_commit_hash(self):
         return True
+
+
+class PhabricatorObject(GitObject):
+    pass
 
 
 def get_repository_root():
@@ -195,7 +209,7 @@ def get_focus_object_path(sys_argv):
     return os.getcwd()
 
 
-def get_git_object(sys_argv, path):
+def get_git_object(sys_argv, path, host):
     focus_object = sys_argv[1:]
     if not focus_object:
         return FocusObject.default()
@@ -206,6 +220,9 @@ def get_git_object(sys_argv, path):
         focus_hash = get_commit_hash(focus_object[0])
         if focus_hash:
             return focus_hash
+        host_focus_object = host.valid_focus_object(focus_object[0])
+        if host_focus_object:
+            return host_focus_object
         error = "specified file does not exist: %s" % object_path
         raise FileNotFoundError(error)
     is_dir = os.path.isdir(object_path) and object_path[-1] != os.sep
@@ -242,7 +259,7 @@ def open_url(url):
 def main():
     host = get_repository_host()
     path = get_focus_object_path(sys.argv)
-    git_object = get_git_object(sys.argv, path=path)
+    git_object = get_git_object(sys.argv, path, host)
     url = host.get_url(git_object)
     open_url(url)
 

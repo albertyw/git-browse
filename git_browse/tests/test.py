@@ -187,34 +187,49 @@ class TestGetFocusObjectPath(unittest.TestCase):
 
 
 class TestGetFocusObject(unittest.TestCase):
+    def setUp(self):
+        self.host = browse.GithubHost('albertyw', 'git-browse')
+
     def test_default_focus_object(self):
         sys_argv = ['asdf']
-        focus_object = browse.get_git_object(sys_argv, os.getcwd())
+        focus_object = browse.get_git_object(sys_argv, os.getcwd(), self.host)
         self.assertTrue(focus_object.is_root())
         self.assertTrue(focus_object.is_directory())
 
     def test_file_focus_object(self):
         sys_argv = ['asdf', 'README.md']
-        focus_object = browse.get_git_object(sys_argv, os.getcwd())
+        focus_object = browse.get_git_object(sys_argv, os.getcwd(), self.host)
         self.assertFalse(focus_object.is_root())
         self.assertFalse(focus_object.is_directory())
         self.assertEqual(focus_object.identifier[-9:], 'README.md')
 
     def test_directory_focus_object(self):
         sys_argv = ['asdf', '.']
-        focus_object = browse.get_git_object(sys_argv, os.getcwd())
+        focus_object = browse.get_git_object(sys_argv, os.getcwd(), self.host)
         self.assertFalse(focus_object.is_root())
         self.assertTrue(focus_object.is_directory())
 
     def test_get_focus_hash(self):
         sys_argv = ['asdf', 'v2.0.0']
-        focus_object = browse.get_git_object(sys_argv, os.getcwd())
+        focus_object = browse.get_git_object(sys_argv, os.getcwd(), self.host)
         self.assertTrue(focus_object.__class__ is browse.FocusHash)
+
+    def test_phabricator_object(self):
+        host = browse.PhabricatorHost.create()
+        sys_argv = ['asdf', 'D123']
+        focus_object = browse.get_git_object(sys_argv, os.getcwd(), host)
+        self.assertTrue(focus_object.__class__ is browse.PhabricatorObject)
+
+    def test_invalid_phabricator_object(self):
+        phabricator_host = browse.PhabricatorHost.create()
+        sys_argv = ['asdf', 'asdf']
+        with self.assertRaises(FileNotFoundError):
+            browse.get_git_object(sys_argv, os.getcwd(), phabricator_host)
 
     def test_nonexistend_focus_object(self):
         sys_argv = ['asdf', 'asdf']
         with self.assertRaises(FileNotFoundError):
-            browse.get_git_object(sys_argv, os.getcwd())
+            browse.get_git_object(sys_argv, os.getcwd(), self.host)
 
 
 class TestGetCommitHash(unittest.TestCase):

@@ -77,7 +77,13 @@ GIT_URLS = [
         'v2.0.0',
         ['arc', 'browse', 'f5631b4c423f2fa5c9c4b64853607f1727d4b7a9'],
         True
-    )
+    ),
+    (
+        'gitolite@code.uber.internal:a/b',
+        'D123',
+        ['arc', 'browse', 'D123'],
+        True
+    ),
 ]
 
 
@@ -101,7 +107,7 @@ def generate_test(*test_data):
         sys_argv = ['git-browse.py']
         if target_path:
             sys_argv.append(target_path)
-        focus_object = browse.get_git_object(sys_argv, REPO_PATH)
+        focus_object = browse.get_git_object(sys_argv, REPO_PATH, host)
         url = host.get_url(focus_object)
         self.assertEqual(host_url, url)
     return test
