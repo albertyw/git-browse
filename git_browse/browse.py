@@ -78,7 +78,7 @@ class UberPhabricatorHost(object):
         pass
 
     @staticmethod
-    def create(url_regex_match):
+    def create(url_regex_match=None):
         return UberPhabricatorHost(None, None)
 
     def get_url(self, git_object):
@@ -149,6 +149,13 @@ def get_git_config():
     return git_config_path
 
 
+def check_phabricator_url():
+    repository_root = get_repository_root()
+    arcconfig_path = os.path.join(repository_root, '.arcconfig')
+    if os.path.exists(arcconfig_path):
+        return UberPhabricatorHost.create()
+
+
 def get_git_url(git_config_file):
     config = configparser.ConfigParser()
     config.read(git_config_file)
@@ -171,6 +178,9 @@ def parse_git_url(git_url):
 
 
 def get_repository_host():
+    repo_host = check_phabricator_url()
+    if repo_host:
+        return repo_host
     git_config_file = get_git_config()
     git_url = get_git_url(git_config_file)
     repo_host = parse_git_url(git_url)
