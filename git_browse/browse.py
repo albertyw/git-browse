@@ -16,7 +16,6 @@ USER_REGEX = '(?P<user>[\w\.@:\/~_-]+)'
 REPOSITORY_REGEX = '(?P<repository>[\w\.@:\/~_-]+)'
 GITHUB_SSH_URL = 'git@github.com:%s/%s' % (USER_REGEX, REPOSITORY_REGEX)
 GITHUB_HTTPS_URL = 'https://github.com/%s/%s' % (USER_REGEX, REPOSITORY_REGEX)
-UBER_PHABRICATOR_SSH_URL = 'gitolite@code.uber.internal'
 
 
 class GithubHost(object):
@@ -73,13 +72,13 @@ class GithubHost(object):
         return repository_url
 
 
-class UberPhabricatorHost(object):
+class PhabricatorHost(object):
     def __init__(self, user, repository):
         pass
 
     @staticmethod
     def create(url_regex_match=None):
-        return UberPhabricatorHost(None, None)
+        return PhabricatorHost(None, None)
 
     def get_url(self, git_object):
         path = git_object.identifier
@@ -95,7 +94,6 @@ class UberPhabricatorHost(object):
 HOST_REGEXES = {
     GITHUB_SSH_URL: GithubHost,
     GITHUB_HTTPS_URL: GithubHost,
-    UBER_PHABRICATOR_SSH_URL: UberPhabricatorHost,
 }
 
 
@@ -153,7 +151,7 @@ def check_phabricator_url():
     repository_root = get_repository_root()
     arcconfig_path = os.path.join(repository_root, '.arcconfig')
     if os.path.exists(arcconfig_path):
-        return UberPhabricatorHost.create()
+        return PhabricatorHost.create()
 
 
 def get_git_url(git_config_file):
