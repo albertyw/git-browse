@@ -1,3 +1,12 @@
+v2.2.0 (2017-04-01)
+===================
+
+ - Support for generic phabricator hosts
+ - Better documentation
+ - Better error handling
+ - Minor refactors and more tests
+
+
 v2.1.0 (2017-02-19)
 ===================
 
