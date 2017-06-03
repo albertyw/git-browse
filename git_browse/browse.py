@@ -258,7 +258,14 @@ def main():
     parser.add_argument(
         '--path',
         default='',
-        help='relative path to the current git repository')
+        help='relative path to the current git repository'
+    )
+    parser.add_argument(
+        '-d',
+        '--dry-run',
+        action='store_true',
+        help='Do not open the url in the brower, and only print to stdout'
+    )
     args = parser.parse_args()
 
     host = get_repository_host()
