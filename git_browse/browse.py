@@ -200,13 +200,6 @@ def get_repository_host():
     return repo_host
 
 
-def get_focus_object_path(path_override):
-    if not path_override:
-        return os.getcwd()
-    path = os.path.join(os.getcwd(), path_override)
-    return path
-
-
 def get_git_object(focus_object, path, host):
     if not focus_object:
         return FocusObject.default()
@@ -262,11 +255,12 @@ def main():
     )
     parser.add_argument(
         '--path',
+        default='',
         help='relative path to the current git repository')
     args = parser.parse_args()
 
     host = get_repository_host()
-    path = get_focus_object_path(args.path)
+    path = os.path.join(os.getcwd(), args.path)
     git_object = get_git_object(args.target, path, host)
     url = host.get_url(git_object)
     open_url(url)
