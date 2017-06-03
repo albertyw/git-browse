@@ -5,6 +5,7 @@ try:
 except ImportError:
     raise ImportError("Must be using Python 3")
 
+import argparse
 import os
 import re
 import subprocess
@@ -199,28 +200,17 @@ def get_repository_host():
     return repo_host
 
 
-def get_focus_object_path(sys_argv):
-    for argv in sys_argv:
-        if argv[:7] == '--path=':
-            path_override = argv[7:]
-            path = os.path.join(os.getcwd(), path_override)
-            sys_argv.remove(argv)
-            return path
-    return os.getcwd()
-
-
-def get_git_object(sys_argv, path, host):
-    focus_object = sys_argv[1:]
+def get_git_object(focus_object, path, host):
     if not focus_object:
         return FocusObject.default()
     directory = path
-    object_path = os.path.join(directory, focus_object[0])
+    object_path = os.path.join(directory, focus_object)
     object_path = os.path.normpath(object_path)
     if not os.path.exists(object_path):
-        focus_hash = get_commit_hash(focus_object[0])
+        focus_hash = get_commit_hash(focus_object)
         if focus_hash:
             return focus_hash
-        host_focus_object = host.valid_focus_object(focus_object[0])
+        host_focus_object = host.valid_focus_object(focus_object)
         if host_focus_object:
             return host_focus_object
         error = "specified file does not exist: %s" % object_path
@@ -257,9 +247,21 @@ def open_url(url):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        'target',
+        nargs='?',
+        help='file, directory, git hash, or git branch you wish to browse'
+    )
+    parser.add_argument(
+        '--path',
+        default='',
+        help='relative path to the current git repository')
+    args = parser.parse_args()
+
     host = get_repository_host()
-    path = get_focus_object_path(sys.argv)
-    git_object = get_git_object(sys.argv, path, host)
+    path = os.path.join(os.getcwd(), args.path)
+    git_object = get_git_object(args.target, path, host)
     url = host.get_url(git_object)
     open_url(url)
 
