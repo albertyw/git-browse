@@ -1,3 +1,11 @@
+v2.3.0 (2017-06-03)
+===================
+
+ - Add support for only printing out URL instead of opening browser in `-d`/`--dry-run` flag
+ - Add help info in `-h`/`--help` flag
+ - Updated dependencies
+
+
 v2.2.0 (2017-04-01)
 ===================
 
