@@ -13,25 +13,25 @@ ARCCONFIG_PATH = os.path.join(REPO_PATH, '.arcconfig')
 GIT_URLS = [
     (
         'git@github.com:albertyw/git-browse',
-        None,
+        '',
         'https://github.com/albertyw/git-browse',
         False
     ),
     (
         'git@github.com:albertyw/git-browse.git',
-        None,
+        '',
         'https://github.com/albertyw/git-browse',
         False
     ),
     (
         'https://github.com/albertyw/git-browse.git',
-        None,
+        '',
         'https://github.com/albertyw/git-browse',
         False
     ),
     (
         'https://github.com/albertyw/git-browse',
-        None,
+        '',
         'https://github.com/albertyw/git-browse',
         False
     ),
@@ -56,7 +56,7 @@ GIT_URLS = [
     ),
     (
         'gitolite@code.uber.internal:a/b',
-        None,
+        '',
         ['arc', 'browse', '.'],
         True
     ),
@@ -104,10 +104,7 @@ def generate_test(*test_data):
         if arcconfig:
             Path(ARCCONFIG_PATH).touch()
         host = browse.get_repository_host()
-        sys_argv = ['git-browse.py']
-        if target_path:
-            sys_argv.append(target_path)
-        focus_object = browse.get_git_object(sys_argv, REPO_PATH, host)
+        focus_object = browse.get_git_object(target_path, REPO_PATH, host)
         url = host.get_url(focus_object)
         self.assertEqual(host_url, url)
     return test
