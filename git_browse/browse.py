@@ -247,7 +247,9 @@ def open_url(url):
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    description = "Open repositories, directories, and files in the browser.\n"
+    description += "https://github.com/albertyw/git-browse"
+    parser = argparse.ArgumentParser(description=description)
     parser.add_argument(
         'target',
         nargs='?',
