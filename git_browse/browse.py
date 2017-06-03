@@ -237,8 +237,10 @@ def get_commit_hash(identifier):
     return FocusHash(commit_hash)
 
 
-def open_url(url):
+def open_url(url, dry_run=False):
     print(url)
+    if dry_run:
+        return
     if url.__class__ is list:
         subprocess.call(url)
         return
@@ -272,7 +274,7 @@ def main():
     path = os.path.join(os.getcwd(), args.path)
     git_object = get_git_object(args.target, path, host)
     url = host.get_url(git_object)
-    open_url(url)
+    open_url(url, args.dry_run)
 
 
 if __name__ == "__main__":

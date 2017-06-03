@@ -231,6 +231,20 @@ class TestOpenURL(unittest.TestCase):
         browse.open_url('asdf')
         mock_print.assert_called_with('asdf')
 
+    @patch("builtins.print", autospec=True)
+    @patch("subprocess.call")
+    def test_open_url(self, mock_call, mock_print):
+        browse.open_url(['asdf'])
+        mock_print.assert_called_with(['asdf'])
+        mock_call.assert_called_with(['asdf'])
+
+    @patch("builtins.print", autospec=True)
+    @patch("subprocess.call")
+    def test_open_url(self, mock_call, mock_print):
+        browse.open_url(['asdf'], True)
+        mock_print.assert_called_with(['asdf'])
+        assert not mock_call.called
+
 
 class FullTest(unittest.TestCase):
     def setUp(self):
@@ -308,4 +322,4 @@ class FullTest(unittest.TestCase):
     def check_main(self, sys_argv, expected, mock_open_url):
         sys.argv = sys_argv
         browse.main()
-        mock_open_url.assert_called_with(expected)
+        mock_open_url.assert_called_with(expected, False)
