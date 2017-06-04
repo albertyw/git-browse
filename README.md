@@ -38,12 +38,14 @@ Usage
 -----
 
 ```
-Usage: git browse [object]
+Usage: git browse [-h] [--path PATH] [--dry-run] [target]
 ```
 
-If `[object]` is omitted, the root repository page will be opened.
-If `[object]` is a directory or file, then that object will be opened.
-If `[object]` is a commit hash, then that commit hash will be opened.
+If `[target]` is omitted, the root repository page will be opened.
+If `[target]` is a directory or file, then that object will be opened.
+If `[target]` is a commit hash, then that commit hash will be opened.
+If `--path` is available, then its value is be used to compute the relative path to the current git repository
+If `--dry-run` is set, then git-browse will only print out the target url instead of opening it in a browser
 
 ### Examples
 
