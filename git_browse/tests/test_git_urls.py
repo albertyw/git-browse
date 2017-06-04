@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 import unittest
+from unittest.mock import patch
 
 from git_browse import browse
 
@@ -9,7 +10,6 @@ directory = os.path.dirname(os.path.realpath(__file__))
 REPO_PATH = os.path.normpath(os.path.join(directory, '..', '..'))
 TEST_DIR = 'testdir'
 TEST_DIR_PATH = os.path.join(REPO_PATH, 'testdir')
-ARCCONFIG_PATH = os.path.join(REPO_PATH, '.arcconfig')
 GIT_URLS = [
     (
         'git@github.com:albertyw/git-browse',
@@ -93,16 +93,14 @@ class TestGitURLs(unittest.TestCase):
 
     def tearDown(self):
         os.rmdir(TEST_DIR_PATH)
-        if os.path.exists(ARCCONFIG_PATH):
-            os.remove(ARCCONFIG_PATH)
 
 
 def generate_test(*test_data):
     git_url, target_path, host_url, arcconfig = test_data
 
-    def test(self):
-        if arcconfig:
-            Path(ARCCONFIG_PATH).touch()
+    @patch('git_browse.browse.get_git_url')
+    def test(self, mock_get_git_url):
+        mock_get_git_url.return_value = git_url
         host = browse.get_repository_host()
         focus_object = browse.get_git_object(target_path, REPO_PATH, host)
         url = host.get_url(focus_object)
