@@ -1,3 +1,9 @@
+v2.3.1 (2017-06-03)
+===================
+
+ - Support phabricator repositories without arcconfig
+
+
 v2.3.0 (2017-06-03)
 ===================
 
