@@ -11,7 +11,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 setup(
     name='git-browse',
 
-    version='2.3.1',
+    version='2.3.2',
 
     description='Open repositories, directories, and files in the browser',
     long_description=long_description,
