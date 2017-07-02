@@ -49,14 +49,14 @@ then git-browse will only print out the target url instead of opening it
 in a browser
 
 Examples
-~~~~~~~
+~~~~~~~~
 
 +----------------------------+----------------------------------------------------------------------------------------+
 | Command                    | Opens                                                                                  |
 +============================+========================================================================================+
 | ``git browse``             | https://github.com/albertyw/git-browse                                                 |
 +----------------------------+----------------------------------------------------------------------------------------+
-| ``git browse README.md``   | https://github.com/albertyw/git-browse/blob/master/README.md                           |
+| ``git browse README.rst``  | https://github.com/albertyw/git-browse/blob/master/README.rst                          |
 +----------------------------+----------------------------------------------------------------------------------------+
 | ``git browse git_browse``  | https://github.com/albertyw/git-browse/tree/master/git_browse/                         |
 +----------------------------+----------------------------------------------------------------------------------------+

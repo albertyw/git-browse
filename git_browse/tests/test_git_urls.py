@@ -36,8 +36,8 @@ GIT_URLS = [
     ),
     (
         'git@github.com:albertyw/git-browse',
-        'README.md',
-        'https://github.com/albertyw/git-browse/blob/master/README.md',
+        'README.rst',
+        'https://github.com/albertyw/git-browse/blob/master/README.rst',
         False
     ),
     (
@@ -61,8 +61,8 @@ GIT_URLS = [
     ),
     (
         'gitolite@code.uber.internal:a/b',
-        'README.md',
-        ['arc', 'browse', 'README.md'],
+        'README.rst',
+        ['arc', 'browse', 'README.rst'],
         True
     ),
     (
