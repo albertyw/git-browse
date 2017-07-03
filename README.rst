@@ -22,16 +22,9 @@ browse <https://github.com/github/hub/blob/master/commands/browse.go>`__.
 Installation
 ------------
 
-You need to first clone this repository somewhere on your system
-(perhaps in your `dotfiles <https://github.com/albertyw/dotfiles>`__)
-repository.
-
-.. code:: bash
-
-    git clone git@github.com:albertyw/git-browse $REPOSITORY_LOCATION
-    git config --global \
-        alias.browse \
-        "!"$REPOSITORY_LOCATION"/git_browse/browse.py --path=\${GIT_PREFIX:-./}"
+First clone this repository to somewhere on your system
+(perhaps in your `dotfiles <https://github.com/albertyw/dotfiles>`__
+repository), then run ``<REPOSITORY_LOCATION>/install.sh``.
 
 Usage
 -----
