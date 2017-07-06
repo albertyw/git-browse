@@ -76,7 +76,7 @@ Publishing
     twine upload dist/*
 
 .. |PyPI| image:: https://img.shields.io/pypi/v/git-browse.svg
-   :target: https://github.com/albertyw/git-browse
+   :target: https://pypi.python.org/pypi/git-browse/
 .. |Python Versions| image:: https://img.shields.io/pypi/pyversions/git-browse.svg
    :target: https://github.com/albertyw/git-browse
 .. |Codeship Status for albertyw/git-browse| image:: https://codeship.com/projects/fbd67810-b952-0134-2c2e-166255a25182/status?branch=master
