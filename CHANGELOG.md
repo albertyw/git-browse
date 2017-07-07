@@ -1,3 +1,11 @@
+v2.4.0 (2017-07-07)
+===================
+
+ - Add an installation script
+ - Bugfix for opening gitolite repositories
+ - Dependency cleanup
+
+
 v2.3.2 (2017-07-02)
 ===================
 
