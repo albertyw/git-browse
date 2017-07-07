@@ -83,6 +83,12 @@ GIT_URLS = [
         ['arc', 'browse', 'D123'],
         True
     ),
+    (
+        'gitolite@code.uber.internal:a',
+        'README.rst',
+        ['arc', 'browse', 'README.rst'],
+        True
+    ),
 ]
 
 

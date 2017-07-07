@@ -17,8 +17,7 @@ USER_REGEX = '(?P<user>[\w\.@:\/~_-]+)'
 REPOSITORY_REGEX = '(?P<repository>[\w\.@:\/~_-]+)'
 GITHUB_SSH_URL = 'git@github.com:%s/%s' % (USER_REGEX, REPOSITORY_REGEX)
 GITHUB_HTTPS_URL = 'https://github.com/%s/%s' % (USER_REGEX, REPOSITORY_REGEX)
-UBER_GITOLITE_URL = 'gitolite@code.uber.internal:%s/%s' % \
-    (USER_REGEX, REPOSITORY_REGEX)
+UBER_GITOLITE_URL = 'gitolite@code.uber.internal:%s' % (REPOSITORY_REGEX)
 
 
 class GithubHost(object):
@@ -81,12 +80,12 @@ class GithubHost(object):
 class PhabricatorHost(object):
     PHABRICATOR_OBJECT_REGEX = '^[DT][0-9]+$'
 
-    def __init__(self, user, repository):
+    def __init__(self):
         pass
 
     @staticmethod
     def create(url_regex_match=None):
-        return PhabricatorHost(None, None)
+        return PhabricatorHost()
 
     def get_url(self, git_object):
         path = git_object.identifier
