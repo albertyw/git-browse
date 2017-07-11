@@ -8,6 +8,8 @@ Climate| |Test Coverage|
 
 Open repositories, directories, and files in the browser
 
+.. image:: https://user-images.githubusercontent.com/3151040/28054498-e7cb0746-65c9-11e7-882e-dbf612f5b075.gif
+
 This is a script that can be added as a gitconfig alias to easily browse
 repositories on Git hosting services (e.g. github). It is built to model
 `arcanist's browse <https://github.com/phacility/arcanist/blob/master/src/workflow/ArcanistBrowseWorkflow.php>`__
