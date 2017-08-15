@@ -323,3 +323,10 @@ class FullTest(unittest.TestCase):
         sys.argv = sys_argv
         browse.main()
         mock_open_url.assert_called_with(expected, False)
+
+    @patch('sys.stdout.write')
+    def test_check_version(self, mock_print):
+        with self.assertRaises(SystemExit):
+            sys.argv = ['asdf', '-v']
+            browse.main()
+        self.assertTrue(mock_print.called)

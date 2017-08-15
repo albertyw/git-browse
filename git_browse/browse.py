@@ -261,6 +261,9 @@ def main():
         action='store_true',
         help='Do not open the url in the brower, and only print to stdout'
     )
+    parser.add_argument(
+        '-v', '--version', action='version', version=__version__,
+    )
     args = parser.parse_args()
 
     host = get_repository_host()
