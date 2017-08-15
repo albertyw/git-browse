@@ -3,6 +3,8 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
+from git_browse import browse
+
 # Get the long description from the README file
 here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
@@ -11,7 +13,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 setup(
     name='git-browse',
 
-    version='2.4.0',
+    version=browse.__version__,
 
     description='Open repositories, directories, and files in the browser',
     long_description=long_description,

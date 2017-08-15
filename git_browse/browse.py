@@ -13,6 +13,7 @@ import sys
 import webbrowser
 
 
+__version__ = '2.4.0'
 USER_REGEX = '(?P<user>[\w\.@:\/~_-]+)'
 REPOSITORY_REGEX = '(?P<repository>[\w\.@:\/~_-]+)'
 GITHUB_SSH_URL = 'git@github.com:%s/%s' % (USER_REGEX, REPOSITORY_REGEX)
