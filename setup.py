@@ -1,4 +1,6 @@
-# Always prefer setuptools over distutils
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from setuptools import setup, find_packages
 from codecs import open
 from os import path
@@ -21,7 +23,7 @@ setup(
     url='https://github.com/albertyw/git-browse',
 
     author='Albert Wang',
-    author_email='aywang31@gmail.com',
+    author_email='git@albertyw.com',
 
     license='MIT',
 
@@ -57,10 +59,6 @@ setup(
         'dev': [],
         'test': [],
     },
-
-    package_data={},
-
-    data_files=[],
 
     entry_points={
         'console_scripts': [
