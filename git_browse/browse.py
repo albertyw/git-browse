@@ -10,6 +10,7 @@ import os
 import re
 import subprocess
 import sys
+from typing import Any, Dict, List, Match # NOQA
 import webbrowser
 
 
@@ -24,19 +25,19 @@ UBER_GITOLITE_URL = 'gitolite@code.uber.internal:%s' % (REPOSITORY_REGEX)
 class GithubHost(object):
     GITHUB_URL = "https://github.com/"
 
-    def __init__(self, user, repository):
+    def __init__(self, user: str, repository: str) -> None:
         self.user = user
         self.repository = repository
 
     @staticmethod
-    def create(url_regex_match):
+    def create(url_regex_match: Match) -> 'GithubHost':
         repository = url_regex_match.group('repository')
         if repository[-4:] == '.git':
             repository = repository[:-4]
         user = url_regex_match.group('user')
         return GithubHost(user, repository)
 
-    def get_url(self, git_object):
+    def get_url(self, git_object: 'GitObject') -> str:
         repository_url = "%s%s/%s" % (
             self.GITHUB_URL,
             self.user,
@@ -50,31 +51,37 @@ class GithubHost(object):
             return self.directory_url(repository_url, git_object)
         return self.file_url(repository_url, git_object)
 
-    def commit_hash_url(self, repository_url, focus_hash):
+    def commit_hash_url(
+            self,
+            repository_url: str,
+            focus_hash: 'GitObject') -> str:
         repository_url = "%s/commit/%s" % (
             repository_url,
             focus_hash.identifier
         )
         return repository_url
 
-    def root_url(self, repository_url, focus_object):
+    def root_url(self, repository_url: str, focus_object: 'GitObject') -> str:
         return repository_url
 
-    def directory_url(self, repository_url, focus_object):
+    def directory_url(
+            self,
+            repository_url: str,
+            focus_object: 'GitObject') -> str:
         repository_url = "%s/tree/master/%s" % (
             repository_url,
             focus_object.identifier
         )
         return repository_url
 
-    def file_url(self, repository_url, focus_object):
+    def file_url(self, repository_url: str, focus_object: 'GitObject') -> str:
         repository_url = "%s/blob/master/%s" % (
             repository_url,
             focus_object.identifier
         )
         return repository_url
 
-    def valid_focus_object(self, arg):
+    def valid_focus_object(self, arg: str):
         return None
 
 
@@ -85,10 +92,10 @@ class PhabricatorHost(object):
         pass
 
     @staticmethod
-    def create(url_regex_match=None):
+    def create(url_regex_match: str=None) -> 'PhabricatorHost':
         return PhabricatorHost()
 
-    def get_url(self, git_object):
+    def get_url(self, git_object: 'GitObject') -> List[str]:
         path = git_object.identifier
         # arc browse requires an object, provide the root object by default
         if git_object.is_root():
@@ -98,7 +105,7 @@ class PhabricatorHost(object):
             command.append(path)
         return command
 
-    def valid_focus_object(self, arg):
+    def valid_focus_object(self, arg: str) -> 'PhabricatorObject':
         if re.search(self.PHABRICATOR_OBJECT_REGEX, arg):
             return PhabricatorObject(arg)
         return None
@@ -108,37 +115,37 @@ HOST_REGEXES = {
     GITHUB_SSH_URL: GithubHost,
     GITHUB_HTTPS_URL: GithubHost,
     UBER_GITOLITE_URL: PhabricatorHost,
-}
+}  # type: Dict[str, Any]
 
 
 class GitObject(object):
-    def __init__(self, identifier):
+    def __init__(self, identifier: str) -> None:
         self.identifier = identifier
 
-    def is_commit_hash(self):
+    def is_commit_hash(self) -> bool:
         return False
 
-    def is_root(self):
+    def is_root(self) -> bool:
         return False
 
-    def is_directory(self):
+    def is_directory(self) -> bool:
         return False
 
 
 class FocusObject(GitObject):
-    def is_root(self):
+    def is_root(self) -> bool:
         return self.identifier == os.sep
 
-    def is_directory(self):
+    def is_directory(self) -> bool:
         return self.identifier[-1] == os.sep
 
     @staticmethod
-    def default():
+    def default() -> 'FocusObject':
         return FocusObject(os.sep)
 
 
 class FocusHash(GitObject):
-    def is_commit_hash(self):
+    def is_commit_hash(self) -> bool:
         return True
 
 
@@ -146,7 +153,7 @@ class PhabricatorObject(GitObject):
     pass
 
 
-def get_repository_root():
+def get_repository_root() -> str:
     current_directory = ''
     new_directory = os.getcwd()
     while current_directory != new_directory:
@@ -159,13 +166,13 @@ def get_repository_root():
     raise FileNotFoundError('.git/config file not found')
 
 
-def get_git_config():
+def get_git_config() -> str:
     repository_root = get_repository_root()
     git_config_path = os.path.join(repository_root, '.git', 'config')
     return git_config_path
 
 
-def get_git_url(git_config_file):
+def get_git_url(git_config_file: str) -> str:
     config = configparser.ConfigParser()
     config.read(git_config_file)
     try:
@@ -175,7 +182,7 @@ def get_git_url(git_config_file):
     return git_url
 
 
-def parse_git_url(git_url):
+def parse_git_url(git_url: str) -> Any:
     for regex, host_class in HOST_REGEXES.items():
         match = re.search(regex, git_url)
         if match:
@@ -186,14 +193,14 @@ def parse_git_url(git_url):
     return host
 
 
-def get_repository_host():
+def get_repository_host() -> Any:
     git_config_file = get_git_config()
     git_url = get_git_url(git_config_file)
     repo_host = parse_git_url(git_url)
     return repo_host
 
 
-def get_git_object(focus_object, path, host):
+def get_git_object(focus_object: str, path: str, host: Any) -> GitObject:
     if not focus_object:
         return FocusObject.default()
     directory = path
@@ -215,7 +222,7 @@ def get_git_object(focus_object, path, host):
     return FocusObject(object_path)
 
 
-def get_commit_hash(identifier):
+def get_commit_hash(identifier: str) -> FocusHash:
     command = ['git', 'show', identifier]
     process = subprocess.Popen(
         command,
@@ -230,7 +237,7 @@ def get_commit_hash(identifier):
     return FocusHash(commit_hash)
 
 
-def open_url(url, dry_run=False):
+def open_url(url: str, dry_run: bool=False) -> None:
     print(url)
     if dry_run:
         return
@@ -241,7 +248,7 @@ def open_url(url, dry_run=False):
         webbrowser.open(url)
 
 
-def main():
+def main() -> None:
     description = "Open repositories, directories, and files in the browser.\n"
     description += "https://github.com/albertyw/git-browse"
     parser = argparse.ArgumentParser(description=description)
