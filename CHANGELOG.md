@@ -1,12 +1,15 @@
+Changelog
+=========
+
 v2.4.1 (2017-08-30)
-===================
+-------------------
 
  - Support `browse.py -v`
  - Update documentation
 
 
 v2.4.0 (2017-07-07)
-===================
+-------------------
 
  - Add an installation script
  - Bugfix for opening gitolite repositories
@@ -14,20 +17,20 @@ v2.4.0 (2017-07-07)
 
 
 v2.3.2 (2017-07-02)
-===================
+-------------------
 
  - Switch README to rst
  - Add info to README
 
 
 v2.3.1 (2017-06-03)
-===================
+-------------------
 
  - Support phabricator repositories without arcconfig
 
 
 v2.3.0 (2017-06-03)
-===================
+-------------------
 
  - Add support for only printing out URL instead of opening browser in `-d`/`--dry-run` flag
  - Add help info in `-h`/`--help` flag
@@ -35,7 +38,7 @@ v2.3.0 (2017-06-03)
 
 
 v2.2.0 (2017-04-01)
-===================
+-------------------
 
  - Support for generic phabricator hosts
  - Better documentation
@@ -44,7 +47,7 @@ v2.2.0 (2017-04-01)
 
 
 v2.1.0 (2017-02-19)
-===================
+-------------------
 
  - Support browsing commit hashes
  - Refactors
@@ -52,7 +55,7 @@ v2.1.0 (2017-02-19)
 
 
 v2.0.1 (2017-02-11)
-===================
+-------------------
 
  - Update development dependencies
  - Fix formatting on PyPI by converting markdown readme to reStructuredText
@@ -60,7 +63,7 @@ v2.0.1 (2017-02-11)
 
 
 v2.0.0 (2017-02-04)
-===================
+-------------------
 
  - First release as a python package
  - Major refactors of repository structure
@@ -68,19 +71,19 @@ v2.0.0 (2017-02-04)
 
 
 v1.2.0 (2017-01-24)
-===================
+-------------------
 
  - Add support for uber phabricator through arcanist client
 
 
 v1.1.1 (2017-01-24)
-===================
+-------------------
 
  - Minor refactors and fixes
 
 
 v1.1.0 (2017-01-20)
-===================
+-------------------
 
  - Open git-browsed urls in web browser, according to python's
    https://docs.python.org/3/library/webbrowser.html
@@ -88,13 +91,13 @@ v1.1.0 (2017-01-20)
 
 
 v1.0.1 (2017-01-19)
-===================
+-------------------
 
  - Fix shebang in browse.py to make it more portable across environments
 
 
 v1.0.0 (2017-01-10)
-===================
+-------------------
 
  - Initial release
  - Supports reading github repositories
