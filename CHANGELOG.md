@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v2.4.2 (2017-11-04)
+-------------------
+
+ - Add type annotations and some minor refactoring
+ - Update dependencies
+
+
 v2.4.1 (2017-08-30)
 -------------------
 
