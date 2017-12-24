@@ -6,7 +6,8 @@ Git Browse
 |Codeship Status for albertyw/git-browse| |Dependency Status| |Code
 Climate| |Test Coverage|
 
-Open repositories, directories, and files in the browser
+Open repositories, directories, and files in the browser.
+See also, git-reviewers_.
 
 .. image:: https://user-images.githubusercontent.com/3151040/28054498-e7cb0746-65c9-11e7-882e-dbf612f5b075.gif
 
@@ -96,6 +97,8 @@ Publishing
     pip install twine
     python setup.py sdist bdist_wheel
     twine upload dist/*
+
+.. _git-reviewers: https://github.com/albertyw/git-reviewers
 
 .. |PyPI| image:: https://img.shields.io/pypi/v/git-browse.svg
    :target: https://pypi.python.org/pypi/git-browse/
