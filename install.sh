@@ -10,8 +10,14 @@ if ! command -v python3 > /dev/null 2>&1; then
     echo "On Ubuntu/Debian, use 'sudo apt install python3'"
 fi
 
-REPOSITORY_LOCATION="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ -z "$1" ]; then
+  BROWSE_PY_LOCATION="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+  BROWSE_PY_LOCATION="$BROWSE_PY_LOCATION"/git_browse
+else
+  # Used for homebrew
+  BROWSE_PY_LOCATION=$1
+fi
 
 git config --global \
     alias.browse \
-    "!"$REPOSITORY_LOCATION"/git_browse/browse.py --path=\${GIT_PREFIX:-./}"
+    "!"$BROWSE_PY_LOCATION"/browse.py --path=\${GIT_PREFIX:-./}"
