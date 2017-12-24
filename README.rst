@@ -70,6 +70,14 @@ Examples
 | ``git browse v1.1.1``      | https://github.com/albertyw/git-browse/commit/80b219dee0aaa86b378993cbf88511126b813c5f |
 +----------------------------+----------------------------------------------------------------------------------------+
 
+Related Projects
+----------------
+
+- `git-brws <https://github.com/rhysd/git-brws>`__
+- `hub browse <https://hub.github.com/>`__
+- `git open <https://github.com/paulirish/git-open>`__
+- `open-browser-github.vim <https://github.com/tyru/open-browser-github.vim>`__
+
 Development
 -----------
 
