@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v2.4.3 (2017-12-24)
+-------------------
+
+ - Make install.sh accept a path for browse.py
+ - Update dependencies
+
+
 v2.4.2 (2017-11-04)
 -------------------
 
