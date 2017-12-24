@@ -23,7 +23,20 @@ browse <https://github.com/github/hub/blob/master/commands/browse.go>`__.
 Installation
 ------------
 
-First clone this repository to somewhere on your system
+HomeBrew (preferred for MacOS)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you use Homebrew, you can install git-browse through the
+`homebrew-albertyw tap <https://github.com/albertyw/homebrew-albertyw>`__:
+
+.. code:: bash
+
+    brew install albertyw/albertyw/git-browse
+
+Manual
+~~~~~~
+
+If you don't use Homebrew, first clone this repository to somewhere on your system
 (perhaps in your `dotfiles <https://github.com/albertyw/dotfiles>`__
 repository), then run ``<REPOSITORY_LOCATION>/install.sh``.
 
