@@ -19,7 +19,8 @@ USER_REGEX = '(?P<user>[\w\.@:\/~_-]+)'
 REPOSITORY_REGEX = '(?P<repository>[\w\.@:\/~_-]+)'
 GITHUB_SSH_URL = 'git@github.com:%s/%s' % (USER_REGEX, REPOSITORY_REGEX)
 GITHUB_HTTPS_URL = 'https://github.com/%s/%s' % (USER_REGEX, REPOSITORY_REGEX)
-UBER_GITOLITE_URL = 'gitolite@code.uber.internal:%s' % (REPOSITORY_REGEX)
+UBER_SSH_GITOLITE_URL = 'gitolite@code.uber.internal:%s' % (REPOSITORY_REGEX)
+UBER_HTTPS_GITOLITE_URL = 'https://code.uber.internal/%s/%s' % (USER_REGEX, REPOSITORY_REGEX)
 
 
 class GithubHost(object):
@@ -114,7 +115,8 @@ class PhabricatorHost(object):
 HOST_REGEXES = {
     GITHUB_SSH_URL: GithubHost,
     GITHUB_HTTPS_URL: GithubHost,
-    UBER_GITOLITE_URL: PhabricatorHost,
+    UBER_SSH_GITOLITE_URL: PhabricatorHost,
+    UBER_HTTPS_GITOLITE_URL: PhabricatorHost,
 }  # type: Dict[str, Any]
 
 

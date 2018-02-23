@@ -89,6 +89,12 @@ GIT_URLS = [
         ['arc', 'browse', 'README.rst'],
         True
     ),
+    (
+        'https://code.uber.internal/x/y',
+        'README.rst',
+        ['arc', 'browse', 'README.rst'],
+        True
+    ),
 ]
 
 
