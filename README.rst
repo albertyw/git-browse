@@ -98,6 +98,8 @@ Publishing
     python setup.py sdist bdist_wheel
     twine upload dist/*
 
+Need to also update `albertyw/homebrew-albertyw <https://github.com/albertyw/homebrew-albertyw>`_
+
 .. _git-reviewers: https://github.com/albertyw/git-reviewers
 
 .. |PyPI| image:: https://img.shields.io/pypi/v/git-browse.svg
