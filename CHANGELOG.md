@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v2.5.0 (2018-02-23)
+-------------------
+
+ - Support Uber https gitolite urls
+ - Update documentation
+ - Update dependencies
+
 v2.4.3 (2017-12-24)
 -------------------
 
