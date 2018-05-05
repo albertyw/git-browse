@@ -88,6 +88,7 @@ Development
     coverage run setup.py test
     coverage report
     flake8
+    mypy git_browse/browse.py
 
 Publishing
 ----------
