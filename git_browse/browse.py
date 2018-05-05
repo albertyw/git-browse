@@ -10,7 +10,7 @@ import os
 import re
 import subprocess
 import sys
-from typing import Any, Dict, List, Match # NOQA
+from typing import Any, Dict, List, Match, Optional # NOQA
 import webbrowser
 
 
@@ -107,7 +107,7 @@ class PhabricatorHost(object):
             command.append(path)
         return command
 
-    def valid_focus_object(self, arg: str) -> 'PhabricatorObject':
+    def valid_focus_object(self, arg: str) -> Optional['PhabricatorObject']:
         if re.search(self.PHABRICATOR_OBJECT_REGEX, arg):
             return PhabricatorObject(arg)
         return None
@@ -225,7 +225,7 @@ def get_git_object(focus_object: str, path: str, host: Any) -> GitObject:
     return FocusObject(object_path)
 
 
-def get_commit_hash(identifier: str) -> FocusHash:
+def get_commit_hash(identifier: str) -> Optional[FocusHash]:
     command = ['git', 'show', identifier]
     process = subprocess.Popen(
         command,
