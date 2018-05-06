@@ -14,7 +14,7 @@ from typing import Any, Dict, List, Match, Optional # NOQA
 import webbrowser
 
 
-__version__ = '2.5.0'
+__version__ = '2.5.1'
 USER_REGEX = '(?P<user>[\w\.@:\/~_-]+)'
 REPOSITORY_REGEX = '(?P<repository>[\w\.@:\/~_-]+)'
 GITHUB_SSH_URL = 'git@github.com:%s/%s' % (USER_REGEX, REPOSITORY_REGEX)
