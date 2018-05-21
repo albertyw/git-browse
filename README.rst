@@ -109,8 +109,8 @@ Need to also update `albertyw/homebrew-albertyw <https://github.com/albertyw/hom
    :target: https://github.com/albertyw/git-browse
 .. |Codeship Status for albertyw/git-browse| image:: https://codeship.com/projects/fbd67810-b952-0134-2c2e-166255a25182/status?branch=master
    :target: https://codeship.com/projects/194945
-.. |Dependency Status| image:: https://gemnasium.com/badges/github.com/albertyw/git-browse.svg
-   :target: https://gemnasium.com/github.com/albertyw/git-browse
+.. |Dependency Status| image:: https://pyup.io/repos/github/albertyw/git-browse/shield.svg
+   :target: https://pyup.io/repos/github/albertyw/git-browse/
 .. |Code Climate| image:: https://codeclimate.com/github/albertyw/git-browse/badges/gpa.svg
    :target: https://codeclimate.com/github/albertyw/git-browse
 .. |Test Coverage| image:: https://codeclimate.com/github/albertyw/git-browse/badges/coverage.svg
