@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v2.6.0 (2018-06-26)
+-------------------
+
+ - Switch from gemnasium to pyup
+ - Support code.uber.internal repositories
+
+
 v2.5.1 (2018-05-05)
 -------------------
 
