@@ -248,21 +248,24 @@ def get_git_url(git_config_file: str) -> str:
     return git_url
 
 
-def parse_git_url(git_url: str) -> Any:
+def parse_git_url(git_url: str, sourcegraph:bool=False) -> Any:
     for regex, host_class in HOST_REGEXES.items():
         match = re.search(regex, git_url)
         if match:
             break
     if not match:
         raise ValueError("git url not parseable")
-    host = host_class.create(match)
+    if sourcegraph:
+        host = SourcegraphHost.create(match)
+    else:
+        host = host_class.create(match)
     return host
 
 
-def get_repository_host() -> Any:
+def get_repository_host(sourcegraph:bool=False) -> Any:
     git_config_file = get_git_config()
     git_url = get_git_url(git_config_file)
-    repo_host = parse_git_url(git_url)
+    repo_host = parse_git_url(git_url, sourcegraph)
     return repo_host
 
 
@@ -335,11 +338,17 @@ def main() -> None:
         help='Do not open the url in the brower, and only print to stdout'
     )
     parser.add_argument(
+        '-s',
+        '--sourcegraph',
+        action='store_true',
+        help='Open objects in sourcegraph'
+    )
+    parser.add_argument(
         '-v', '--version', action='version', version=__version__,
     )
     args = parser.parse_args()
 
-    host = get_repository_host()
+    host = get_repository_host(args.sourcegraph)
     path = os.path.join(os.getcwd(), args.path)
     git_object = get_git_object(args.target, path, host)
     url = host.get_url(git_object)
