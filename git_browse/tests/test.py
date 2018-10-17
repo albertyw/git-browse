@@ -72,6 +72,12 @@ class SourcegraphHost(unittest.TestCase):
         obj = browse.SourcegraphHost.create(match)
         self.assertEqual(obj.repository, 'a/b')
 
+    def test_create_dot_git(self):
+        repo = 'gitolite@code.uber.internal:a/b.git'
+        match = re.search(browse.UBER_SSH_GITOLITE_URL, repo)
+        obj = browse.SourcegraphHost.create(match)
+        self.assertEqual(obj.repository, 'a/b')
+
 
 class GitObject(unittest.TestCase):
     def test_is_directory(self):
