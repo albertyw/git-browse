@@ -17,12 +17,12 @@ import webbrowser
 __version__ = '2.6.0'
 USER_REGEX = '(?P<user>[\w\.@:\/~_-]+)'
 REPOSITORY_REGEX = '(?P<repository>[\w\.@:\/~_-]+)'
-GITHUB_SSH_URL = 'git@github.com:%s/%s' % (USER_REGEX, REPOSITORY_REGEX)
-GITHUB_HTTPS_URL = 'https://github.com/%s/%s' % (USER_REGEX, REPOSITORY_REGEX)
-UBER_SSH_GITOLITE_URL = 'gitolite@code.uber.internal:%s' % (REPOSITORY_REGEX)
-UBER_SSH_CONFIG_GITOLITE_URL = 'gitolite@config.uber.internal:%s' % \
+GITHUB_SSH_URL = 'git@(?P<host>github\.com):%s/%s' % (USER_REGEX, REPOSITORY_REGEX)
+GITHUB_HTTPS_URL = 'https://(?P<host>github\.com)/%s/%s' % (USER_REGEX, REPOSITORY_REGEX)
+UBER_SSH_GITOLITE_URL = 'gitolite@(?P<host>code\.uber\.internal):%s' % (REPOSITORY_REGEX)
+UBER_SSH_CONFIG_GITOLITE_URL = 'gitolite@(?P<host>config\.uber\.internal):%s' % \
     (REPOSITORY_REGEX)
-UBER_HTTPS_GITOLITE_URL = 'https://code.uber.internal/%s/%s' % \
+UBER_HTTPS_GITOLITE_URL = 'https://(?P<host>code\.uber\.internal)/%s/%s' % \
     (USER_REGEX, REPOSITORY_REGEX)
 
 
@@ -127,7 +127,7 @@ class SourcegraphHost(object):
         repository = url_regex_match.group('repository')
         if repository[-4:] == '.git':
             repository = repository[:-4]
-        host = 'code.uber.internal'
+        host = url_regex_match.group('host')
         return SourcegraphHost(host, repository)
 
     def get_url(self, git_object: 'GitObject') -> str:
