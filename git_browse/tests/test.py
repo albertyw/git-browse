@@ -101,6 +101,10 @@ class SourcegraphHost(unittest.TestCase):
         url = self.obj.get_url(git_object)
         self.assertEqual(url, self.obj.SOURCEGRAPH_URL + 'code.uber.internal/asdf/-/blob/zxcv')
 
+    def test_valid_focus_object(self):
+        valid = self.obj.valid_focus_object('asdf')
+        self.assertEqual(valid, None)
+
 
 class GitObject(unittest.TestCase):
     def test_is_directory(self):
@@ -199,6 +203,12 @@ class ParseGitURL(unittest.TestCase):
     def check_host(self, host):
         self.assertTrue(host.__class__ is browse.GithubHost)
         self.assertEqual(host.user, 'albertyw')
+        self.assertEqual(host.repository, 'git-browse')
+
+    def test_sourcegraph_host(self):
+        host = browse.parse_git_url(self.ssh_url, sourcegraph=True)
+        self.assertTrue(host.__class__ is browse.SourcegraphHost)
+        self.assertEqual(host.host, 'github.com')
         self.assertEqual(host.repository, 'git-browse')
 
     def test_broken_url(self):

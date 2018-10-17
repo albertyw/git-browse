@@ -172,7 +172,7 @@ class SourcegraphHost(object):
         return repository_url
 
     def valid_focus_object(self, arg: str):
-        raise None
+        return None
 
 
 HOST_REGEXES = {
