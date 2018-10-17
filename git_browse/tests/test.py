@@ -1,4 +1,5 @@
 import os
+import re
 import shutil
 import sys
 import unittest
@@ -58,6 +59,18 @@ class TestGithubHost(unittest.TestCase):
             url,
             'https://github.com/albertyw/git-browse/commit/v2.0.0'
         )
+
+
+class SourcegraphHost(unittest.TestCase):
+    def test_init(self):
+        obj = browse.SourcegraphHost('asdf')
+        self.assertEqual(obj.repository, 'asdf')
+
+    def test_create(self):
+        repo = 'gitolite@code.uber.internal:a/b'
+        match = re.search(browse.UBER_SSH_GITOLITE_URL, repo)
+        obj = browse.SourcegraphHost.create(match)
+        self.assertEqual(obj.repository, 'a/b')
 
 
 class GitObject(unittest.TestCase):

@@ -116,12 +116,15 @@ class PhabricatorHost(object):
 
 
 class SourcegraphHost(object):
-    def __init__(self):
-        pass
+    def __init__(self, repository: str):
+        self.repository = repository
 
     @staticmethod
-    def create(url_regex_match: str=None) -> 'SourcegraphHost':
-        return SourcegraphHost()
+    def create(url_regex_match: str=Match) -> 'SourcegraphHost':
+        repository = url_regex_match.group('repository')
+        if repository[-4:] == '.git':
+            repository = repository[:-4]
+        return SourcegraphHost(repository)
 
     def get_url(self, git_object: 'GitObject') -> List[str]:
         raise NotImplementedError()
