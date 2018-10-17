@@ -127,7 +127,7 @@ class SourcegraphHost(object):
         self.repository = repository
 
     @staticmethod
-    def create(url_regex_match: str=Match) -> 'SourcegraphHost':
+    def create(url_regex_match: Match) -> 'SourcegraphHost':
         repository = url_regex_match.group('repository')
         if repository[-4:] == '.git':
             repository = repository[:-4]
