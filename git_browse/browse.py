@@ -116,6 +116,8 @@ class PhabricatorHost(object):
 
 
 class SourcegraphHost(object):
+    SOURCEGRAPH_URL = 'https://sourcegraph.uberinternal.com/'
+
     def __init__(self, host: str, repository: str):
         self.host = host
         self.repository = repository
@@ -128,11 +130,49 @@ class SourcegraphHost(object):
         host = 'code.uber.internal'
         return SourcegraphHost(host, repository)
 
-    def get_url(self, git_object: 'GitObject') -> List[str]:
-        raise NotImplementedError()
+    def get_url(self, git_object: 'GitObject') -> str:
+        repository_url = "%s%s/%s" % (
+            self.SOURCEGRAPH_URL,
+            self.host,
+            self.repository
+        )
+        if git_object.is_commit_hash():
+            return self.commit_hash_url(repository_url, git_object)
+        if git_object.is_root():
+            return repository_url
+        if git_object.is_directory():
+            return self.directory_url(repository_url, git_object)
+        return self.file_url(repository_url, git_object)
+
+    def commit_hash_url(
+            self,
+            repository_url: str,
+            focus_hash: 'GitObject') -> str:
+        repository_url = "%s/-/commit/%s" % (
+            repository_url,
+            focus_hash.identifier
+        )
+        return repository_url
+
+    def directory_url(
+            self,
+            repository_url: str,
+            focus_object: 'GitObject') -> str:
+        repository_url = "%s/-/tree/%s" % (
+            repository_url,
+            focus_object.identifier
+        )
+        return repository_url
+
+    def file_url(self, repository_url: str, focus_object: 'GitObject') -> str:
+        repository_url = "%s/-/blob/%s" % (
+            repository_url,
+            focus_object.identifier
+        )
+        return repository_url
 
     def valid_focus_object(self, arg: str):
-        raise NotImplementedError()
+        raise None
 
 
 HOST_REGEXES = {
