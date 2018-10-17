@@ -62,10 +62,12 @@ class TestGithubHost(unittest.TestCase):
 
 
 class SourcegraphHost(unittest.TestCase):
+    def setUp(self):
+        self.obj = browse.SourcegraphHost('code.uber.internal', 'asdf')
+
     def test_init(self):
-        obj = browse.SourcegraphHost('code.uber.internal', 'asdf')
-        self.assertEqual(obj.host, 'code.uber.internal')
-        self.assertEqual(obj.repository, 'asdf')
+        self.assertEqual(self.obj.host, 'code.uber.internal')
+        self.assertEqual(self.obj.repository, 'asdf')
 
     def test_create(self):
         repo = 'gitolite@code.uber.internal:a/b'
@@ -78,6 +80,26 @@ class SourcegraphHost(unittest.TestCase):
         match = re.search(browse.UBER_SSH_GITOLITE_URL, repo)
         obj = browse.SourcegraphHost.create(match)
         self.assertEqual(obj.repository, 'a/b')
+
+    def test_get_url_commit(self):
+        git_object = browse.FocusHash('abcd')
+        url = self.obj.get_url(git_object)
+        self.assertEqual(url, self.obj.SOURCEGRAPH_URL + 'code.uber.internal/asdf/-/commit/abcd')
+
+    def test_get_url_root(self):
+        git_object = browse.FocusObject(os.sep)
+        url = self.obj.get_url(git_object)
+        self.assertEqual(url, self.obj.SOURCEGRAPH_URL + 'code.uber.internal/asdf')
+
+    def test_get_url_directory(self):
+        git_object = browse.FocusObject('zxcv' + os.sep)
+        url = self.obj.get_url(git_object)
+        self.assertEqual(url, self.obj.SOURCEGRAPH_URL + 'code.uber.internal/asdf/-/tree/zxcv/')
+
+    def test_get_url_file(self):
+        git_object = browse.FocusObject('zxcv')
+        url = self.obj.get_url(git_object)
+        self.assertEqual(url, self.obj.SOURCEGRAPH_URL + 'code.uber.internal/asdf/-/blob/zxcv')
 
 
 class GitObject(unittest.TestCase):
