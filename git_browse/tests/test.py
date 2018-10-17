@@ -63,7 +63,8 @@ class TestGithubHost(unittest.TestCase):
 
 class SourcegraphHost(unittest.TestCase):
     def test_init(self):
-        obj = browse.SourcegraphHost('asdf')
+        obj = browse.SourcegraphHost('code.uber.internal', 'asdf')
+        self.assertEqual(obj.host, 'code.uber.internal')
         self.assertEqual(obj.repository, 'asdf')
 
     def test_create(self):
