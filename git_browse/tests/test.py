@@ -84,22 +84,34 @@ class SourcegraphHost(unittest.TestCase):
     def test_get_url_commit(self):
         git_object = browse.FocusHash('abcd')
         url = self.obj.get_url(git_object)
-        self.assertEqual(url, self.obj.SOURCEGRAPH_URL + 'code.uber.internal/asdf/-/commit/abcd')
+        self.assertEqual(
+            url,
+            self.obj.SOURCEGRAPH_URL + 'code.uber.internal/asdf/-/commit/abcd'
+        )
 
     def test_get_url_root(self):
         git_object = browse.FocusObject(os.sep)
         url = self.obj.get_url(git_object)
-        self.assertEqual(url, self.obj.SOURCEGRAPH_URL + 'code.uber.internal/asdf')
+        self.assertEqual(
+            url,
+            self.obj.SOURCEGRAPH_URL + 'code.uber.internal/asdf'
+        )
 
     def test_get_url_directory(self):
         git_object = browse.FocusObject('zxcv' + os.sep)
         url = self.obj.get_url(git_object)
-        self.assertEqual(url, self.obj.SOURCEGRAPH_URL + 'code.uber.internal/asdf/-/tree/zxcv/')
+        self.assertEqual(
+            url,
+            self.obj.SOURCEGRAPH_URL + 'code.uber.internal/asdf/-/tree/zxcv/'
+        )
 
     def test_get_url_file(self):
         git_object = browse.FocusObject('zxcv')
         url = self.obj.get_url(git_object)
-        self.assertEqual(url, self.obj.SOURCEGRAPH_URL + 'code.uber.internal/asdf/-/blob/zxcv')
+        self.assertEqual(
+            url,
+            self.obj.SOURCEGRAPH_URL + 'code.uber.internal/asdf/-/blob/zxcv'
+        )
 
     def test_valid_focus_object(self):
         valid = self.obj.valid_focus_object('asdf')

@@ -15,15 +15,19 @@ import webbrowser
 
 
 __version__ = '2.6.0'
+GITHUB_HOST = '(?P<host>github\.com)'
+UBER_HOST = '(?P<host>code\.uber\.internal)'
+UBER_CONFIG_HOST = '(?P<host>config\.uber\.internal)'
 USER_REGEX = '(?P<user>[\w\.@:\/~_-]+)'
 REPOSITORY_REGEX = '(?P<repository>[\w\.@:\/~_-]+)'
-GITHUB_SSH_URL = 'git@(?P<host>github\.com):%s/%s' % (USER_REGEX, REPOSITORY_REGEX)
-GITHUB_HTTPS_URL = 'https://(?P<host>github\.com)/%s/%s' % (USER_REGEX, REPOSITORY_REGEX)
-UBER_SSH_GITOLITE_URL = 'gitolite@(?P<host>code\.uber\.internal):%s' % (REPOSITORY_REGEX)
-UBER_SSH_CONFIG_GITOLITE_URL = 'gitolite@(?P<host>config\.uber\.internal):%s' % \
-    (REPOSITORY_REGEX)
-UBER_HTTPS_GITOLITE_URL = 'https://(?P<host>code\.uber\.internal)/%s/%s' % \
-    (USER_REGEX, REPOSITORY_REGEX)
+GITHUB_SSH_URL = 'git@%s:%s/%s' % (GITHUB_HOST, USER_REGEX, REPOSITORY_REGEX)
+GITHUB_HTTPS_URL = 'https://%s/%s/%s' % \
+    (GITHUB_HOST, USER_REGEX, REPOSITORY_REGEX)
+UBER_SSH_GITOLITE_URL = 'gitolite@%s:%s' % (UBER_HOST, REPOSITORY_REGEX)
+UBER_SSH_CONFIG_GITOLITE_URL = 'gitolite@%s:%s' % \
+    (UBER_CONFIG_HOST, REPOSITORY_REGEX)
+UBER_HTTPS_GITOLITE_URL = 'https://%s/%s/%s' % \
+    (UBER_HOST, USER_REGEX, REPOSITORY_REGEX)
 
 
 class GithubHost(object):
@@ -248,7 +252,7 @@ def get_git_url(git_config_file: str) -> str:
     return git_url
 
 
-def parse_git_url(git_url: str, sourcegraph:bool=False) -> Any:
+def parse_git_url(git_url: str, sourcegraph: bool=False) -> Any:
     for regex, host_class in HOST_REGEXES.items():
         match = re.search(regex, git_url)
         if match:
@@ -262,7 +266,7 @@ def parse_git_url(git_url: str, sourcegraph:bool=False) -> Any:
     return host
 
 
-def get_repository_host(sourcegraph:bool=False) -> Any:
+def get_repository_host(sourcegraph: bool=False) -> Any:
     git_config_file = get_git_config()
     git_url = get_git_url(git_config_file)
     repo_host = parse_git_url(git_url, sourcegraph)
