@@ -115,6 +115,21 @@ class PhabricatorHost(object):
         return None
 
 
+class SourcegraphHost(object):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def create(url_regex_match: str=None) -> 'SourcegraphHost':
+        return SourcegraphHost()
+
+    def get_url(self, git_object: 'GitObject') -> List[str]:
+        raise NotImplementedError()
+
+    def valid_focus_object(self, arg: str):
+        raise NotImplementedError()
+
+
 HOST_REGEXES = {
     GITHUB_SSH_URL: GithubHost,
     GITHUB_HTTPS_URL: GithubHost,
