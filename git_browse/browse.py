@@ -15,15 +15,19 @@ import webbrowser
 
 
 __version__ = '2.6.0'
+GITHUB_HOST = '(?P<host>github\.com)'
+UBER_HOST = '(?P<host>code\.uber\.internal)'
+UBER_CONFIG_HOST = '(?P<host>config\.uber\.internal)'
 USER_REGEX = '(?P<user>[\w\.@:\/~_-]+)'
 REPOSITORY_REGEX = '(?P<repository>[\w\.@:\/~_-]+)'
-GITHUB_SSH_URL = 'git@github.com:%s/%s' % (USER_REGEX, REPOSITORY_REGEX)
-GITHUB_HTTPS_URL = 'https://github.com/%s/%s' % (USER_REGEX, REPOSITORY_REGEX)
-UBER_SSH_GITOLITE_URL = 'gitolite@code.uber.internal:%s' % (REPOSITORY_REGEX)
-UBER_SSH_CONFIG_GITOLITE_URL = 'gitolite@config.uber.internal:%s' % \
-    (REPOSITORY_REGEX)
-UBER_HTTPS_GITOLITE_URL = 'https://code.uber.internal/%s/%s' % \
-    (USER_REGEX, REPOSITORY_REGEX)
+GITHUB_SSH_URL = 'git@%s:%s/%s' % (GITHUB_HOST, USER_REGEX, REPOSITORY_REGEX)
+GITHUB_HTTPS_URL = 'https://%s/%s/%s' % \
+    (GITHUB_HOST, USER_REGEX, REPOSITORY_REGEX)
+UBER_SSH_GITOLITE_URL = 'gitolite@%s:%s' % (UBER_HOST, REPOSITORY_REGEX)
+UBER_SSH_CONFIG_GITOLITE_URL = 'gitolite@%s:%s' % \
+    (UBER_CONFIG_HOST, REPOSITORY_REGEX)
+UBER_HTTPS_GITOLITE_URL = 'https://%s/%s/%s' % \
+    (UBER_HOST, USER_REGEX, REPOSITORY_REGEX)
 
 
 class GithubHost(object):
@@ -115,6 +119,66 @@ class PhabricatorHost(object):
         return None
 
 
+class SourcegraphHost(object):
+    SOURCEGRAPH_URL = 'https://sourcegraph.uberinternal.com/'
+
+    def __init__(self, host: str, repository: str):
+        self.host = host
+        self.repository = repository
+
+    @staticmethod
+    def create(url_regex_match: Match) -> 'SourcegraphHost':
+        repository = url_regex_match.group('repository')
+        if repository[-4:] == '.git':
+            repository = repository[:-4]
+        host = url_regex_match.group('host')
+        return SourcegraphHost(host, repository)
+
+    def get_url(self, git_object: 'GitObject') -> str:
+        repository_url = "%s%s/%s" % (
+            self.SOURCEGRAPH_URL,
+            self.host,
+            self.repository
+        )
+        if git_object.is_commit_hash():
+            return self.commit_hash_url(repository_url, git_object)
+        if git_object.is_root():
+            return repository_url
+        if git_object.is_directory():
+            return self.directory_url(repository_url, git_object)
+        return self.file_url(repository_url, git_object)
+
+    def commit_hash_url(
+            self,
+            repository_url: str,
+            focus_hash: 'GitObject') -> str:
+        repository_url = "%s/-/commit/%s" % (
+            repository_url,
+            focus_hash.identifier
+        )
+        return repository_url
+
+    def directory_url(
+            self,
+            repository_url: str,
+            focus_object: 'GitObject') -> str:
+        repository_url = "%s/-/tree/%s" % (
+            repository_url,
+            focus_object.identifier
+        )
+        return repository_url
+
+    def file_url(self, repository_url: str, focus_object: 'GitObject') -> str:
+        repository_url = "%s/-/blob/%s" % (
+            repository_url,
+            focus_object.identifier
+        )
+        return repository_url
+
+    def valid_focus_object(self, arg: str):
+        return None
+
+
 HOST_REGEXES = {
     GITHUB_SSH_URL: GithubHost,
     GITHUB_HTTPS_URL: GithubHost,
@@ -188,21 +252,24 @@ def get_git_url(git_config_file: str) -> str:
     return git_url
 
 
-def parse_git_url(git_url: str) -> Any:
+def parse_git_url(git_url: str, sourcegraph: bool=False) -> Any:
     for regex, host_class in HOST_REGEXES.items():
         match = re.search(regex, git_url)
         if match:
             break
     if not match:
         raise ValueError("git url not parseable")
-    host = host_class.create(match)
+    if sourcegraph:
+        host = SourcegraphHost.create(match)
+    else:
+        host = host_class.create(match)
     return host
 
 
-def get_repository_host() -> Any:
+def get_repository_host(sourcegraph: bool=False) -> Any:
     git_config_file = get_git_config()
     git_url = get_git_url(git_config_file)
-    repo_host = parse_git_url(git_url)
+    repo_host = parse_git_url(git_url, sourcegraph)
     return repo_host
 
 
@@ -275,11 +342,17 @@ def main() -> None:
         help='Do not open the url in the brower, and only print to stdout'
     )
     parser.add_argument(
+        '-s',
+        '--sourcegraph',
+        action='store_true',
+        help='Open objects in sourcegraph'
+    )
+    parser.add_argument(
         '-v', '--version', action='version', version=__version__,
     )
     args = parser.parse_args()
 
-    host = get_repository_host()
+    host = get_repository_host(args.sourcegraph)
     path = os.path.join(os.getcwd(), args.path)
     git_object = get_git_object(args.target, path, host)
     url = host.get_url(git_object)

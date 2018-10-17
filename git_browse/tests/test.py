@@ -1,4 +1,5 @@
 import os
+import re
 import shutil
 import sys
 import unittest
@@ -58,6 +59,63 @@ class TestGithubHost(unittest.TestCase):
             url,
             'https://github.com/albertyw/git-browse/commit/v2.0.0'
         )
+
+
+class SourcegraphHost(unittest.TestCase):
+    def setUp(self):
+        self.obj = browse.SourcegraphHost('code.uber.internal', 'asdf')
+
+    def test_init(self):
+        self.assertEqual(self.obj.host, 'code.uber.internal')
+        self.assertEqual(self.obj.repository, 'asdf')
+
+    def test_create(self):
+        repo = 'gitolite@code.uber.internal:a/b'
+        match = re.search(browse.UBER_SSH_GITOLITE_URL, repo)
+        obj = browse.SourcegraphHost.create(match)
+        self.assertEqual(obj.repository, 'a/b')
+
+    def test_create_dot_git(self):
+        repo = 'gitolite@code.uber.internal:a/b.git'
+        match = re.search(browse.UBER_SSH_GITOLITE_URL, repo)
+        obj = browse.SourcegraphHost.create(match)
+        self.assertEqual(obj.repository, 'a/b')
+
+    def test_get_url_commit(self):
+        git_object = browse.FocusHash('abcd')
+        url = self.obj.get_url(git_object)
+        self.assertEqual(
+            url,
+            self.obj.SOURCEGRAPH_URL + 'code.uber.internal/asdf/-/commit/abcd'
+        )
+
+    def test_get_url_root(self):
+        git_object = browse.FocusObject(os.sep)
+        url = self.obj.get_url(git_object)
+        self.assertEqual(
+            url,
+            self.obj.SOURCEGRAPH_URL + 'code.uber.internal/asdf'
+        )
+
+    def test_get_url_directory(self):
+        git_object = browse.FocusObject('zxcv' + os.sep)
+        url = self.obj.get_url(git_object)
+        self.assertEqual(
+            url,
+            self.obj.SOURCEGRAPH_URL + 'code.uber.internal/asdf/-/tree/zxcv/'
+        )
+
+    def test_get_url_file(self):
+        git_object = browse.FocusObject('zxcv')
+        url = self.obj.get_url(git_object)
+        self.assertEqual(
+            url,
+            self.obj.SOURCEGRAPH_URL + 'code.uber.internal/asdf/-/blob/zxcv'
+        )
+
+    def test_valid_focus_object(self):
+        valid = self.obj.valid_focus_object('asdf')
+        self.assertEqual(valid, None)
 
 
 class GitObject(unittest.TestCase):
@@ -157,6 +215,12 @@ class ParseGitURL(unittest.TestCase):
     def check_host(self, host):
         self.assertTrue(host.__class__ is browse.GithubHost)
         self.assertEqual(host.user, 'albertyw')
+        self.assertEqual(host.repository, 'git-browse')
+
+    def test_sourcegraph_host(self):
+        host = browse.parse_git_url(self.ssh_url, sourcegraph=True)
+        self.assertTrue(host.__class__ is browse.SourcegraphHost)
+        self.assertEqual(host.host, 'github.com')
         self.assertEqual(host.repository, 'git-browse')
 
     def test_broken_url(self):
