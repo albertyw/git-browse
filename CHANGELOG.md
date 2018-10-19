@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v2.7.0 (2018-08-18)
+-------------------
+
+ - Add support for sourcegraph
+ - Dependency updates
+
+
 v2.6.0 (2018-06-26)
 -------------------
 
