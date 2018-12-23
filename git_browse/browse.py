@@ -30,7 +30,11 @@ UBER_HTTPS_GITOLITE_URL = 'https://%s/%s/%s' % \
     (UBER_HOST, USER_REGEX, REPOSITORY_REGEX)
 
 
-class GithubHost(object):
+class Host():
+    pass
+
+
+class GithubHost(Host):
     GITHUB_URL = "https://github.com/"
 
     def __init__(self, user: str, repository: str) -> None:
@@ -93,7 +97,7 @@ class GithubHost(object):
         return None
 
 
-class PhabricatorHost(object):
+class PhabricatorHost(Host):
     PHABRICATOR_OBJECT_REGEX = '^[DT][0-9]+$'
 
     def __init__(self):
@@ -119,7 +123,7 @@ class PhabricatorHost(object):
         return None
 
 
-class SourcegraphHost(object):
+class SourcegraphHost(Host):
     SOURCEGRAPH_URL = 'https://sourcegraph.uberinternal.com/'
 
     def __init__(self, host: str, repository: str):
