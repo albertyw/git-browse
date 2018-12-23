@@ -10,7 +10,7 @@ import os
 import re
 import subprocess
 import sys
-from typing import Dict, List, Match, Optional # NOQA
+from typing import Any, Dict, List, Match, Optional # NOQA
 import webbrowser
 
 
@@ -189,7 +189,7 @@ HOST_REGEXES = {
     UBER_SSH_GITOLITE_URL: PhabricatorHost,
     UBER_SSH_CONFIG_GITOLITE_URL: PhabricatorHost,
     UBER_HTTPS_GITOLITE_URL: PhabricatorHost,
-}  # type: Dict[str, Host]
+}  # type: Dict[str, Any]
 
 
 class GitObject(object):
@@ -256,7 +256,7 @@ def get_git_url(git_config_file: str) -> str:
     return git_url
 
 
-def parse_git_url(git_url: str, sourcegraph: bool=False) -> Host:
+def parse_git_url(git_url: str, sourcegraph: bool=False) -> Any:
     for regex, host_class in HOST_REGEXES.items():
         match = re.search(regex, git_url)
         if match:
@@ -270,14 +270,14 @@ def parse_git_url(git_url: str, sourcegraph: bool=False) -> Host:
     return host
 
 
-def get_repository_host(sourcegraph: bool=False) -> Host:
+def get_repository_host(sourcegraph: bool=False) -> Any:
     git_config_file = get_git_config()
     git_url = get_git_url(git_config_file)
     repo_host = parse_git_url(git_url, sourcegraph)
     return repo_host
 
 
-def get_git_object(focus_object: str, path: str, host: Host) -> GitObject:
+def get_git_object(focus_object: str, path: str, host: Any) -> GitObject:
     if not focus_object:
         return FocusObject.default()
     directory = path
