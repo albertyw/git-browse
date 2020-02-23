@@ -64,6 +64,7 @@ class TestGithubHost(unittest.TestCase):
 class SourcegraphHost(unittest.TestCase):
     def setUp(self):
         self.obj = browse.SourcegraphHost('code.uber.internal', 'asdf')
+        self.obj.host_class = browse.PhabricatorHost
 
     def test_init(self):
         self.assertEqual(self.obj.host, 'code.uber.internal')
@@ -86,7 +87,8 @@ class SourcegraphHost(unittest.TestCase):
         url = self.obj.get_url(git_object)
         self.assertEqual(
             url,
-            self.obj.SOURCEGRAPH_URL + 'code.uber.internal/asdf/-/commit/abcd'
+            self.obj.UBER_SOURCEGRAPH_URL +
+            'code.uber.internal/asdf/-/commit/abcd'
         )
 
     def test_get_url_root(self):
@@ -94,7 +96,7 @@ class SourcegraphHost(unittest.TestCase):
         url = self.obj.get_url(git_object)
         self.assertEqual(
             url,
-            self.obj.SOURCEGRAPH_URL + 'code.uber.internal/asdf'
+            self.obj.UBER_SOURCEGRAPH_URL + 'code.uber.internal/asdf'
         )
 
     def test_get_url_directory(self):
@@ -102,7 +104,8 @@ class SourcegraphHost(unittest.TestCase):
         url = self.obj.get_url(git_object)
         self.assertEqual(
             url,
-            self.obj.SOURCEGRAPH_URL + 'code.uber.internal/asdf/-/tree/zxcv/'
+            self.obj.UBER_SOURCEGRAPH_URL +
+            'code.uber.internal/asdf/-/tree/zxcv/'
         )
 
     def test_get_url_file(self):
@@ -110,7 +113,8 @@ class SourcegraphHost(unittest.TestCase):
         url = self.obj.get_url(git_object)
         self.assertEqual(
             url,
-            self.obj.SOURCEGRAPH_URL + 'code.uber.internal/asdf/-/blob/zxcv'
+            self.obj.UBER_SOURCEGRAPH_URL +
+            'code.uber.internal/asdf/-/blob/zxcv'
         )
 
     def test_valid_focus_object(self):

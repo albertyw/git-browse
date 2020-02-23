@@ -120,9 +120,11 @@ class PhabricatorHost(Host):
 
 
 class SourcegraphHost(Host):
-    SOURCEGRAPH_URL = 'https://sourcegraph.uberinternal.com/'
+    PUBLIC_SOURCEGRAPH_URL = 'https://sourcegraph.com/'
+    UBER_SOURCEGRAPH_URL = 'https://sourcegraph.uberinternal.com/'
 
     def __init__(self, host: str, repository: str):
+        self.host_class = None
         self.host = host
         self.repository = repository
 
@@ -135,8 +137,11 @@ class SourcegraphHost(Host):
         return SourcegraphHost(host, repository)
 
     def get_url(self, git_object: 'GitObject') -> str:
+        sourcegraph_url = self.PUBLIC_SOURCEGRAPH_URL
+        if self.host_class == PhabricatorHost:
+            sourcegraph_url = self.UBER_SOURCEGRAPH_URL
         repository_url = "%s%s/%s" % (
-            self.SOURCEGRAPH_URL,
+            sourcegraph_url,
             self.host,
             self.repository
         )
@@ -261,6 +266,7 @@ def parse_git_url(git_url: str, sourcegraph: bool = False) -> Any:
         raise ValueError("git url not parseable")
     if sourcegraph:
         host = SourcegraphHost.create(match)
+        host.host_class = host_class
     else:
         host = host_class.create(match)
     return host
