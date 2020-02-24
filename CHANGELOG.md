@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v2.7.2 (2020-02-23)
+-------------------
+
+ - Update dependencies
+ - Use the public sourcegraph for github repositories
+
+
 v2.7.1 (2019-02-02)
 -------------------
 
