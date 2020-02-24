@@ -134,6 +134,11 @@ class SourcegraphHost(Host):
         if repository[-4:] == '.git':
             repository = repository[:-4]
         host = url_regex_match.group('host')
+        try:
+            user = url_regex_match.group('user')
+            repository = '%s/%s' % (user, repository)
+        except IndexError:
+            pass
         return SourcegraphHost(host, repository)
 
     def get_url(self, git_object: 'GitObject') -> str:

@@ -207,6 +207,7 @@ class ParseGitURL(unittest.TestCase):
         self.ssh_url = 'git@github.com:albertyw/git-browse.git'
         self.https_url = 'https://github.com/albertyw/git-browse'
         self.broken_url = 'asdfasdf'
+        self.uber_ssh_url = 'gitolite@code.uber.internal:abcd/efgh'
 
     def test_ssh_url(self):
         host = browse.parse_git_url(self.ssh_url)
@@ -221,11 +222,17 @@ class ParseGitURL(unittest.TestCase):
         self.assertEqual(host.user, 'albertyw')
         self.assertEqual(host.repository, 'git-browse')
 
-    def test_sourcegraph_host(self):
+    def test_sourcegraph_github_host(self):
         host = browse.parse_git_url(self.ssh_url, sourcegraph=True)
         self.assertTrue(host.__class__ is browse.SourcegraphHost)
         self.assertEqual(host.host, 'github.com')
-        self.assertEqual(host.repository, 'git-browse')
+        self.assertEqual(host.repository, 'albertyw/git-browse')
+
+    def test_sourcegraph_uber_host(self):
+        host = browse.parse_git_url(self.uber_ssh_url, sourcegraph=True)
+        self.assertTrue(host.__class__ is browse.SourcegraphHost)
+        self.assertEqual(host.host, 'code.uber.internal')
+        self.assertEqual(host.repository, 'abcd/efgh')
 
     def test_broken_url(self):
         with self.assertRaises(ValueError):
