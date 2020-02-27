@@ -46,15 +46,25 @@ Usage
 
 ::
 
-    Usage: git browse [-h] [--path PATH] [--dry-run] [target]
+    $ git browse -h
+    'browse' is aliased to '!~/.dotfiles/scripts/git/git-browse/git_browse/browse.py --path=${GIT_PREFIX:-./}'
+    usage: browse.py [-h] [--path PATH] [-d] [-s] [-v] [target]
 
-If ``[target]`` is omitted, the root repository page will be opened. If
-``[target]`` is a directory or file, then that object will be opened. If
-``[target]`` is a commit hash, then that commit hash will be opened. If
-``--path`` is available, then its value is be used to compute the
-relative path to the current git repository If ``--dry-run`` is set,
-then git-browse will only print out the target url instead of opening it
-in a browser
+    Open repositories, directories, and files in the browser.
+    https://github.com/albertyw/git-browse
+
+    positional arguments:
+      target             file, directory, git hash, or git branch you wish to
+                         browse
+
+    optional arguments:
+      -h, --help         show this help message and exit
+      --path PATH        relative path to the current git repository
+      -d, --dry-run      Do not open the url in the brower, and only print to
+                         stdout
+      -s, --sourcegraph  Open objects in sourcegraph
+      -v, --version      show program's version number and exit
+
 
 Examples
 ~~~~~~~~
