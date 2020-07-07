@@ -1,6 +1,7 @@
 import os
+from typing import Callable, List, Tuple, Union, cast
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from git_browse import browse
 
@@ -9,7 +10,7 @@ directory = os.path.dirname(os.path.realpath(__file__))
 REPO_PATH = os.path.normpath(os.path.join(directory, '..', '..'))
 TEST_DIR = 'testdir'
 TEST_DIR_PATH = os.path.join(REPO_PATH, 'testdir')
-GIT_URLS = [
+GIT_URLS: List[Tuple[str, str, Union[str, List[str]], bool]] = [
     (
         'git@github.com:albertyw/git-browse',
         '',
@@ -105,23 +106,22 @@ GIT_URLS = [
 
 
 class TestGitURLs(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         os.mkdir(TEST_DIR_PATH)
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         os.rmdir(TEST_DIR_PATH)
 
 
-def generate_test(*test_data):
-    git_url, target_path, host_url, arcconfig = test_data
-
+def generate_test(git_url: str, target_path: str, host_url: Union[str, List[str]], arcconfig: bool) -> Callable[[], None]:
     @patch('git_browse.browse.get_git_url')
-    def test(self, mock_get_git_url):
+    def test(self: TestGitURLs, mock_get_git_url: MagicMock) -> None:
         mock_get_git_url.return_value = git_url
         host = browse.get_repository_host()
         focus_object = browse.get_git_object(target_path, REPO_PATH, host)
         url = host.get_url(focus_object)
         self.assertEqual(host_url, url)
+    test = cast(Callable[[], None], test)
     return test
 
 

@@ -12,26 +12,26 @@ BASE_DIRECTORY = os.path.normpath(os.path.join(directory, '..', '..'))
 
 
 class TestGithubHost(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.github_host = browse.GithubHost('albertyw', 'git-browse')
         self.repository_url = 'https://github.com/albertyw/git-browse'
         self.focus_object = browse.FocusObject('/')
         self.focus_hash = browse.FocusHash('v2.0.0')
 
-    def test_init(self):
+    def test_init(self) -> None:
         host = browse.GithubHost('user', 'repository')
         self.assertEqual(host.user, 'user')
         self.assertEqual(host.repository, 'repository')
 
-    def test_get_url(self):
+    def test_get_url(self) -> None:
         url = self.github_host.get_url(self.focus_object)
         self.assertEqual(url, self.repository_url)
 
-    def test_root_url(self):
+    def test_root_url(self) -> None:
         url = self.github_host.root_url(self.repository_url, self.focus_object)
         self.assertEqual(url, self.repository_url)
 
-    def test_directory_url(self):
+    def test_directory_url(self) -> None:
         self.focus_object.identifier = 'asdf/'
         url = self.github_host.directory_url(
             self.repository_url,
@@ -42,7 +42,7 @@ class TestGithubHost(unittest.TestCase):
             'https://github.com/albertyw/git-browse/tree/master/asdf/'
         )
 
-    def test_file_url(self):
+    def test_file_url(self) -> None:
         self.focus_object.identifier = 'README.rst'
         url = self.github_host.file_url(self.repository_url, self.focus_object)
         self.assertEqual(
@@ -50,7 +50,7 @@ class TestGithubHost(unittest.TestCase):
             'https://github.com/albertyw/git-browse/blob/master/README.rst'
         )
 
-    def test_commit_hash_url(self):
+    def test_commit_hash_url(self) -> None:
         url = self.github_host.commit_hash_url(
             self.repository_url,
             self.focus_hash
@@ -62,27 +62,27 @@ class TestGithubHost(unittest.TestCase):
 
 
 class SourcegraphHost(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.obj = browse.SourcegraphHost('code.uber.internal', 'asdf')
         self.obj.host_class = browse.PhabricatorHost
 
-    def test_init(self):
+    def test_init(self) -> None:
         self.assertEqual(self.obj.host, 'code.uber.internal')
         self.assertEqual(self.obj.repository, 'asdf')
 
-    def test_create(self):
+    def test_create(self) -> None:
         repo = 'gitolite@code.uber.internal:a/b'
         match = re.search(browse.UBER_SSH_GITOLITE_URL, repo)
         obj = browse.SourcegraphHost.create(match)
         self.assertEqual(obj.repository, 'a/b')
 
-    def test_create_dot_git(self):
+    def test_create_dot_git(self) -> None:
         repo = 'gitolite@code.uber.internal:a/b.git'
         match = re.search(browse.UBER_SSH_GITOLITE_URL, repo)
         obj = browse.SourcegraphHost.create(match)
         self.assertEqual(obj.repository, 'a/b')
 
-    def test_get_url_commit(self):
+    def test_get_url_commit(self) -> None:
         git_object = browse.FocusHash('abcd')
         url = self.obj.get_url(git_object)
         self.assertEqual(
@@ -91,7 +91,7 @@ class SourcegraphHost(unittest.TestCase):
             'code.uber.internal/asdf/-/commit/abcd'
         )
 
-    def test_get_url_root(self):
+    def test_get_url_root(self) -> None:
         git_object = browse.FocusObject(os.sep)
         url = self.obj.get_url(git_object)
         self.assertEqual(
@@ -99,7 +99,7 @@ class SourcegraphHost(unittest.TestCase):
             self.obj.UBER_SOURCEGRAPH_URL + 'code.uber.internal/asdf'
         )
 
-    def test_get_url_directory(self):
+    def test_get_url_directory(self) -> None:
         git_object = browse.FocusObject('zxcv' + os.sep)
         url = self.obj.get_url(git_object)
         self.assertEqual(
@@ -108,7 +108,7 @@ class SourcegraphHost(unittest.TestCase):
             'code.uber.internal/asdf/-/tree/zxcv/'
         )
 
-    def test_get_url_file(self):
+    def test_get_url_file(self) -> None:
         git_object = browse.FocusObject('zxcv')
         url = self.obj.get_url(git_object)
         self.assertEqual(
@@ -117,67 +117,67 @@ class SourcegraphHost(unittest.TestCase):
             'code.uber.internal/asdf/-/blob/zxcv'
         )
 
-    def test_valid_focus_object(self):
+    def test_valid_focus_object(self) -> None:
         valid = self.obj.valid_focus_object('asdf')
         self.assertEqual(valid, None)
 
 
 class GitObject(unittest.TestCase):
-    def test_is_directory(self):
+    def test_is_directory(self) -> None:
         obj = browse.GitObject('/asdf')
         self.assertFalse(obj.is_directory())
 
 
 class FocusObject(unittest.TestCase):
-    def test_init(self):
+    def test_init(self) -> None:
         obj = browse.FocusObject('/asdf')
         self.assertEqual(obj.identifier, '/asdf')
 
-    def test_is_root(self):
+    def test_is_root(self) -> None:
         obj = browse.FocusObject('/')
         self.assertTrue(obj.is_root())
 
-    def test_is_not_root(self):
+    def test_is_not_root(self) -> None:
         obj = browse.FocusObject('/asdf/')
         self.assertFalse(obj.is_root())
 
-    def test_is_directory(self):
+    def test_is_directory(self) -> None:
         obj = browse.FocusObject('/asdf/')
         self.assertTrue(obj.is_directory())
 
-    def test_is_not_directory(self):
+    def test_is_not_directory(self) -> None:
         obj = browse.FocusObject('/asdf')
         self.assertFalse(obj.is_directory())
 
-    def test_default(self):
+    def test_default(self) -> None:
         obj = browse.FocusObject.default()
         self.assertTrue(obj.is_root())
 
 
 class FocusHash(unittest.TestCase):
-    def test_init(self):
+    def test_init(self) -> None:
         obj = browse.FocusHash('abcde')
         self.assertEqual(obj.identifier, 'abcde')
 
-    def test_is_commit_hash(self):
+    def test_is_commit_hash(self) -> None:
         obj = browse.FocusHash('abcde')
         self.assertTrue(obj.is_commit_hash())
 
 
 class GetRepositoryRoot(unittest.TestCase):
-    def test_get(self):
+    def test_get(self) -> None:
         os.chdir(BASE_DIRECTORY)
         directory = browse.get_repository_root()
         self.assertEqual(directory, BASE_DIRECTORY)
 
-    def test_fail_get(self):
+    def test_fail_get(self) -> None:
         os.chdir(os.sep)
         with self.assertRaises(FileNotFoundError):
             browse.get_repository_root()
 
 
 class GetGitConfig(unittest.TestCase):
-    def test_get(self):
+    def test_get(self) -> None:
         os.chdir(BASE_DIRECTORY)
         directory = browse.get_git_config()
         expected = os.path.join(BASE_DIRECTORY, '.git', 'config')
@@ -185,35 +185,35 @@ class GetGitConfig(unittest.TestCase):
 
 
 class GetGitURL(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.git_config_file = os.path.join(
             BASE_DIRECTORY,
             '.git',
             'config'
         )
 
-    def test_url(self):
+    def test_url(self) -> None:
         git_url = browse.get_git_url(self.git_config_file)
         expected = 'git@github.com:albertyw/git-browse'
         self.assertEqual(git_url.replace('.git', ''), expected)
 
-    def test_bad_url(self):
+    def test_bad_url(self) -> None:
         with self.assertRaises(RuntimeError):
             browse.get_git_url(BASE_DIRECTORY)
 
 
 class ParseGitURL(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.ssh_url = 'git@github.com:albertyw/git-browse.git'
         self.https_url = 'https://github.com/albertyw/git-browse'
         self.broken_url = 'asdfasdf'
         self.uber_ssh_url = 'gitolite@code.uber.internal:abcd/efgh'
 
-    def test_ssh_url(self):
+    def test_ssh_url(self) -> None:
         host = browse.parse_git_url(self.ssh_url)
         self.check_host(host)
 
-    def test_https_url(self):
+    def test_https_url(self) -> None:
         host = browse.parse_git_url(self.https_url)
         self.check_host(host)
 
@@ -222,25 +222,25 @@ class ParseGitURL(unittest.TestCase):
         self.assertEqual(host.user, 'albertyw')
         self.assertEqual(host.repository, 'git-browse')
 
-    def test_sourcegraph_github_host(self):
+    def test_sourcegraph_github_host(self) -> None:
         host = browse.parse_git_url(self.ssh_url, sourcegraph=True)
         self.assertTrue(host.__class__ is browse.SourcegraphHost)
         self.assertEqual(host.host, 'github.com')
         self.assertEqual(host.repository, 'albertyw/git-browse')
 
-    def test_sourcegraph_uber_host(self):
+    def test_sourcegraph_uber_host(self) -> None:
         host = browse.parse_git_url(self.uber_ssh_url, sourcegraph=True)
         self.assertTrue(host.__class__ is browse.SourcegraphHost)
         self.assertEqual(host.host, 'code.uber.internal')
         self.assertEqual(host.repository, 'abcd/efgh')
 
-    def test_broken_url(self):
+    def test_broken_url(self) -> None:
         with self.assertRaises(ValueError):
             browse.parse_git_url(self.broken_url)
 
 
 class TestGetRepositoryHost(unittest.TestCase):
-    def test_repository_host(self):
+    def test_repository_host(self) -> None:
         host = browse.get_repository_host()
         self.assertTrue(host.__class__ is browse.GithubHost)
         self.assertEqual(host.user, 'albertyw')
@@ -248,52 +248,52 @@ class TestGetRepositoryHost(unittest.TestCase):
 
 
 class TestGetFocusObject(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.host = browse.GithubHost('albertyw', 'git-browse')
 
-    def test_default_focus_object(self):
+    def test_default_focus_object(self) -> None:
         focus_object = browse.get_git_object('', os.getcwd(), self.host)
         self.assertTrue(focus_object.is_root())
         self.assertTrue(focus_object.is_directory())
 
-    def test_file_focus_object(self):
+    def test_file_focus_object(self) -> None:
         target = 'README.rst'
         focus_object = browse.get_git_object(target, os.getcwd(), self.host)
         self.assertFalse(focus_object.is_root())
         self.assertFalse(focus_object.is_directory())
         self.assertEqual(focus_object.identifier[-10:], 'README.rst')
 
-    def test_directory_focus_object(self):
+    def test_directory_focus_object(self) -> None:
         focus_object = browse.get_git_object('.', os.getcwd(), self.host)
         self.assertFalse(focus_object.is_root())
         self.assertTrue(focus_object.is_directory())
 
-    def test_get_focus_hash(self):
+    def test_get_focus_hash(self) -> None:
         focus_object = browse.get_git_object('v2.0.0', os.getcwd(), self.host)
         self.assertTrue(focus_object.__class__ is browse.FocusHash)
 
-    def test_phabricator_object(self):
+    def test_phabricator_object(self) -> None:
         host = browse.PhabricatorHost.create()
         focus_object = browse.get_git_object('D123', os.getcwd(), host)
         self.assertTrue(focus_object.__class__ is browse.PhabricatorObject)
 
-    def test_invalid_phabricator_object(self):
+    def test_invalid_phabricator_object(self) -> None:
         phabricator_host = browse.PhabricatorHost.create()
         with self.assertRaises(FileNotFoundError):
             browse.get_git_object('asdf', os.getcwd(), phabricator_host)
 
-    def test_nonexistend_focus_object(self):
+    def test_nonexistend_focus_object(self) -> None:
         with self.assertRaises(FileNotFoundError):
             browse.get_git_object('asdf', os.getcwd(), self.host)
 
 
 class TestGetCommitHash(unittest.TestCase):
-    def test_get_unknown_hash(self):
+    def test_get_unknown_hash(self) -> None:
         focus_object = '!@#$'
         focus_hash = browse.get_commit_hash(focus_object)
         self.assertEqual(focus_hash, None)
 
-    def test_get_hash(self):
+    def test_get_hash(self) -> None:
         focus_object = 'v2.0.0'
         focus_hash = browse.get_commit_hash(focus_object)
         self.assertTrue(focus_hash.__class__ is browse.FocusHash)
@@ -322,7 +322,7 @@ class TestOpenURL(unittest.TestCase):
 
 
 class FullTest(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.original_sys_argv = sys.argv
         self.test_directory = os.path.join(BASE_DIRECTORY, 'test_dir')
         test_file = os.path.join(self.test_directory, 'test_file')
@@ -330,7 +330,7 @@ class FullTest(unittest.TestCase):
         with open(test_file, 'w'):
             pass
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         sys.argv = self.original_sys_argv
         os.chdir(BASE_DIRECTORY)
         shutil.rmtree(self.test_directory)
