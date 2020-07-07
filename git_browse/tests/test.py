@@ -273,12 +273,12 @@ class TestGetFocusObject(unittest.TestCase):
         self.assertTrue(focus_object.__class__ is browse.FocusHash)
 
     def test_phabricator_object(self) -> None:
-        host = browse.PhabricatorHost.create()
+        host = browse.PhabricatorHost.create(r'')
         focus_object = browse.get_git_object('D123', os.getcwd(), host)
         self.assertTrue(focus_object.__class__ is browse.PhabricatorObject)
 
     def test_invalid_phabricator_object(self) -> None:
-        phabricator_host = browse.PhabricatorHost.create()
+        phabricator_host = browse.PhabricatorHost.create(r'')
         with self.assertRaises(FileNotFoundError):
             browse.get_git_object('asdf', os.getcwd(), phabricator_host)
 
