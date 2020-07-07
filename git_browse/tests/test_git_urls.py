@@ -113,7 +113,12 @@ class TestGitURLs(unittest.TestCase):
         os.rmdir(TEST_DIR_PATH)
 
 
-def generate_test(git_url: str, target_path: str, host_url: Union[str, List[str]], arcconfig: bool) -> Callable[[], None]:
+def generate_test(
+    git_url: str,
+    target_path: str,
+    host_url: Union[str, List[str]],
+    arcconfig: bool,
+) -> Callable[[], None]:
     @patch('git_browse.browse.get_git_url')
     def test(self: TestGitURLs, mock_get_git_url: MagicMock) -> None:
         mock_get_git_url.return_value = git_url

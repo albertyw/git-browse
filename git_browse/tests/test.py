@@ -286,7 +286,9 @@ class TestGetFocusObject(unittest.TestCase):
 
     def test_invalid_phabricator_object(self) -> None:
         assert self.placeholder_match is not None
-        phabricator_host = browse.PhabricatorHost.create(self.placeholder_match)
+        phabricator_host = browse.PhabricatorHost.create(
+            self.placeholder_match
+        )
         with self.assertRaises(FileNotFoundError):
             browse.get_git_object('asdf', os.getcwd(), phabricator_host)
 
@@ -317,14 +319,18 @@ class TestOpenURL(unittest.TestCase):
 
     @patch("builtins.print", autospec=True)
     @patch("subprocess.call")
-    def test_open_subprocess(self, mock_call: MagicMock, mock_print: MagicMock) -> None:
+    def test_open_subprocess(
+        self, mock_call: MagicMock, mock_print: MagicMock
+    ) -> None:
         browse.open_url(['asdf'])
         mock_print.assert_called_with(['asdf'])
         mock_call.assert_called_with(['asdf'])
 
     @patch("builtins.print", autospec=True)
     @patch("subprocess.call")
-    def test_dry_open_url(self, mock_call: MagicMock, mock_print: MagicMock) -> None:
+    def test_dry_open_url(
+        self, mock_call: MagicMock, mock_print: MagicMock
+    ) -> None:
         browse.open_url(['asdf'], True)
         mock_print.assert_called_with(['asdf'])
         assert not mock_call.called
@@ -403,7 +409,9 @@ class FullTest(unittest.TestCase):
         )
         self.check_main(sys_argv, expected, mock_open_url)
 
-    def check_main(self, sys_argv: List[str], expected: str, mock_open_url: MagicMock) -> None:
+    def check_main(
+        self, sys_argv: List[str], expected: str, mock_open_url: MagicMock
+    ) -> None:
         sys.argv = sys_argv
         browse.main()
         mock_open_url.assert_called_with(expected, False)
