@@ -6,7 +6,7 @@ import os
 import re
 import subprocess
 import sys
-from typing import Any, Dict, List, Match, Optional # NOQA
+from typing import Any, Dict, List, Match, Optional, Union # NOQA
 import webbrowser
 
 
@@ -38,7 +38,7 @@ class GithubHost(Host):
         self.repository = repository
 
     @staticmethod
-    def create(url_regex_match: Match) -> 'GithubHost':
+    def create(url_regex_match: Match[str]) -> 'GithubHost':
         repository = url_regex_match.group('repository')
         if repository[-4:] == '.git':
             repository = repository[:-4]
@@ -89,18 +89,18 @@ class GithubHost(Host):
         )
         return repository_url
 
-    def valid_focus_object(self, arg: str):
+    def valid_focus_object(self, arg: str) -> Optional['GitObject']:
         return None
 
 
 class PhabricatorHost(Host):
     PHABRICATOR_OBJECT_REGEX = '^[DT][0-9]+$'
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     @staticmethod
-    def create(url_regex_match: str = None) -> 'PhabricatorHost':
+    def create(url_regex_match: Optional[str] = None) -> 'PhabricatorHost':
         return PhabricatorHost()
 
     def get_url(self, git_object: 'GitObject') -> List[str]:
@@ -129,7 +129,7 @@ class SourcegraphHost(Host):
         self.repository = repository
 
     @staticmethod
-    def create(url_regex_match: Match) -> 'SourcegraphHost':
+    def create(url_regex_match: Match[str]) -> 'SourcegraphHost':
         repository = url_regex_match.group('repository')
         if repository[-4:] == '.git':
             repository = repository[:-4]
@@ -185,7 +185,7 @@ class SourcegraphHost(Host):
         )
         return repository_url
 
-    def valid_focus_object(self, arg: str):
+    def valid_focus_object(self, arg: str) -> Optional['GitObject']:
         return None
 
 
@@ -321,7 +321,7 @@ def get_commit_hash(identifier: str) -> Optional[FocusHash]:
     return FocusHash(commit_hash)
 
 
-def open_url(url: str, dry_run: bool = False) -> None:
+def open_url(url: Union[str, List[str]], dry_run: bool = False) -> None:
     print(url)
     if dry_run:
         return
