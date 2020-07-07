@@ -307,7 +307,7 @@ def get_git_object(focus_object: str, path: str, host: Any) -> GitObject:
 
 
 def get_commit_hash(identifier: str) -> Optional[FocusHash]:
-    command = ['git', 'show', identifier]
+    command = ['git', 'show', identifier, '--no-abbrev-commit']
     process = subprocess.Popen(
         command,
         stdout=subprocess.PIPE,
