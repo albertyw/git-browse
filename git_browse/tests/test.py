@@ -2,7 +2,7 @@ import os
 import re
 import shutil
 import sys
-from typing import List
+from typing import List, cast
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -220,7 +220,7 @@ class ParseGitURL(unittest.TestCase):
         host = browse.parse_git_url(self.https_url)
         self.check_host(host)
 
-    def check_host(self, host: None) -> None:
+    def check_host(self, host: browse.Host) -> None:
         self.assertTrue(host.__class__ is browse.GithubHost)
         self.assertEqual(host.user, 'albertyw')
         self.assertEqual(host.repository, 'git-browse')
@@ -228,12 +228,14 @@ class ParseGitURL(unittest.TestCase):
     def test_sourcegraph_github_host(self) -> None:
         host = browse.parse_git_url(self.ssh_url, sourcegraph=True)
         self.assertTrue(host.__class__ is browse.SourcegraphHost)
+        host = cast(browse.SourcegraphHost, host)
         self.assertEqual(host.host, 'github.com')
         self.assertEqual(host.repository, 'albertyw/git-browse')
 
     def test_sourcegraph_uber_host(self) -> None:
         host = browse.parse_git_url(self.uber_ssh_url, sourcegraph=True)
         self.assertTrue(host.__class__ is browse.SourcegraphHost)
+        host = cast(browse.SourcegraphHost, host)
         self.assertEqual(host.host, 'code.uber.internal')
         self.assertEqual(host.repository, 'abcd/efgh')
 
@@ -253,6 +255,7 @@ class TestGetRepositoryHost(unittest.TestCase):
 class TestGetFocusObject(unittest.TestCase):
     def setUp(self) -> None:
         self.host = browse.GithubHost('albertyw', 'git-browse')
+        self.placeholder_match = re.match(r'', '')
 
     def test_default_focus_object(self) -> None:
         focus_object = browse.get_git_object('', os.getcwd(), self.host)
@@ -276,12 +279,14 @@ class TestGetFocusObject(unittest.TestCase):
         self.assertTrue(focus_object.__class__ is browse.FocusHash)
 
     def test_phabricator_object(self) -> None:
-        host = browse.PhabricatorHost.create(re.match(r'', ''))
+        assert self.placeholder_match is not None
+        host = browse.PhabricatorHost.create(self.placeholder_match)
         focus_object = browse.get_git_object('D123', os.getcwd(), host)
         self.assertTrue(focus_object.__class__ is browse.PhabricatorObject)
 
     def test_invalid_phabricator_object(self) -> None:
-        phabricator_host = browse.PhabricatorHost.create(re.match(r'', ''))
+        assert self.placeholder_match is not None
+        phabricator_host = browse.PhabricatorHost.create(self.placeholder_match)
         with self.assertRaises(FileNotFoundError):
             browse.get_git_object('asdf', os.getcwd(), phabricator_host)
 
@@ -300,6 +305,7 @@ class TestGetCommitHash(unittest.TestCase):
         focus_object = 'v2.0.0'
         focus_hash = browse.get_commit_hash(focus_object)
         self.assertTrue(focus_hash.__class__ is browse.FocusHash)
+        focus_hash = cast(browse.FocusHash, focus_hash)
         self.assertTrue(focus_hash.identifier)
 
 

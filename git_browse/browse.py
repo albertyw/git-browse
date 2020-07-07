@@ -28,6 +28,24 @@ UBER_HTTPS_GITOLITE_URL = 'https://%s/%s/%s' % \
 
 
 class Host(metaclass=ABCMeta):
+    @property
+    @abstractmethod
+    def user(self) -> str:
+        pass
+
+    @user.setter
+    def user(self, user: str) -> None:
+        pass
+
+    @property
+    @abstractmethod
+    def repository(self) -> str:
+        pass
+
+    @repository.setter
+    def repository(self, repository: str) -> None:
+        pass
+
     @staticmethod
     @abstractmethod
     def create(url_regex_match: Match[str]) -> 'Host':
@@ -48,6 +66,8 @@ class Host(metaclass=ABCMeta):
 
 class GithubHost(Host):
     GITHUB_URL = "https://github.com/"
+    user: str = ''
+    repository: str = ''
 
     def __init__(self, user: str, repository: str) -> None:
         self.user = user
@@ -114,6 +134,8 @@ class GithubHost(Host):
 
 class PhabricatorHost(Host):
     PHABRICATOR_OBJECT_REGEX = '^[DT][0-9]+$'
+    user: str = ''
+    repository: str = ''
 
     def __init__(self) -> None:
         pass
@@ -144,6 +166,8 @@ class PhabricatorHost(Host):
 class SourcegraphHost(Host):
     PUBLIC_SOURCEGRAPH_URL = 'https://sourcegraph.com/'
     UBER_SOURCEGRAPH_URL = 'https://sourcegraph.uberinternal.com/'
+    user: str = ''
+    repository: str = ''
 
     def __init__(self, host: str, repository: str):
         self.host_class: Optional[Type[Host]] = None
