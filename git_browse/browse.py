@@ -189,13 +189,13 @@ class SourcegraphHost(Host):
         return None
 
 
-HOST_REGEXES = {
+HOST_REGEXES: Dict[str, Any] = {
     GITHUB_SSH_URL: GithubHost,
     GITHUB_HTTPS_URL: GithubHost,
     UBER_SSH_GITOLITE_URL: PhabricatorHost,
     UBER_SSH_CONFIG_GITOLITE_URL: PhabricatorHost,
     UBER_HTTPS_GITOLITE_URL: PhabricatorHost,
-}  # type: Dict[str, Any]
+}
 
 
 class GitObject(object):
