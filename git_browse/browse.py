@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
+from abc import ABCMeta, abstractmethod
 import argparse
 import configparser
 import os
 import re
 import subprocess
 import sys
-from typing import Any, Dict, List, Match, Optional # NOQA
+from typing import Dict, List, Match, Optional, Type, Union # NOQA
 import webbrowser
 
 
@@ -26,26 +27,64 @@ UBER_HTTPS_GITOLITE_URL = 'https://%s/%s/%s' % \
     (UBER_HOST, USER_REGEX, REPOSITORY_REGEX)
 
 
-class Host():
-    pass
+class Host(metaclass=ABCMeta):
+    @property
+    @abstractmethod
+    def user(self) -> str:
+        pass
+
+    @user.setter
+    def user(self, user: str) -> None:
+        pass
+
+    @property
+    @abstractmethod
+    def repository(self) -> str:
+        pass
+
+    @repository.setter
+    def repository(self, repository: str) -> None:
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def create(url_regex_match: Match[str]) -> 'Host':
+        pass
+
+    @abstractmethod
+    def set_host_class(self, host_class: 'Type[Host]') -> None:
+        pass
+
+    @abstractmethod
+    def get_url(self, git_object: 'GitObject') -> Union[str, List[str]]:
+        pass
+
+    @abstractmethod
+    def valid_focus_object(self, arg: str) -> Optional['GitObject']:
+        pass
 
 
 class GithubHost(Host):
     GITHUB_URL = "https://github.com/"
+    user: str = ''
+    repository: str = ''
 
     def __init__(self, user: str, repository: str) -> None:
         self.user = user
         self.repository = repository
 
     @staticmethod
-    def create(url_regex_match: Match) -> 'GithubHost':
+    def create(url_regex_match: Match[str]) -> 'Host':
         repository = url_regex_match.group('repository')
         if repository[-4:] == '.git':
             repository = repository[:-4]
         user = url_regex_match.group('user')
         return GithubHost(user, repository)
 
-    def get_url(self, git_object: 'GitObject') -> str:
+    def set_host_class(self, host_class: Type[Host]) -> None:
+        return
+
+    def get_url(self, git_object: 'GitObject') -> Union[str, List[str]]:
         repository_url = "%s%s/%s" % (
             self.GITHUB_URL,
             self.user,
@@ -89,21 +128,26 @@ class GithubHost(Host):
         )
         return repository_url
 
-    def valid_focus_object(self, arg: str):
+    def valid_focus_object(self, arg: str) -> Optional['GitObject']:
         return None
 
 
 class PhabricatorHost(Host):
     PHABRICATOR_OBJECT_REGEX = '^[DT][0-9]+$'
+    user: str = ''
+    repository: str = ''
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     @staticmethod
-    def create(url_regex_match: str = None) -> 'PhabricatorHost':
+    def create(url_regex_match: Match[str]) -> 'Host':
         return PhabricatorHost()
 
-    def get_url(self, git_object: 'GitObject') -> List[str]:
+    def set_host_class(self, host_class: Type[Host]) -> None:
+        return
+
+    def get_url(self, git_object: 'GitObject') -> Union[str, List[str]]:
         path = git_object.identifier
         # arc browse requires an object, provide the root object by default
         if git_object.is_root():
@@ -122,14 +166,16 @@ class PhabricatorHost(Host):
 class SourcegraphHost(Host):
     PUBLIC_SOURCEGRAPH_URL = 'https://sourcegraph.com/'
     UBER_SOURCEGRAPH_URL = 'https://sourcegraph.uberinternal.com/'
+    user: str = ''
+    repository: str = ''
 
     def __init__(self, host: str, repository: str):
-        self.host_class = None
+        self.host_class: Optional[Type[Host]] = None
         self.host = host
         self.repository = repository
 
     @staticmethod
-    def create(url_regex_match: Match) -> 'SourcegraphHost':
+    def create(url_regex_match: Match[str]) -> 'Host':
         repository = url_regex_match.group('repository')
         if repository[-4:] == '.git':
             repository = repository[:-4]
@@ -141,7 +187,10 @@ class SourcegraphHost(Host):
             pass
         return SourcegraphHost(host, repository)
 
-    def get_url(self, git_object: 'GitObject') -> str:
+    def set_host_class(self, host_class: Type[Host]) -> None:
+        self.host_class = host_class
+
+    def get_url(self, git_object: 'GitObject') -> Union[str, List[str]]:
         sourcegraph_url = self.PUBLIC_SOURCEGRAPH_URL
         if self.host_class == PhabricatorHost:
             sourcegraph_url = self.UBER_SOURCEGRAPH_URL
@@ -185,11 +234,11 @@ class SourcegraphHost(Host):
         )
         return repository_url
 
-    def valid_focus_object(self, arg: str):
+    def valid_focus_object(self, arg: str) -> Optional['GitObject']:
         return None
 
 
-HOST_REGEXES: Dict[str, Any] = {
+HOST_REGEXES: Dict[str, Type[Host]] = {
     GITHUB_SSH_URL: GithubHost,
     GITHUB_HTTPS_URL: GithubHost,
     UBER_SSH_GITOLITE_URL: PhabricatorHost,
@@ -262,7 +311,7 @@ def get_git_url(git_config_file: str) -> str:
     return git_url
 
 
-def parse_git_url(git_url: str, sourcegraph: bool = False) -> Any:
+def parse_git_url(git_url: str, sourcegraph: bool = False) -> Host:
     for regex, host_class in HOST_REGEXES.items():
         match = re.search(regex, git_url)
         if match:
@@ -271,20 +320,20 @@ def parse_git_url(git_url: str, sourcegraph: bool = False) -> Any:
         raise ValueError("git url not parseable")
     if sourcegraph:
         host = SourcegraphHost.create(match)
-        host.host_class = host_class
+        host.set_host_class(host_class)
     else:
         host = host_class.create(match)
     return host
 
 
-def get_repository_host(sourcegraph: bool = False) -> Any:
+def get_repository_host(sourcegraph: bool = False) -> Host:
     git_config_file = get_git_config()
     git_url = get_git_url(git_config_file)
     repo_host = parse_git_url(git_url, sourcegraph)
     return repo_host
 
 
-def get_git_object(focus_object: str, path: str, host: Any) -> GitObject:
+def get_git_object(focus_object: str, path: str, host: Host) -> GitObject:
     if not focus_object:
         return FocusObject.default()
     directory = path
@@ -321,7 +370,7 @@ def get_commit_hash(identifier: str) -> Optional[FocusHash]:
     return FocusHash(commit_hash)
 
 
-def open_url(url: str, dry_run: bool = False) -> None:
+def open_url(url: Union[str, List[str]], dry_run: bool = False) -> None:
     print(url)
     if dry_run:
         return
