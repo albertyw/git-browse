@@ -2,8 +2,9 @@ import os
 import re
 import shutil
 import sys
+from typing import List
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from git_browse import browse
 
@@ -73,12 +74,14 @@ class SourcegraphHost(unittest.TestCase):
     def test_create(self) -> None:
         repo = 'gitolite@code.uber.internal:a/b'
         match = re.search(browse.UBER_SSH_GITOLITE_URL, repo)
+        assert match is not None
         obj = browse.SourcegraphHost.create(match)
         self.assertEqual(obj.repository, 'a/b')
 
     def test_create_dot_git(self) -> None:
         repo = 'gitolite@code.uber.internal:a/b.git'
         match = re.search(browse.UBER_SSH_GITOLITE_URL, repo)
+        assert match is not None
         obj = browse.SourcegraphHost.create(match)
         self.assertEqual(obj.repository, 'a/b')
 
@@ -217,7 +220,7 @@ class ParseGitURL(unittest.TestCase):
         host = browse.parse_git_url(self.https_url)
         self.check_host(host)
 
-    def check_host(self, host):
+    def check_host(self, host: None) -> None:
         self.assertTrue(host.__class__ is browse.GithubHost)
         self.assertEqual(host.user, 'albertyw')
         self.assertEqual(host.repository, 'git-browse')
@@ -273,12 +276,12 @@ class TestGetFocusObject(unittest.TestCase):
         self.assertTrue(focus_object.__class__ is browse.FocusHash)
 
     def test_phabricator_object(self) -> None:
-        host = browse.PhabricatorHost.create(r'')
+        host = browse.PhabricatorHost.create(re.match(r'', ''))
         focus_object = browse.get_git_object('D123', os.getcwd(), host)
         self.assertTrue(focus_object.__class__ is browse.PhabricatorObject)
 
     def test_invalid_phabricator_object(self) -> None:
-        phabricator_host = browse.PhabricatorHost.create(r'')
+        phabricator_host = browse.PhabricatorHost.create(re.match(r'', ''))
         with self.assertRaises(FileNotFoundError):
             browse.get_git_object('asdf', os.getcwd(), phabricator_host)
 
@@ -302,20 +305,20 @@ class TestGetCommitHash(unittest.TestCase):
 
 class TestOpenURL(unittest.TestCase):
     @patch("builtins.print", autospec=True)
-    def test_open_url(self, mock_print):
+    def test_open_url(self, mock_print: MagicMock) -> None:
         browse.open_url('asdf')
         mock_print.assert_called_with('asdf')
 
     @patch("builtins.print", autospec=True)
     @patch("subprocess.call")
-    def test_open_subprocess(self, mock_call, mock_print):
+    def test_open_subprocess(self, mock_call: MagicMock, mock_print: MagicMock) -> None:
         browse.open_url(['asdf'])
         mock_print.assert_called_with(['asdf'])
         mock_call.assert_called_with(['asdf'])
 
     @patch("builtins.print", autospec=True)
     @patch("subprocess.call")
-    def test_dry_open_url(self, mock_call, mock_print):
+    def test_dry_open_url(self, mock_call: MagicMock, mock_print: MagicMock) -> None:
         browse.open_url(['asdf'], True)
         mock_print.assert_called_with(['asdf'])
         assert not mock_call.called
@@ -336,13 +339,13 @@ class FullTest(unittest.TestCase):
         shutil.rmtree(self.test_directory)
 
     @patch("git_browse.browse.open_url")
-    def test_default(self, mock_open_url):
+    def test_default(self, mock_open_url: MagicMock) -> None:
         sys_argv = ['asdf']
         expected = 'https://github.com/albertyw/git-browse'
         self.check_main(sys_argv, expected, mock_open_url)
 
     @patch("git_browse.browse.open_url")
-    def test_file(self, mock_open_url):
+    def test_file(self, mock_open_url: MagicMock) -> None:
         sys_argv = ['asdf', 'README.rst']
         expected = (
             'https://github.com/albertyw/git-browse/'
@@ -351,7 +354,7 @@ class FullTest(unittest.TestCase):
         self.check_main(sys_argv, expected, mock_open_url)
 
     @patch("git_browse.browse.open_url")
-    def test_subdirectory_file(self, mock_open_url):
+    def test_subdirectory_file(self, mock_open_url: MagicMock) -> None:
         sys_argv = ['asdf', 'test_dir/test_file']
         expected = (
             'https://github.com/albertyw/git-browse/'
@@ -360,7 +363,7 @@ class FullTest(unittest.TestCase):
         self.check_main(sys_argv, expected, mock_open_url)
 
     @patch("git_browse.browse.open_url")
-    def test_chdir_subdirectory_file(self, mock_open_url):
+    def test_chdir_subdirectory_file(self, mock_open_url: MagicMock) -> None:
         os.chdir(self.test_directory)
         sys_argv = ['asdf', 'test_file']
         expected = (
@@ -370,13 +373,13 @@ class FullTest(unittest.TestCase):
         self.check_main(sys_argv, expected, mock_open_url)
 
     @patch("git_browse.browse.open_url")
-    def test_directory(self, mock_open_url):
+    def test_directory(self, mock_open_url: MagicMock) -> None:
         sys_argv = ['asdf', '.']
         expected = 'https://github.com/albertyw/git-browse/tree/master/./'
         self.check_main(sys_argv, expected, mock_open_url)
 
     @patch("git_browse.browse.open_url")
-    def test_subdirectory(self, mock_open_url):
+    def test_subdirectory(self, mock_open_url: MagicMock) -> None:
         sys_argv = ['asdf', 'test_dir']
         expected = (
             'https://github.com/albertyw/git-browse/'
@@ -385,7 +388,7 @@ class FullTest(unittest.TestCase):
         self.check_main(sys_argv, expected, mock_open_url)
 
     @patch("git_browse.browse.open_url")
-    def test_chdir_subdirectory(self, mock_open_url):
+    def test_chdir_subdirectory(self, mock_open_url: MagicMock) -> None:
         os.chdir(self.test_directory)
         sys_argv = ['asdf', '.']
         expected = (
@@ -394,13 +397,13 @@ class FullTest(unittest.TestCase):
         )
         self.check_main(sys_argv, expected, mock_open_url)
 
-    def check_main(self, sys_argv, expected, mock_open_url):
+    def check_main(self, sys_argv: List[str], expected: str, mock_open_url: MagicMock) -> None:
         sys.argv = sys_argv
         browse.main()
         mock_open_url.assert_called_with(expected, False)
 
     @patch('sys.stdout.write')
-    def test_check_version(self, mock_print):
+    def test_check_version(self, mock_print: MagicMock) -> None:
         with self.assertRaises(SystemExit):
             sys.argv = ['asdf', '-v']
             browse.main()
