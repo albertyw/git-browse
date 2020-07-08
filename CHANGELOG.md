@@ -1,6 +1,15 @@
 Changelog
 =========
 
+v2.7.3 (2020-07-08)
+-------------------
+
+ - Add full type annotations
+ - Many refactors
+ - Dependency updates
+ - Readme updates
+
+
 v2.7.2 (2020-02-23)
 -------------------
 
