@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from git_browse import browse
+from git_browse.tests import test_util
 
 
 directory = os.path.dirname(os.path.realpath(__file__))
@@ -49,9 +50,9 @@ GIT_URLS: List[Tuple[str, str, Union[str, List[str]], bool]] = [
     ),
     (
         'git@github.com:albertyw/git-browse',
-        'v2.0.0',
+        test_util.get_tag(),
         'https://github.com/albertyw/git-browse/commit/' +
-        'f5631b4c423f2fa5c9c4b64853607f1727d4b7a9',
+        test_util.get_tag_commit_hash(),
         False
     ),
     (
@@ -80,8 +81,8 @@ GIT_URLS: List[Tuple[str, str, Union[str, List[str]], bool]] = [
     ),
     (
         'gitolite@code.uber.internal:a/b',
-        'v2.0.0',
-        ['arc', 'browse', 'f5631b4c423f2fa5c9c4b64853607f1727d4b7a9'],
+        test_util.get_tag(),
+        ['arc', 'browse', test_util.get_tag_commit_hash()],
         True
     ),
     (

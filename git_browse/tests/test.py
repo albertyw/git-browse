@@ -7,6 +7,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from git_browse import browse
+from git_browse.tests import test_util
 
 directory = os.path.dirname(os.path.realpath(__file__))
 BASE_DIRECTORY = os.path.normpath(os.path.join(directory, '..', '..'))
@@ -17,7 +18,7 @@ class TestGithubHost(unittest.TestCase):
         self.github_host = browse.GithubHost('albertyw', 'git-browse')
         self.repository_url = 'https://github.com/albertyw/git-browse'
         self.focus_object = browse.FocusObject('/')
-        self.focus_hash = browse.FocusHash('v2.0.0')
+        self.focus_hash = browse.FocusHash(test_util.get_tag())
 
     def test_init(self) -> None:
         host = browse.GithubHost('user', 'repository')
@@ -58,7 +59,8 @@ class TestGithubHost(unittest.TestCase):
         )
         self.assertEqual(
             url,
-            'https://github.com/albertyw/git-browse/commit/v2.0.0'
+            'https://github.com/albertyw/git-browse/commit/%s'
+            % test_util.get_tag()
         )
 
 
@@ -275,7 +277,9 @@ class TestGetFocusObject(unittest.TestCase):
         self.assertTrue(focus_object.is_directory())
 
     def test_get_focus_hash(self) -> None:
-        focus_object = browse.get_git_object('v2.0.0', os.getcwd(), self.host)
+        focus_object = browse.get_git_object(
+            test_util.get_tag(), os.getcwd(), self.host
+        )
         self.assertTrue(focus_object.__class__ is browse.FocusHash)
 
     def test_phabricator_object(self) -> None:
@@ -304,8 +308,7 @@ class TestGetCommitHash(unittest.TestCase):
         self.assertEqual(focus_hash, None)
 
     def test_get_hash(self) -> None:
-        focus_object = 'v2.0.0'
-        focus_hash = browse.get_commit_hash(focus_object)
+        focus_hash = browse.get_commit_hash(test_util.get_tag())
         self.assertTrue(focus_hash.__class__ is browse.FocusHash)
         focus_hash = cast(browse.FocusHash, focus_hash)
         self.assertTrue(focus_hash.identifier)
