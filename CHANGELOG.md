@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v2.8.0 (2020-07-26)
+-------------------
+
+ - Add support for opening repositories and directories in godocs
+ - Add tests
+
+
 v2.7.3 (2020-07-08)
 -------------------
 
