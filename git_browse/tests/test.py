@@ -155,7 +155,7 @@ class TestGodocsHost(unittest.TestCase):
     def test_get_url_commit(self) -> None:
         git_object = browse.FocusHash('abcd')
         with self.assertRaises(NotImplementedError):
-            url = self.obj.get_url(git_object)
+            self.obj.get_url(git_object)
 
     def test_get_url_root(self) -> None:
         git_object = browse.FocusObject(os.sep)
@@ -177,7 +177,7 @@ class TestGodocsHost(unittest.TestCase):
     def test_get_url_file(self) -> None:
         git_object = browse.FocusObject('zxcv')
         with self.assertRaises(NotImplementedError):
-            url = self.obj.get_url(git_object)
+            self.obj.get_url(git_object)
 
     def test_valid_focus_object(self) -> None:
         valid = self.obj.valid_focus_object('asdf')
