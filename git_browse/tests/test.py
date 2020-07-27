@@ -127,6 +127,63 @@ class SourcegraphHost(unittest.TestCase):
         self.assertEqual(valid, None)
 
 
+class TestGodocsHost(unittest.TestCase):
+    def setUp(self) -> None:
+        self.obj = browse.GodocsHost('github.com', 'asdf/qwer')
+        self.obj.host_class = browse.GithubHost
+
+    def test_init(self) -> None:
+        self.assertEqual(self.obj.host, 'github.com')
+        self.assertEqual(self.obj.repository, 'asdf/qwer')
+
+    def test_create(self) -> None:
+        repo = 'git@github.com:asdf/qwer'
+        match = re.search(browse.GITHUB_SSH_URL, repo)
+        assert match is not None
+        obj = browse.GithubHost.create(match)
+        self.assertEqual(obj.user, 'asdf')
+        self.assertEqual(obj.repository, 'qwer')
+
+    def test_create_dot_git(self) -> None:
+        repo = 'git@github.com:asdf/qwer.git'
+        match = re.search(browse.GITHUB_SSH_URL, repo)
+        assert match is not None
+        obj = browse.GithubHost.create(match)
+        self.assertEqual(obj.user, 'asdf')
+        self.assertEqual(obj.repository, 'qwer')
+
+    def test_get_url_commit(self) -> None:
+        git_object = browse.FocusHash('abcd')
+        with self.assertRaises(NotImplementedError):
+            self.obj.get_url(git_object)
+
+    def test_get_url_root(self) -> None:
+        git_object = browse.FocusObject(os.sep)
+        url = self.obj.get_url(git_object)
+        self.assertEqual(
+            url,
+            self.obj.PUBLIC_GODOCS_URL + 'github.com/asdf/qwer'
+        )
+
+    def test_get_url_directory(self) -> None:
+        git_object = browse.FocusObject('zxcv' + os.sep)
+        url = self.obj.get_url(git_object)
+        self.assertEqual(
+            url,
+            self.obj.PUBLIC_GODOCS_URL +
+            'github.com/asdf/qwer/zxcv/'
+        )
+
+    def test_get_url_file(self) -> None:
+        git_object = browse.FocusObject('zxcv')
+        with self.assertRaises(NotImplementedError):
+            self.obj.get_url(git_object)
+
+    def test_valid_focus_object(self) -> None:
+        valid = self.obj.valid_focus_object('asdf')
+        self.assertEqual(valid, None)
+
+
 class GitObject(unittest.TestCase):
     def test_is_directory(self) -> None:
         obj = browse.GitObject('/asdf')

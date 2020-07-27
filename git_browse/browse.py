@@ -238,6 +238,73 @@ class SourcegraphHost(Host):
         return None
 
 
+class GodocsHost(Host):
+    PUBLIC_GODOCS_URL = 'https://pkg.go.dev/'
+    UBER_GODOCS_URL = 'https://eng.uberinternal.com/docs/api/go/pkg/'
+    user: str = ''
+    repository: str = ''
+
+    def __init__(self, host: str, repository: str):
+        self.host_class: Optional[Type[Host]] = None
+        self.host = host
+        self.repository = repository
+
+    @staticmethod
+    def create(url_regex_match: Match[str]) -> 'Host':
+        repository = url_regex_match.group('repository')
+        if repository[-4:] == '.git':
+            repository = repository[:-4]
+        host = url_regex_match.group('host')
+        try:
+            user = url_regex_match.group('user')
+            repository = '%s/%s' % (user, repository)
+        except IndexError:
+            pass
+        return GodocsHost(host, repository)
+
+    def set_host_class(self, host_class: Type[Host]) -> None:
+        self.host_class = host_class
+
+    def get_url(self, git_object: 'GitObject') -> Union[str, List[str]]:
+        godocs_url = self.PUBLIC_GODOCS_URL
+        if self.host_class == PhabricatorHost:
+            godocs_url = self.UBER_GODOCS_URL
+        repository_url = "%s%s/%s" % (
+            godocs_url,
+            self.host,
+            self.repository
+        )
+        if git_object.is_commit_hash():
+            return self.commit_hash_url(repository_url, git_object)
+        if git_object.is_root():
+            return repository_url
+        if git_object.is_directory():
+            return self.directory_url(repository_url, git_object)
+        return self.file_url(repository_url, git_object)
+
+    def commit_hash_url(
+            self,
+            repository_url: str,
+            focus_hash: 'GitObject') -> str:
+        raise NotImplementedError("Cannot look up commits in godocs")
+
+    def directory_url(
+            self,
+            repository_url: str,
+            focus_object: 'GitObject') -> str:
+        repository_url = "%s/%s" % (
+            repository_url,
+            focus_object.identifier
+        )
+        return repository_url
+
+    def file_url(self, repository_url: str, focus_object: 'GitObject') -> str:
+        raise NotImplementedError("Cannot look up individual files in godocs")
+
+    def valid_focus_object(self, arg: str) -> Optional['GitObject']:
+        return None
+
+
 HOST_REGEXES: Dict[str, Type[Host]] = {
     GITHUB_SSH_URL: GithubHost,
     GITHUB_HTTPS_URL: GithubHost,
@@ -311,7 +378,11 @@ def get_git_url(git_config_file: str) -> str:
     return git_url
 
 
-def parse_git_url(git_url: str, sourcegraph: bool = False) -> Host:
+def parse_git_url(
+    git_url: str,
+    sourcegraph: bool = False,
+    godocs: bool = False,
+) -> Host:
     for regex, host_class in HOST_REGEXES.items():
         match = re.search(regex, git_url)
         if match:
@@ -321,15 +392,21 @@ def parse_git_url(git_url: str, sourcegraph: bool = False) -> Host:
     if sourcegraph:
         host = SourcegraphHost.create(match)
         host.set_host_class(host_class)
+    elif godocs:
+        host = GodocsHost.create(match)
+        host.set_host_class(host_class)
     else:
         host = host_class.create(match)
     return host
 
 
-def get_repository_host(sourcegraph: bool = False) -> Host:
+def get_repository_host(
+    sourcegraph: bool = False,
+    godocs: bool = False,
+) -> Host:
     git_config_file = get_git_config()
     git_url = get_git_url(git_config_file)
-    repo_host = parse_git_url(git_url, sourcegraph)
+    repo_host = parse_git_url(git_url, sourcegraph, godocs)
     return repo_host
 
 
@@ -408,11 +485,20 @@ def main() -> None:
         help='Open objects in sourcegraph'
     )
     parser.add_argument(
+        '-g',
+        '--godocs',
+        action='store_true',
+        help='Open objects in godocs'
+    )
+    parser.add_argument(
         '-v', '--version', action='version', version=__version__,
     )
     args = parser.parse_args()
+    if args.sourcegraph and args.godocs:
+        print('Sourcegraph and Godocs flags are mutually exclusive')
+        return
 
-    host = get_repository_host(args.sourcegraph)
+    host = get_repository_host(args.sourcegraph, args.godocs)
     path = os.path.join(os.getcwd(), args.path)
     git_object = get_git_object(args.target, path, host)
     url = host.get_url(git_object)
