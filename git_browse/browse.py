@@ -326,7 +326,10 @@ def parse_git_url(git_url: str, sourcegraph: bool = False) -> Host:
     return host
 
 
-def get_repository_host(sourcegraph: bool = False) -> Host:
+def get_repository_host(
+    sourcegraph: bool = False,
+    godocs: bool = False,
+) -> Host:
     git_config_file = get_git_config()
     git_url = get_git_url(git_config_file)
     repo_host = parse_git_url(git_url, sourcegraph)
@@ -408,11 +411,20 @@ def main() -> None:
         help='Open objects in sourcegraph'
     )
     parser.add_argument(
+        '-g',
+        '--godocs',
+        action='store_true',
+        help='Open objects in godocs'
+    )
+    parser.add_argument(
         '-v', '--version', action='version', version=__version__,
     )
     args = parser.parse_args()
+    if args.sourcegraph and args.godocs:
+        print('Sourcegraph and Godocs flags are mutually exclusive')
+        return
 
-    host = get_repository_host(args.sourcegraph)
+    host = get_repository_host(args.sourcegraph, args.godocs)
     path = os.path.join(os.getcwd(), args.path)
     git_object = get_git_object(args.target, path, host)
     url = host.get_url(git_object)
