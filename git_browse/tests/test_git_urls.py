@@ -38,8 +38,8 @@ GIT_URLS: List[Tuple[str, str, Union[str, List[str]], bool]] = [
     ),
     (
         'git@github.com:albertyw/git-browse',
-        'README.rst',
-        'https://github.com/albertyw/git-browse/blob/master/README.rst',
+        'README.md',
+        'https://github.com/albertyw/git-browse/blob/master/README.md',
         False
     ),
     (
@@ -69,8 +69,8 @@ GIT_URLS: List[Tuple[str, str, Union[str, List[str]], bool]] = [
     ),
     (
         'gitolite@code.uber.internal:a/b',
-        'README.rst',
-        ['arc', 'browse', 'README.rst'],
+        'README.md',
+        ['arc', 'browse', 'README.md'],
         True
     ),
     (
@@ -93,14 +93,14 @@ GIT_URLS: List[Tuple[str, str, Union[str, List[str]], bool]] = [
     ),
     (
         'gitolite@code.uber.internal:a',
-        'README.rst',
-        ['arc', 'browse', 'README.rst'],
+        'README.md',
+        ['arc', 'browse', 'README.md'],
         True
     ),
     (
         'https://code.uber.internal/x/y',
-        'README.rst',
-        ['arc', 'browse', 'README.rst'],
+        'README.md',
+        ['arc', 'browse', 'README.md'],
         True
     ),
 ]

@@ -45,11 +45,11 @@ class TestGithubHost(unittest.TestCase):
         )
 
     def test_file_url(self) -> None:
-        self.focus_object.identifier = 'README.rst'
+        self.focus_object.identifier = 'README.md'
         url = self.github_host.file_url(self.repository_url, self.focus_object)
         self.assertEqual(
             url,
-            'https://github.com/albertyw/git-browse/blob/master/README.rst'
+            'https://github.com/albertyw/git-browse/blob/master/README.md'
         )
 
     def test_commit_hash_url(self) -> None:
@@ -322,11 +322,11 @@ class TestGetFocusObject(unittest.TestCase):
         self.assertTrue(focus_object.is_directory())
 
     def test_file_focus_object(self) -> None:
-        target = 'README.rst'
+        target = 'README.md'
         focus_object = browse.get_git_object(target, os.getcwd(), self.host)
         self.assertFalse(focus_object.is_root())
         self.assertFalse(focus_object.is_directory())
-        self.assertEqual(focus_object.identifier[-10:], 'README.rst')
+        self.assertEqual(focus_object.identifier[-10:], 'README.md')
 
     def test_directory_focus_object(self) -> None:
         focus_object = browse.get_git_object('.', os.getcwd(), self.host)
@@ -418,10 +418,10 @@ class FullTest(unittest.TestCase):
 
     @patch("git_browse.browse.open_url")
     def test_file(self, mock_open_url: MagicMock) -> None:
-        sys_argv = ['asdf', 'README.rst']
+        sys_argv = ['asdf', 'README.md']
         expected = (
             'https://github.com/albertyw/git-browse/'
-            'blob/master/README.rst'
+            'blob/master/README.md'
         )
         self.check_main(sys_argv, expected, mock_open_url)
 
