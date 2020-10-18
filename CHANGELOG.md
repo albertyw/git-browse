@@ -1,6 +1,14 @@
 Changelog
 =========
 
+v2.8.1 (2020-10-18)
+-------------------
+
+ - Dependency updates
+ - Switch readme to markdown
+ - Explicitly specify python typing in package classifier
+
+
 v2.8.0 (2020-07-26)
 -------------------
 
