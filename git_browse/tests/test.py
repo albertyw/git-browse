@@ -2,6 +2,7 @@ import os
 import re
 import shutil
 import sys
+import tempfile
 from typing import List, cast
 import unittest
 from unittest.mock import MagicMock, patch
@@ -248,20 +249,43 @@ class GetGitConfig(unittest.TestCase):
 
 class GetGitURL(unittest.TestCase):
     def setUp(self) -> None:
-        self.git_config_file = os.path.join(
+        git_config_file = os.path.join(
             BASE_DIRECTORY,
             '.git',
             'config'
         )
+        with open(git_config_file, 'rb') as handle:
+            configs = handle.read()
+        self.git_config_file = tempfile.NamedTemporaryFile()
+        self.git_config_file.write(configs)
+        self.git_config_file.seek(0)
+
+    def tearDown(self) -> None:
+        self.git_config_file.close()
 
     def test_url(self) -> None:
-        git_url = browse.get_git_url(self.git_config_file)
+        git_url = browse.get_git_url(self.git_config_file.name)
         expected = 'git@github.com:albertyw/git-browse'
         self.assertEqual(git_url.replace('.git', ''), expected)
 
     def test_bad_url(self) -> None:
         with self.assertRaises(RuntimeError):
             browse.get_git_url(BASE_DIRECTORY)
+
+    def test_multiple_fetch(self) -> None:
+        # For https://github.com/albertyw/git-browse/issues/48
+        config_contents = (
+            '[remote "origin"]\n'
+            '    fetch = refs/heads/my_name/*:refs/remotes/origin/my_name/*\n'
+            '    fetch = refs/heads/master:refs/remotes/origin/master\n'
+            '    url = git@github.com:albertyw/git-browse\n'
+        )
+        config_file = tempfile.NamedTemporaryFile()
+        config_file.write(config_contents.encode('utf-8'))
+        config_file.seek(0)
+        git_url = browse.get_git_url(config_file.name)
+        expected = 'git@github.com:albertyw/git-browse'
+        self.assertEqual(git_url.replace('.git', ''), expected)
 
 
 class ParseGitURL(unittest.TestCase):

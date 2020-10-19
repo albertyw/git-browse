@@ -369,7 +369,8 @@ def get_git_config() -> str:
 
 
 def get_git_url(git_config_file: str) -> str:
-    config = configparser.ConfigParser()
+    # strict is removed here because gitconfig allows for multiple "fetch" keys
+    config = configparser.ConfigParser(strict=False)
     config.read(git_config_file)
     try:
         git_url = config['remote "origin"']['url']
