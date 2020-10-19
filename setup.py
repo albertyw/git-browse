@@ -19,6 +19,7 @@ setup(
 
     description='Open repositories, directories, and files in the browser',
     long_description=long_description,
+    long_description_content_type='text/markdown',
 
     url='https://github.com/albertyw/git-browse',
 
