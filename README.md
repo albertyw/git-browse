@@ -49,21 +49,19 @@ Usage
 ```
 $ git browse -h
 'browse' is aliased to '!~/.dotfiles/scripts/git/git-browse/git_browse/browse.py --path=${GIT_PREFIX:-./}'
-usage: browse.py [-h] [--path PATH] [-d] [-s] [-v] [target]
+usage: browse.py [-h] [--path PATH] [-d] [-s] [-g] [-v] [target]
 
-Open repositories, directories, and files in the browser.
-https://github.com/albertyw/git-browse
+Open repositories, directories, and files in the browser. https://github.com/albertyw/git-browse
 
 positional arguments:
-  target             file, directory, git hash, or git branch you wish to
-                     browse
+  target             file, directory, git hash, or git branch you wish to browse
 
 optional arguments:
   -h, --help         show this help message and exit
   --path PATH        relative path to the current git repository
-  -d, --dry-run      Do not open the url in the brower, and only print to
-                     stdout
+  -d, --dry-run      Do not open the url in the brower, and only print to stdout
   -s, --sourcegraph  Open objects in sourcegraph
+  -g, --godocs       Open objects in godocs
   -v, --version      show program's version number and exit
 ```
 
