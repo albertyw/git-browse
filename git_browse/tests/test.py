@@ -2,6 +2,7 @@ import os
 import re
 import shutil
 import sys
+import tempfile
 from typing import List, cast
 import unittest
 from unittest.mock import MagicMock, patch
@@ -248,14 +249,22 @@ class GetGitConfig(unittest.TestCase):
 
 class GetGitURL(unittest.TestCase):
     def setUp(self) -> None:
-        self.git_config_file = os.path.join(
+        git_config_file = os.path.join(
             BASE_DIRECTORY,
             '.git',
             'config'
         )
+        with open(git_config_file, 'rb') as handle:
+            configs = handle.read()
+        self.git_config_file = tempfile.NamedTemporaryFile()
+        self.git_config_file.write(configs)
+        self.git_config_file.seek(0)
+
+    def tearDown(self) -> None:
+        self.git_config_file.close()
 
     def test_url(self) -> None:
-        git_url = browse.get_git_url(self.git_config_file)
+        git_url = browse.get_git_url(self.git_config_file.name)
         expected = 'git@github.com:albertyw/git-browse'
         self.assertEqual(git_url.replace('.git', ''), expected)
 
