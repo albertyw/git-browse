@@ -272,6 +272,21 @@ class GetGitURL(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             browse.get_git_url(BASE_DIRECTORY)
 
+    def test_multiple_fetch(self) -> None:
+        # For https://github.com/albertyw/git-browse/issues/48
+        config_contents = (
+            '[remote "origin"]\n'
+            '    fetch = refs/heads/my_name/*:refs/remotes/origin/my_name/*\n'
+            '    fetch = refs/heads/master:refs/remotes/origin/master\n'
+            '    url = git@github.com:albertyw/git-browse\n'
+        )
+        config_file = tempfile.NamedTemporaryFile()
+        config_file.write(config_contents.encode('utf-8'))
+        config_file.seek(0)
+        git_url = browse.get_git_url(config_file.name)
+        expected = 'git@github.com:albertyw/git-browse'
+        self.assertEqual(git_url.replace('.git', ''), expected)
+
 
 class ParseGitURL(unittest.TestCase):
     def setUp(self) -> None:
