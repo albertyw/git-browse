@@ -1,6 +1,12 @@
 Changelog
 =========
 
+v2.8.3 (2020-10-20)
+-------------------
+
+ - Fix being able to run on a git repository with multiple fetch configs
+
+
 v2.8.2 (2020-10-18)
 -------------------
 

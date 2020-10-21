@@ -11,7 +11,7 @@ from typing import Dict, List, Match, Optional, Type, Union # NOQA
 import webbrowser
 
 
-__version__ = '2.8.2'
+__version__ = '2.8.3'
 GITHUB_HOST = '(?P<host>github\\.com)'
 UBER_HOST = '(?P<host>code\\.uber\\.internal)'
 UBER_CONFIG_HOST = '(?P<host>config\\.uber\\.internal)'
