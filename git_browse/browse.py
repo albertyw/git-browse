@@ -6,7 +6,7 @@ import configparser
 import os
 import re
 import subprocess
-from typing import Dict, List, Match, Optional, Type, Union, cast # NOQA
+from typing import Dict, List, Match, Optional, Type, Union, cast
 import webbrowser
 
 
