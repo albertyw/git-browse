@@ -26,6 +26,17 @@ UBER_HTTPS_GITOLITE_URL = 'https://%s/%s/%s' % \
     (UBER_HOST, USER_REGEX, REPOSITORY_REGEX)
 
 
+def copy_text_to_clipboard(text: str) -> None:
+    try:
+        p = subprocess.Popen(
+            ['pbcopy', 'w'],
+            stdin=subprocess.PIPE, close_fds=True
+        )
+        p.communicate(input=text.encode('utf-8'))
+    except FileNotFoundError:
+        pass
+
+
 class Host(metaclass=ABCMeta):
     @property
     @abstractmethod
@@ -447,7 +458,11 @@ def get_commit_hash(identifier: str) -> Optional[FocusHash]:
     return FocusHash(commit_hash)
 
 
-def open_url(url: Union[str, List[str]], dry_run: bool = False) -> None:
+def open_url(
+        url: Union[str, List[str]],
+        dry_run: bool = False,
+        copy_clipboard: bool = False,
+        ) -> None:
     print(url)
     if dry_run:
         return
@@ -455,6 +470,8 @@ def open_url(url: Union[str, List[str]], dry_run: bool = False) -> None:
         subprocess.call(url)
         return
     url = cast(str, url)
+    if copy_clipboard:
+        copy_text_to_clipboard(url)
     webbrowser.open(url)
 
 
@@ -477,6 +494,12 @@ def main() -> None:
         '--dry-run',
         action='store_true',
         help='Do not open the url in the brower, and only print to stdout'
+    )
+    parser.add_argument(
+        '-c',
+        '--copy',
+        action='store_true',
+        help='Copy url to clipboard, if available',
     )
     parser.add_argument(
         '-s',
@@ -502,7 +525,7 @@ def main() -> None:
     path = os.path.join(os.getcwd(), args.path)
     git_object = get_git_object(args.target, path, host)
     url = host.get_url(git_object)
-    open_url(url, args.dry_run)
+    open_url(url, args.dry_run, args.copy)
 
 
 if __name__ == "__main__":

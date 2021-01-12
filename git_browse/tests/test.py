@@ -498,7 +498,7 @@ class FullTest(unittest.TestCase):
     ) -> None:
         sys.argv = sys_argv
         browse.main()
-        mock_open_url.assert_called_with(expected, False)
+        mock_open_url.assert_called_with(expected, False, False)
 
     @patch('sys.stdout.write')
     def test_check_version(self, mock_print: MagicMock) -> None:
