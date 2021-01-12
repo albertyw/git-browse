@@ -6,7 +6,7 @@ import configparser
 import os
 import re
 import subprocess
-from typing import Dict, List, Match, Optional, Type, Union # NOQA
+from typing import Dict, List, Match, Optional, Type, Union, cast # NOQA
 import webbrowser
 
 
@@ -454,6 +454,7 @@ def open_url(url: Union[str, List[str]], dry_run: bool = False) -> None:
     if url.__class__ is list:
         subprocess.call(url)
         return
+    url = cast(str, url)
     webbrowser.open(url)
 
 
