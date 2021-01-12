@@ -1,6 +1,14 @@
 Changelog
 =========
 
+v2.9.0 (2021-01-12)
+-------------------
+
+ - Add a `--copy` option to copy urls to clipboard
+ - Allow opening urls in browser on any support platform
+ - Various cleanup
+
+
 v2.8.3 (2020-10-20)
 -------------------
 
