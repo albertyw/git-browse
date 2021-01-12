@@ -6,7 +6,6 @@ import configparser
 import os
 import re
 import subprocess
-import sys
 from typing import Dict, List, Match, Optional, Type, Union # NOQA
 import webbrowser
 
@@ -455,8 +454,7 @@ def open_url(url: Union[str, List[str]], dry_run: bool = False) -> None:
     if url.__class__ is list:
         subprocess.call(url)
         return
-    if sys.platform == 'darwin':
-        webbrowser.open(url)
+    webbrowser.open(url)
 
 
 def main() -> None:

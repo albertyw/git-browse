@@ -9,6 +9,5 @@ exclude_lines =
   pragma: no cover
   production
   if __name__ == "__main__":
-  if sys.platform == 'darwin':
   if url.__class__ is list:
   except ImportError:
