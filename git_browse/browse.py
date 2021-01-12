@@ -464,15 +464,14 @@ def open_url(
         copy_clipboard: bool = False,
         ) -> None:
     print(url)
-    if dry_run:
-        return
-    if url.__class__ is list:
+    if url.__class__ is list and not dry_run:
         subprocess.call(url)
         return
     url = cast(str, url)
     if copy_clipboard:
         copy_text_to_clipboard(url)
-    webbrowser.open(url)
+    if not dry_run:
+        webbrowser.open(url)
 
 
 def main() -> None:
