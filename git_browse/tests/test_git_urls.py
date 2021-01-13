@@ -11,7 +11,7 @@ directory = os.path.dirname(os.path.realpath(__file__))
 REPO_PATH = os.path.normpath(os.path.join(directory, '..', '..'))
 TEST_DIR = 'testdir'
 TEST_DIR_PATH = os.path.join(REPO_PATH, 'testdir')
-GIT_URLS: List[Tuple[str, str, Union[str, List[str]], bool]] = [
+GIT_URLS: List[Tuple[str, str, Union[str, List[str]]]] = [
     (
         'git@github.com:albertyw/git-browse',
         '',
