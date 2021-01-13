@@ -117,8 +117,8 @@ GIT_URLS: List[TestConfig] = [
 class TestGitURLs(unittest.TestCase):
     def setUp(self) -> None:
         os.mkdir(TEST_DIR_PATH)
-        self.mock_popen_patcher = patch('subprocess.Popen')
-        self.addCleanup(self.mock_popen_patcher.stop)
+        self.mock_run_patcher = patch('subprocess.run')
+        self.addCleanup(self.mock_run_patcher.stop)
 
     def tearDown(self) -> None:
         os.rmdir(TEST_DIR_PATH)
@@ -136,14 +136,13 @@ def generate_test(test_config: TestConfig) -> Callable[[], None]:
         focus_object = browse.get_git_object(
             test_config.target_path, REPO_PATH, host
         )
-        self.mock_popen_patcher.start()
-        mock_popen = cast(MagicMock, subprocess.Popen)
+        self.mock_run_patcher.start()
+        mock_run = cast(MagicMock, subprocess.run)
 
         if test_config.subprocess_command:
             self.assertEqual(test_config.host_url, None)
             return_data = 'asdf\nurl'
-            mock_popen().returncode = 0
-            mock_popen().communicate.return_value = (return_data, '')
+            mock_run().stdout = return_data
             host_url = 'url'
         else:
             self.assertEqual(test_config.subprocess_command, None)
@@ -155,7 +154,7 @@ def generate_test(test_config: TestConfig) -> Callable[[], None]:
 
         if test_config.subprocess_command:
             found = False
-            for call in mock_popen.call_args_list:
+            for call in mock_run.call_args_list:
                 if call.args and call.args[0] == \
                         test_config.subprocess_command:
                     found = True
