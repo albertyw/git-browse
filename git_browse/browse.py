@@ -27,12 +27,9 @@ UBER_HTTPS_GITOLITE_URL = 'https://%s/%s/%s' % \
 
 
 def copy_text_to_clipboard(text: str) -> None:
+    stdin = text.encode('utf-8')
     try:
-        p = subprocess.Popen(
-            ['pbcopy', 'w'],
-            stdin=subprocess.PIPE, close_fds=True
-        )
-        p.communicate(input=text.encode('utf-8'))
+        subprocess.run(['pbcopy', 'w'], input=stdin, close_fds=True)
     except FileNotFoundError:
         pass
 
@@ -173,21 +170,11 @@ class PhabricatorHost(Host):
 
     def set_arc_browse_echo(self) -> None:
         command = ['arc', 'set-config', '--local', 'browser', 'echo']
-        process = subprocess.Popen(
-            command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-        process.communicate()
+        subprocess.run(command, capture_output=True, check=True)
 
     def unset_arc_browse_echo(self) -> None:
         command = ['arc', 'set-config', '--local', 'browser', '""']
-        process = subprocess.Popen(
-            command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-        process.communicate()
+        subprocess.run(command, capture_output=True, check=True)
 
     def arc_browse_read(self, git_object: 'GitObject') -> str:
         path = git_object.identifier
@@ -197,16 +184,13 @@ class PhabricatorHost(Host):
         command = ['arc', 'browse']
         if path:
             command.append(path)
-        process = subprocess.Popen(
+        process = subprocess.run(
             command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            universal_newlines=True
+            capture_output=True,
+            check=True,
+            universal_newlines=True,
         )
-        out, err = process.communicate()
-        if process.returncode != 0:
-            return ''
-        url = out.strip().split("\n")[-1]
+        url = process.stdout.strip().split("\n")[-1]
         return url
 
     def valid_focus_object(self, arg: str) -> Optional['PhabricatorObject']:
@@ -487,16 +471,14 @@ def get_git_object(focus_object: str, path: str, host: Host) -> GitObject:
 
 def get_commit_hash(identifier: str) -> Optional[FocusHash]:
     command = ['git', 'show', identifier, '--no-abbrev-commit']
-    process = subprocess.Popen(
+    process = subprocess.run(
         command,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        universal_newlines=True
+        capture_output=True,
+        universal_newlines=True,
     )
-    out, err = process.communicate()
     if process.returncode != 0:
         return None
-    commit_hash = out.split("\n")[0].split(" ")[1]
+    commit_hash = process.stdout.split("\n")[0].split(" ")[1]
     return FocusHash(commit_hash)
 
 
