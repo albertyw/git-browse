@@ -401,24 +401,6 @@ class TestOpenURL(unittest.TestCase):
         browse.open_url('asdf')
         mock_print.assert_called_with('asdf')
 
-    @patch("builtins.print", autospec=True)
-    @patch("subprocess.call")
-    def test_open_subprocess(
-        self, mock_call: MagicMock, mock_print: MagicMock
-    ) -> None:
-        browse.open_url(['asdf'])
-        mock_print.assert_called_with(['asdf'])
-        mock_call.assert_called_with(['asdf'])
-
-    @patch("builtins.print", autospec=True)
-    @patch("subprocess.call")
-    def test_dry_open_url(
-        self, mock_call: MagicMock, mock_print: MagicMock
-    ) -> None:
-        browse.open_url(['asdf'], True)
-        mock_print.assert_called_with(['asdf'])
-        assert not mock_call.called
-
 
 class FullTest(unittest.TestCase):
     def setUp(self) -> None:

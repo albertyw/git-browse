@@ -6,7 +6,7 @@ import configparser
 import os
 import re
 import subprocess
-from typing import Dict, List, Match, Optional, Type, Union, cast
+from typing import Dict, Match, Optional, Type
 import webbrowser
 
 
@@ -66,7 +66,7 @@ class Host(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def get_url(self, git_object: 'GitObject') -> Union[str, List[str]]:
+    def get_url(self, git_object: 'GitObject') -> str:
         pass
 
     @abstractmethod
@@ -94,7 +94,7 @@ class GithubHost(Host):
     def set_host_class(self, host_class: Type[Host]) -> None:
         return
 
-    def get_url(self, git_object: 'GitObject') -> Union[str, List[str]]:
+    def get_url(self, git_object: 'GitObject') -> str:
         repository_url = "%s%s/%s" % (
             self.GITHUB_URL,
             self.user,
@@ -157,7 +157,7 @@ class PhabricatorHost(Host):
     def set_host_class(self, host_class: Type[Host]) -> None:
         return
 
-    def get_url(self, git_object: 'GitObject') -> Union[str, List[str]]:
+    def get_url(self, git_object: 'GitObject') -> str:
         """
         arc browse will try to open a browser for you.  Instead, configure arc
         browse to send the url to "echo" so that git-browse can open the
@@ -242,7 +242,7 @@ class SourcegraphHost(Host):
     def set_host_class(self, host_class: Type[Host]) -> None:
         self.host_class = host_class
 
-    def get_url(self, git_object: 'GitObject') -> Union[str, List[str]]:
+    def get_url(self, git_object: 'GitObject') -> str:
         sourcegraph_url = self.PUBLIC_SOURCEGRAPH_URL
         if self.host_class == PhabricatorHost:
             sourcegraph_url = self.UBER_SOURCEGRAPH_URL
@@ -317,7 +317,7 @@ class GodocsHost(Host):
     def set_host_class(self, host_class: Type[Host]) -> None:
         self.host_class = host_class
 
-    def get_url(self, git_object: 'GitObject') -> Union[str, List[str]]:
+    def get_url(self, git_object: 'GitObject') -> str:
         godocs_url = self.PUBLIC_GODOCS_URL
         if self.host_class == PhabricatorHost:
             godocs_url = self.UBER_GODOCS_URL
@@ -501,15 +501,11 @@ def get_commit_hash(identifier: str) -> Optional[FocusHash]:
 
 
 def open_url(
-        url: Union[str, List[str]],
+        url: str,
         dry_run: bool = False,
         copy_clipboard: bool = False,
         ) -> None:
     print(url)
-    if url.__class__ is list and not dry_run:
-        subprocess.call(url)
-        return
-    url = cast(str, url)
     if copy_clipboard:
         copy_text_to_clipboard(url)
     if not dry_run:
