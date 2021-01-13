@@ -170,21 +170,11 @@ class PhabricatorHost(Host):
 
     def set_arc_browse_echo(self) -> None:
         command = ['arc', 'set-config', '--local', 'browser', 'echo']
-        process = subprocess.Popen(
-            command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-        process.communicate()
+        subprocess.run(command, capture_output=True, check=True)
 
     def unset_arc_browse_echo(self) -> None:
         command = ['arc', 'set-config', '--local', 'browser', '""']
-        process = subprocess.Popen(
-            command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-        process.communicate()
+        subprocess.run(command, capture_output=True, check=True)
 
     def arc_browse_read(self, git_object: 'GitObject') -> str:
         path = git_object.identifier
@@ -194,16 +184,13 @@ class PhabricatorHost(Host):
         command = ['arc', 'browse']
         if path:
             command.append(path)
-        process = subprocess.Popen(
+        process = subprocess.run(
             command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            universal_newlines=True
+            capture_output=True,
+            check=True,
+            universal_newlines=True,
         )
-        out, err = process.communicate()
-        if process.returncode != 0:
-            return ''
-        url = out.strip().split("\n")[-1]
+        url = process.stdout.strip().split("\n")[-1]
         return url
 
     def valid_focus_object(self, arg: str) -> Optional['PhabricatorObject']:
