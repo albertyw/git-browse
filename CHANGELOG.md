@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v2.9.1 (2021-01-13)
+-------------------
+
+ - Change how browsing phabricator urls works.  Instead of entirely offloading the work to arcanist, read arcanist's output.
+ - Significant refactors to simplify code and update to more modern python
+
+
 v2.9.0 (2021-01-12)
 -------------------
 
