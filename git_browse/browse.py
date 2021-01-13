@@ -27,12 +27,9 @@ UBER_HTTPS_GITOLITE_URL = 'https://%s/%s/%s' % \
 
 
 def copy_text_to_clipboard(text: str) -> None:
+    stdin = text.encode('utf-8')
     try:
-        p = subprocess.Popen(
-            ['pbcopy', 'w'],
-            stdin=subprocess.PIPE, close_fds=True
-        )
-        p.communicate(input=text.encode('utf-8'))
+        subprocess.run(['pbcopy', 'w'], input=stdin, close_fds=True)
     except FileNotFoundError:
         pass
 
