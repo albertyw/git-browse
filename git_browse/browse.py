@@ -471,16 +471,14 @@ def get_git_object(focus_object: str, path: str, host: Host) -> GitObject:
 
 def get_commit_hash(identifier: str) -> Optional[FocusHash]:
     command = ['git', 'show', identifier, '--no-abbrev-commit']
-    process = subprocess.Popen(
+    process = subprocess.run(
         command,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        universal_newlines=True
+        capture_output=True,
+        universal_newlines=True,
     )
-    out, err = process.communicate()
     if process.returncode != 0:
         return None
-    commit_hash = out.split("\n")[0].split(" ")[1]
+    commit_hash = process.stdout.split("\n")[0].split(" ")[1]
     return FocusHash(commit_hash)
 
 
