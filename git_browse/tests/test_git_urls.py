@@ -16,92 +16,77 @@ GIT_URLS: List[Tuple[str, str, Union[str, List[str]], bool]] = [
         'git@github.com:albertyw/git-browse',
         '',
         'https://github.com/albertyw/git-browse',
-        False
     ),
     (
         'git@github.com:albertyw/git-browse.git',
         '',
         'https://github.com/albertyw/git-browse',
-        False
     ),
     (
         'https://github.com/albertyw/git-browse.git',
         '',
         'https://github.com/albertyw/git-browse',
-        False
     ),
     (
         'https://github.com/albertyw/git-browse',
         '',
         'https://github.com/albertyw/git-browse',
-        False
     ),
     (
         'git@github.com:albertyw/git-browse',
         'README.md',
         'https://github.com/albertyw/git-browse/blob/master/README.md',
-        False
     ),
     (
         'git@github.com:albertyw/git-browse',
         TEST_DIR,
         'https://github.com/albertyw/git-browse/tree/master/testdir/',
-        False
     ),
     (
         'git@github.com:albertyw/git-browse',
         test_util.get_tag(),
         'https://github.com/albertyw/git-browse/commit/' +
         test_util.get_tag_commit_hash(),
-        False
     ),
     (
         'gitolite@code.uber.internal:a/b',
         '',
         ['arc', 'browse', '.'],
-        True
     ),
     (
         'gitolite@config.uber.internal:a/b',
         '',
         ['arc', 'browse', '.'],
-        True
     ),
     (
         'gitolite@code.uber.internal:a/b',
         'README.md',
         ['arc', 'browse', 'README.md'],
-        True
     ),
     (
         'gitolite@code.uber.internal:a/b',
         TEST_DIR,
         ['arc', 'browse', TEST_DIR+'/'],
-        True
     ),
     (
         'gitolite@code.uber.internal:a/b',
         test_util.get_tag(),
         ['arc', 'browse', test_util.get_tag_commit_hash()],
-        True
     ),
     (
         'gitolite@code.uber.internal:a/b',
         'D123',
         ['arc', 'browse', 'D123'],
-        True
     ),
     (
         'gitolite@code.uber.internal:a',
         'README.md',
         ['arc', 'browse', 'README.md'],
-        True
     ),
     (
         'https://code.uber.internal/x/y',
         'README.md',
         ['arc', 'browse', 'README.md'],
-        True
     ),
 ]
 
@@ -118,7 +103,6 @@ def generate_test(
     git_url: str,
     target_path: str,
     host_url: Union[str, List[str]],
-    arcconfig: bool,
 ) -> Callable[[], None]:
     @patch('git_browse.browse.get_git_url')
     def test(self: TestGitURLs, mock_get_git_url: MagicMock) -> None:
