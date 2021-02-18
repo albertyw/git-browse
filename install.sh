@@ -20,4 +20,4 @@ fi
 
 git config --global \
     alias.browse \
-    "!"$BROWSE_PY_LOCATION"/browse.py --path=\${GIT_PREFIX:-./}"
+    "!$BROWSE_PY_LOCATION/browse.py --path=\${GIT_PREFIX:-./}"
