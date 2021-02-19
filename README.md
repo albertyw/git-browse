@@ -5,6 +5,7 @@ Git Browse
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/git-browse)
 ![PyPI - License](https://img.shields.io/pypi/l/git-browse)
 
+[![Build Status](https://drone.albertyw.com/api/badges/albertyw/git-browse/status.svg)](https://drone.albertyw.com/albertyw/git-browse)
 [![Codeship Status for albertyw/git-browse](https://app.codeship.com/projects/fbd67810-b952-0134-2c2e-166255a25182/status?branch=master)](https://app.codeship.com/projects/194945)
 [![Dependency Status](https://pyup.io/repos/github/albertyw/git-browse/shield.svg)](https://pyup.io/repos/github/albertyw/git-browse/)
 [![Code Climate](https://codeclimate.com/github/albertyw/git-browse/badges/gpa.svg)](https://codeclimate.com/github/albertyw/git-browse)
