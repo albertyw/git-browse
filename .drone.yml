@@ -1,0 +1,18 @@
+kind: pipeline
+type: docker
+name: test
+
+steps:
+  - name: Test Python
+    image: python:3.9
+    commands:
+      - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > "${HOME}/bin/cc-test-reporter"
+      - chmod +x "${HOME}/bin/cc-test-reporter"
+      - pip install -r requirements-test.txt
+      - flake8
+      - mypy git_browse --strict
+      - cc-test-reporter before-build
+      - coverage run setup.py test
+      - exitcode="$?"
+      - coverage xml
+      - cc-test-reporter after-build --exit-code "$exitcode" --prefix /home/rof/src/github.com/albertyw/git-browse
