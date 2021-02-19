@@ -16,3 +16,5 @@ steps:
       - exitcode="$?"
       - coverage xml
       - cc-test-reporter after-build --exit-code "$exitcode" --prefix /home/rof/src/github.com/albertyw/git-browse
+    environment:
+      CC_TEST_REPORTER_ID: 3ed7f5ff3362f31338e19d26a3641748d004a598d0e68d67ecdcf4cb632b3cdb
