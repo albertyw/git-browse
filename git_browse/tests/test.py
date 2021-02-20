@@ -409,16 +409,16 @@ class TestOpenURL(unittest.TestCase):
 class FullTest(unittest.TestCase):
     def setUp(self) -> None:
         self.original_sys_argv = sys.argv
-        self.test_directory = os.path.join(BASE_DIRECTORY, 'test_dir')
-        test_file = os.path.join(self.test_directory, 'test_file')
-        os.makedirs(self.test_directory, exist_ok=True)
+        self.test_dir = os.path.join(BASE_DIRECTORY, 'test_dir')
+        test_file = os.path.join(self.test_dir, 'test_file')
+        os.makedirs(self.test_dir, exist_ok=True)
         with open(test_file, 'w'):
             pass
 
     def tearDown(self) -> None:
         sys.argv = self.original_sys_argv
         os.chdir(BASE_DIRECTORY)
-        shutil.rmtree(self.test_directory)
+        shutil.rmtree(self.test_dir)
 
     @patch("git_browse.browse.open_url")
     def test_default(self, mock_open_url: MagicMock) -> None:
@@ -446,7 +446,7 @@ class FullTest(unittest.TestCase):
 
     @patch("git_browse.browse.open_url")
     def test_chdir_subdirectory_file(self, mock_open_url: MagicMock) -> None:
-        os.chdir(self.test_directory)
+        os.chdir(self.test_dir)
         sys_argv = ['asdf', 'test_file']
         expected = (
             'https://github.com/albertyw/git-browse/'
@@ -471,7 +471,7 @@ class FullTest(unittest.TestCase):
 
     @patch("git_browse.browse.open_url")
     def test_chdir_subdirectory(self, mock_open_url: MagicMock) -> None:
-        os.chdir(self.test_directory)
+        os.chdir(self.test_dir)
         sys_argv = ['asdf', '.']
         expected = (
             'https://github.com/albertyw/git-browse/'
