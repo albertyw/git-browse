@@ -2,6 +2,11 @@ kind: pipeline
 type: docker
 name: test
 
+volumes:
+  - name: pypirc
+    host:
+      path: /home/albertyw/.ssh/other/pypirc
+
 steps:
   - name: fetch
     image: alpine/git
@@ -23,3 +28,15 @@ steps:
       - cc-test-reporter after-build --exit-code "$exitcode"
     environment:
       CC_TEST_REPORTER_ID: 3ed7f5ff3362f31338e19d26a3641748d004a598d0e68d67ecdcf4cb632b3cdb
+
+  - name: Upload Python
+    image: python:3.9
+    commands:
+      - python setup.py sdist bdist_wheel
+      - twine upload dist/*
+    volumes:
+      - name: pypirc
+        path: /root/.pypirc
+    when:
+      event:
+        - tag
