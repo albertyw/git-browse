@@ -96,10 +96,6 @@ mypy git_browse/browse.py
 Publishing
 ----------
 
-```bash
-pip install twine
-python setup.py sdist bdist_wheel
-twine upload dist/*
-```
-
-Need to also update [albertyw/homebrew-albertyw](https://github.com/albertyw/homebrew-albertyw).
+1.  Update changelog and `__version__` variable with a semantic version
+2.  Commit changes, create a version tag, and push both
+3.  Update [albertyw/homebrew-albertyw](https://github.com/albertyw/homebrew-albertyw)
