@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v2.9.2 (2021-02-22)
+-------------------
+
+ - Switch CI from codeship to Drone
+ - Update dependencies
+
+
 v2.9.1 (2021-01-13)
 -------------------
 
