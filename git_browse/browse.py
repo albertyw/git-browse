@@ -390,7 +390,7 @@ def get_repository_root() -> str:
     new_directory = os.getcwd()
     while current_directory != new_directory:
         current_directory = new_directory
-        git_config = os.path.join(current_directory, '.git', 'config')
+        git_config = os.path.join(current_directory, '.git')
         if os.path.exists(git_config):
             return current_directory
         new_directory = os.path.join(current_directory, '..')
@@ -400,7 +400,12 @@ def get_repository_root() -> str:
 
 def get_git_config() -> str:
     repository_root = get_repository_root()
-    git_config_path = os.path.join(repository_root, '.git', 'config')
+    git_directory = os.path.join(repository_root, '.git')
+    if os.path.isfile(git_directory):
+        with open(git_directory, 'r') as handle:
+            data = handle.read()
+            git_directory = data.split(' ')[1].strip()
+    git_config_path = os.path.join(git_directory, 'config')
     return git_config_path
 
 
