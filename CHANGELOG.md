@@ -1,6 +1,14 @@
 Changelog
 =========
 
+v2.10.0 (2021-06-14)
+--------------------
+
+ - Add support for running git browse on git submodules
+ - Update dependencies
+ - Other cleanup
+
+
 v2.9.2 (2021-02-22)
 -------------------
 
