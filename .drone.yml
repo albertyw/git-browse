@@ -24,6 +24,7 @@ steps:
       - cc-test-reporter before-build
       - coverage run setup.py test
       - exitcode="$?"
+      - coverage report -m
       - coverage xml
       - cc-test-reporter after-build --exit-code "$exitcode"
     environment:
