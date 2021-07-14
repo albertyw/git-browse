@@ -16,9 +16,15 @@ UBER_HOST = '(?P<host>code\\.uber\\.internal)'
 UBER_CONFIG_HOST = '(?P<host>config\\.uber\\.internal)'
 USER_REGEX = '(?P<user>[\\w\\.@:\\/~_-]+)'
 REPOSITORY_REGEX = '(?P<repository>[\\w\\.@:\\/~_-]+)'
+ACCOUNT_REGEX = '(?P<account>[\\w\\.@:\\/~_-]+)'
+BITBUCKET_HOST = '(?P<host>bitbucket\\.org)'
 GITHUB_SSH_URL = 'git@%s:%s/%s' % (GITHUB_HOST, USER_REGEX, REPOSITORY_REGEX)
 GITHUB_HTTPS_URL = 'https://%s/%s/%s' % \
     (GITHUB_HOST, USER_REGEX, REPOSITORY_REGEX)
+BITBUCKET_SSH_URL = 'git@%s:%s/%s' % \
+    (BITBUCKET_HOST, USER_REGEX, REPOSITORY_REGEX)
+BITBUCKET_HTTPS_URL = 'https://%s@%s/%s/%s' % \
+    (ACCOUNT_REGEX, BITBUCKET_HOST, USER_REGEX, REPOSITORY_REGEX)
 UBER_SSH_GITOLITE_URL = 'gitolite@%s:%s' % (UBER_HOST, REPOSITORY_REGEX)
 UBER_SSH_CONFIG_GITOLITE_URL = 'gitolite@%s:%s' % \
     (UBER_CONFIG_HOST, REPOSITORY_REGEX)
@@ -130,6 +136,74 @@ class GithubHost(Host):
 
     def file_url(self, repository_url: str, focus_object: 'GitObject') -> str:
         repository_url = "%s/blob/master/%s" % (
+            repository_url,
+            focus_object.identifier
+        )
+        return repository_url
+
+    def valid_focus_object(self, arg: str) -> Optional['GitObject']:
+        return None
+
+
+class BitbucketHost(Host):
+    BITBUCKET_URL = "https://bitbucket.org/"
+    user: str = ''
+    repository: str = ''
+
+    def __init__(self, user: str, repository: str) -> None:
+        self.user = user
+        self.repository = repository
+
+    @staticmethod
+    def create(url_regex_match: Match[str]) -> 'Host':
+        repository = url_regex_match.group('repository')
+        if repository[-4:] == '.git':
+            repository = repository[:-4]
+        user = url_regex_match.group('user')
+        return BitbucketHost(user, repository)
+
+    def set_host_class(self, host_class: Type[Host]) -> None:
+        return
+
+    def get_url(self, git_object: 'GitObject') -> str:
+        repository_url = "%s%s/%s" % (
+            self.BITBUCKET_URL,
+            self.user,
+            self.repository
+        )
+        if git_object.is_commit_hash():
+            return self.commit_hash_url(repository_url, git_object)
+        if git_object.is_root():
+            return self.root_url(repository_url, git_object)
+        if git_object.is_directory():
+            return self.directory_url(repository_url, git_object)
+        return self.file_url(repository_url, git_object)
+
+    def commit_hash_url(
+            self,
+            repository_url: str,
+            focus_hash: 'GitObject') -> str:
+        repository_url = "%s/commits/%s" % (
+            repository_url,
+            focus_hash.identifier
+        )
+        return repository_url
+
+    def root_url(self, repository_url: str, focus_object: 'GitObject') -> str:
+        return repository_url
+
+    def directory_url(
+            self,
+            repository_url: str,
+            focus_object: 'GitObject') -> str:
+        repository_url = "%s/src/master/%s" % (
+            repository_url,
+            focus_object.identifier
+        )
+        return repository_url
+
+    def file_url(self, repository_url: str, focus_object: 'GitObject') -> str:
+        repository_url = "%s/src/master/%s" % (
             repository_url,
             focus_object.identifier
         )
@@ -344,6 +418,8 @@ class GodocsHost(Host):
 HOST_REGEXES: Dict[str, Type[Host]] = {
     GITHUB_SSH_URL: GithubHost,
     GITHUB_HTTPS_URL: GithubHost,
+    BITBUCKET_SSH_URL: BitbucketHost,
+    BITBUCKET_HTTPS_URL: BitbucketHost,
     UBER_SSH_GITOLITE_URL: PhabricatorHost,
     UBER_SSH_CONFIG_GITOLITE_URL: PhabricatorHost,
     UBER_HTTPS_GITOLITE_URL: PhabricatorHost,
