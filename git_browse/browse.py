@@ -16,9 +16,15 @@ UBER_HOST = '(?P<host>code\\.uber\\.internal)'
 UBER_CONFIG_HOST = '(?P<host>config\\.uber\\.internal)'
 USER_REGEX = '(?P<user>[\\w\\.@:\\/~_-]+)'
 REPOSITORY_REGEX = '(?P<repository>[\\w\\.@:\\/~_-]+)'
+ACCOUNT_REGEX = '(?P<account>[\\w\\.@:\\/~_-]+)'
+BITBUCKET_HOST = '(?P<host>bitbucket\\.org)'
 GITHUB_SSH_URL = 'git@%s:%s/%s' % (GITHUB_HOST, USER_REGEX, REPOSITORY_REGEX)
 GITHUB_HTTPS_URL = 'https://%s/%s/%s' % \
     (GITHUB_HOST, USER_REGEX, REPOSITORY_REGEX)
+BITBUCKET_SSH_URL = 'git@%s:%s/%s' % \
+    (BITBUCKET_HOST, USER_REGEX, REPOSITORY_REGEX)
+BITBUCKET_HTTPS_URL = 'https://%s@%s/%s/%s' % \
+    (ACCOUNT_REGEX, BITBUCKET_HOST, USER_REGEX, REPOSITORY_REGEX)
 UBER_SSH_GITOLITE_URL = 'gitolite@%s:%s' % (UBER_HOST, REPOSITORY_REGEX)
 UBER_SSH_CONFIG_GITOLITE_URL = 'gitolite@%s:%s' % \
     (UBER_CONFIG_HOST, REPOSITORY_REGEX)
