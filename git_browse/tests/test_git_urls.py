@@ -64,6 +64,49 @@ GIT_URLS: List[TestConfig] = [
         None,
     ),
     TestConfig(
+        'git@bitbucket.org:albertyw/git-browse',
+        '',
+        'https://bitbucket.org/albertyw/git-browse',
+        None,
+    ),
+    TestConfig(
+        'git@bitbucket.org:albertyw/git-browse.git',
+        '',
+        'https://bitbucket.org/albertyw/git-browse',
+        None,
+    ),
+    TestConfig(
+        'https://albertyw@bitbucket.org/albertyw/git-browse.git',
+        '',
+        'https://bitbucket.org/albertyw/git-browse',
+        None,
+    ),
+    TestConfig(
+        'https://albertyw@bitbucket.org/albertyw/git-browse',
+        '',
+        'https://bitbucket.org/albertyw/git-browse',
+        None,
+    ),
+    TestConfig(
+        'git@bitbucket.org:albertyw/git-browse',
+        'README.md',
+        'https://bitbucket.org/albertyw/git-browse/src/master/README.md',
+        None,
+    ),
+    TestConfig(
+        'git@bitbucket.org:albertyw/git-browse',
+        TEST_DIR,
+        'https://bitbucket.org/albertyw/git-browse/src/master/testdir/',
+        None,
+    ),
+    TestConfig(
+        'git@bitbucket.org:albertyw/git-browse',
+        test_util.get_tag(),
+        'https://bitbucket.org/albertyw/git-browse/commits/' +
+        test_util.get_tag_commit_hash(),
+        None,
+    ),
+    TestConfig(
         'gitolite@code.uber.internal:a/b',
         '',
         None,
