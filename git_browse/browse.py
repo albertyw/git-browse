@@ -350,6 +350,8 @@ class GodocsHost(Host):
 HOST_REGEXES: Dict[str, Type[Host]] = {
     GITHUB_SSH_URL: GithubHost,
     GITHUB_HTTPS_URL: GithubHost,
+    BITBUCKET_SSH_URL: BitbucketHost,
+    BITBUCKET_HTTPS_URL: BitbucketHost,
     UBER_SSH_GITOLITE_URL: PhabricatorHost,
     UBER_SSH_CONFIG_GITOLITE_URL: PhabricatorHost,
     UBER_HTTPS_GITOLITE_URL: PhabricatorHost,
