@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v2.11.0 (2021-07-15)
+--------------------
+
+ - Add support for bitbucket repositories
+ - Update dependencies
+
+
 v2.10.0 (2021-06-14)
 --------------------
 

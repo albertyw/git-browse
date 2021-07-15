@@ -10,7 +10,7 @@ from typing import Dict, Match, Optional, Type
 import webbrowser
 
 
-__version__ = '2.10.0'
+__version__ = '2.11.0'
 GITHUB_HOST = '(?P<host>github\\.com)'
 UBER_HOST = '(?P<host>code\\.uber\\.internal)'
 UBER_CONFIG_HOST = '(?P<host>config\\.uber\\.internal)'
