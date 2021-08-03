@@ -4,6 +4,7 @@ from abc import ABCMeta, abstractmethod
 import argparse
 import configparser
 import os
+import pathlib
 import re
 import subprocess
 from typing import Dict, Match, Optional, Type
@@ -458,31 +459,27 @@ class PhabricatorObject(GitObject):
     pass
 
 
-def get_repository_root() -> str:
-    current_directory = ''
-    new_directory = os.getcwd()
-    while current_directory != new_directory:
-        current_directory = new_directory
-        git_config = os.path.join(current_directory, '.git')
-        if os.path.exists(git_config):
-            return current_directory
-        new_directory = os.path.join(current_directory, '..')
-        new_directory = os.path.normpath(new_directory)
+def get_repository_root() -> pathlib.Path:
+    path = pathlib.Path.cwd()
+    for path in [path] + list(path.parents):
+        git_config = path / '.git'
+        if git_config.exists():
+            return path
     raise FileNotFoundError('.git/config file not found')
 
 
-def get_git_config() -> str:
+def get_git_config() -> pathlib.Path:
     repository_root = get_repository_root()
-    git_directory = os.path.join(repository_root, '.git')
-    if os.path.isfile(git_directory):
+    git_directory = repository_root / '.git'
+    if git_directory.is_file():
         with open(git_directory, 'r') as handle:
             data = handle.read()
-            git_directory = data.split(' ')[1].strip()
-    git_config_path = os.path.join(git_directory, 'config')
+            git_directory = pathlib.Path(data.split(' ')[1].strip())
+    git_config_path = git_directory / 'config'
     return git_config_path
 
 
-def get_git_url(git_config_file: str) -> str:
+def get_git_url(git_config_file: pathlib.Path) -> str:
     # strict is removed here because gitconfig allows for multiple "fetch" keys
     config = configparser.ConfigParser(strict=False)
     config.read(git_config_file)
@@ -525,13 +522,13 @@ def get_repository_host(
     return repo_host
 
 
-def get_git_object(focus_object: str, path: str, host: Host) -> GitObject:
+def get_git_object(
+    focus_object: str, path: pathlib.Path, host: Host
+) -> GitObject:
     if not focus_object:
         return FocusObject.default()
-    directory = path
-    object_path = os.path.join(directory, focus_object)
-    object_path = os.path.normpath(object_path)
-    if not os.path.exists(object_path):
+    object_path = path.joinpath(focus_object).resolve()
+    if not object_path.exists():
         focus_hash = get_commit_hash(focus_object)
         if focus_hash:
             return focus_hash
@@ -540,11 +537,10 @@ def get_git_object(focus_object: str, path: str, host: Host) -> GitObject:
             return host_focus_object
         error = "specified file does not exist: %s" % object_path
         raise FileNotFoundError(error)
-    is_dir = os.path.isdir(object_path) and object_path[-1] != os.sep
-    object_path = os.path.relpath(object_path, get_repository_root())
-    if is_dir:
-        object_path += os.sep
-    return FocusObject(object_path)
+    object_path_str = str(object_path.relative_to(get_repository_root()))
+    if object_path.is_dir() and object_path_str[-1] != os.sep:
+        object_path_str += os.sep
+    return FocusObject(object_path_str)
 
 
 def get_commit_hash(identifier: str) -> Optional[FocusHash]:
@@ -619,7 +615,7 @@ def main() -> None:
         return
 
     host = get_repository_host(args.sourcegraph, args.godocs)
-    path = os.path.join(os.getcwd(), args.path)
+    path = pathlib.Path.cwd().joinpath(args.path)
     git_object = get_git_object(args.target, path, host)
     url = host.get_url(git_object)
     open_url(url, args.dry_run, args.copy)

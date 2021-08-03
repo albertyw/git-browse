@@ -1,4 +1,5 @@
 import os
+import pathlib
 import re
 import shutil
 import sys
@@ -10,8 +11,7 @@ from unittest.mock import MagicMock, patch
 from git_browse import browse
 from git_browse.tests import test_util
 
-directory = os.path.dirname(os.path.realpath(__file__))
-BASE_DIRECTORY = os.path.normpath(os.path.join(directory, '..', '..'))
+BASE_DIRECTORY = pathlib.Path(__file__).parents[2]
 
 
 class TestGithubHost(unittest.TestCase):
@@ -294,40 +294,37 @@ class GetGitConfig(unittest.TestCase):
     def test_get(self) -> None:
         os.chdir(BASE_DIRECTORY)
         directory = browse.get_git_config()
-        expected = os.path.join(BASE_DIRECTORY, '.git', 'config')
+        expected = BASE_DIRECTORY / '.git' / 'config'
         self.assertEqual(directory, expected)
 
     def test_submodule_get(self) -> None:
         temp_dir = tempfile.TemporaryDirectory()
-        config_dir = os.path.join(BASE_DIRECTORY, '.git')
+        config_dir = BASE_DIRECTORY / '.git'
         data = 'gitdir: %s' % config_dir
-        with open(os.path.join(temp_dir.name, '.git'), 'w') as handle:
+        with open(pathlib.Path(temp_dir.name) / '.git', 'w') as handle:
             handle.write(data)
         os.chdir(temp_dir.name)
         directory = browse.get_git_config()
-        expected = os.path.join(BASE_DIRECTORY, '.git', 'config')
+        expected = config_dir / 'config'
         self.assertEqual(directory, expected)
         temp_dir.cleanup()
 
 
 class GetGitURL(unittest.TestCase):
     def setUp(self) -> None:
-        git_config_file = os.path.join(
-            BASE_DIRECTORY,
-            '.git',
-            'config'
-        )
+        git_config_file = BASE_DIRECTORY / '.git' / 'config'
         with open(git_config_file, 'rb') as handle:
             configs = handle.read()
         self.git_config_file = tempfile.NamedTemporaryFile()
         self.git_config_file.write(configs)
         self.git_config_file.seek(0)
+        self.git_config_file_name = pathlib.Path(self.git_config_file.name)
 
     def tearDown(self) -> None:
         self.git_config_file.close()
 
     def test_url(self) -> None:
-        git_url = browse.get_git_url(self.git_config_file.name)
+        git_url = browse.get_git_url(self.git_config_file_name)
         git_url = git_url.replace('.git', '')
         expected = [
             'git@github.com:albertyw/git-browse',
@@ -350,7 +347,8 @@ class GetGitURL(unittest.TestCase):
         config_file = tempfile.NamedTemporaryFile()
         config_file.write(config_contents.encode('utf-8'))
         config_file.seek(0)
-        git_url = browse.get_git_url(config_file.name)
+        config_file_name = pathlib.Path(config_file.name)
+        git_url = browse.get_git_url(config_file_name)
         expected = 'git@github.com:albertyw/git-browse'
         self.assertEqual(git_url.replace('.git', ''), expected)
 
@@ -408,25 +406,29 @@ class TestGetFocusObject(unittest.TestCase):
         self.placeholder_match = re.match(r'', '')
 
     def test_default_focus_object(self) -> None:
-        focus_object = browse.get_git_object('', os.getcwd(), self.host)
+        focus_object = browse.get_git_object('', pathlib.Path.cwd(), self.host)
         self.assertTrue(focus_object.is_root())
         self.assertTrue(focus_object.is_directory())
 
     def test_file_focus_object(self) -> None:
         target = 'README.md'
-        focus_object = browse.get_git_object(target, os.getcwd(), self.host)
+        focus_object = browse.get_git_object(
+            target, pathlib.Path.cwd(), self.host,
+        )
         self.assertFalse(focus_object.is_root())
         self.assertFalse(focus_object.is_directory())
         self.assertEqual(focus_object.identifier[-10:], 'README.md')
 
     def test_directory_focus_object(self) -> None:
-        focus_object = browse.get_git_object('.', os.getcwd(), self.host)
+        focus_object = browse.get_git_object(
+            '.', pathlib.Path.cwd(), self.host,
+        )
         self.assertFalse(focus_object.is_root())
         self.assertTrue(focus_object.is_directory())
 
     def test_get_focus_hash(self) -> None:
         focus_object = browse.get_git_object(
-            test_util.get_tag(), os.getcwd(), self.host
+            test_util.get_tag(), pathlib.Path.cwd(), self.host
         )
         self.assertTrue(focus_object.__class__ is browse.FocusHash)
 
@@ -436,11 +438,11 @@ class TestGetFocusObject(unittest.TestCase):
             self.placeholder_match
         )
         with self.assertRaises(FileNotFoundError):
-            browse.get_git_object('asdf', os.getcwd(), phabricator_host)
+            browse.get_git_object('asdf', pathlib.Path.cwd(), phabricator_host)
 
     def test_nonexistend_focus_object(self) -> None:
         with self.assertRaises(FileNotFoundError):
-            browse.get_git_object('asdf', os.getcwd(), self.host)
+            browse.get_git_object('asdf', pathlib.Path.cwd(), self.host)
 
 
 class TestGetCommitHash(unittest.TestCase):
@@ -466,8 +468,8 @@ class TestOpenURL(unittest.TestCase):
 class FullTest(unittest.TestCase):
     def setUp(self) -> None:
         self.original_sys_argv = sys.argv
-        self.test_dir = os.path.join(BASE_DIRECTORY, 'test_dir')
-        test_file = os.path.join(self.test_dir, 'test_file')
+        self.test_dir = BASE_DIRECTORY / 'test_dir'
+        test_file = self.test_dir / 'test_file'
         os.makedirs(self.test_dir, exist_ok=True)
         with open(test_file, 'w'):
             pass

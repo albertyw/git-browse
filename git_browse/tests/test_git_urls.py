@@ -1,4 +1,5 @@
 import os
+import pathlib
 import subprocess
 from typing import Callable, List, NamedTuple, Optional, cast
 import unittest
@@ -15,10 +16,9 @@ class TestConfig(NamedTuple):
     subprocess_command: Optional[List[str]]
 
 
-directory = os.path.dirname(os.path.realpath(__file__))
-REPO_PATH = os.path.normpath(os.path.join(directory, '..', '..'))
+REPO_PATH = pathlib.Path(__file__).parents[2]
 TEST_DIR = 'testdir'
-TEST_DIR_PATH = os.path.join(REPO_PATH, 'testdir')
+TEST_DIR_PATH = REPO_PATH / TEST_DIR
 GIT_URLS: List[TestConfig] = [
     TestConfig(
         'git@github.com:albertyw/git-browse',
@@ -171,7 +171,7 @@ def generate_test(test_config: TestConfig) -> Callable[[], None]:
         mock_get_git_url.return_value = test_config.git_url
         host = browse.get_repository_host()
         focus_object = browse.get_git_object(
-            test_config.target_path, REPO_PATH, host
+            test_config.target_path, pathlib.Path(REPO_PATH), host
         )
         self.mock_run_patcher.start()
         mock_run = cast(MagicMock, subprocess.run)
