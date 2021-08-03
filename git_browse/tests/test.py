@@ -1,3 +1,4 @@
+import json
 import os
 import pathlib
 import re
@@ -114,6 +115,104 @@ class TestBitbucketHost(unittest.TestCase):
             'https://bitbucket.org/albertyw/git-browse/commits/%s'
             % test_util.get_tag()
         )
+
+
+class TestPhabricatorHost(unittest.TestCase):
+    def setUp(self) -> None:
+        self.phabricator_host = browse.PhabricatorHost()
+        self.phabricator_url = 'https://example.com'
+        self.repository_callsign = 'ASDF'
+        self.focus_object = browse.FocusObject('/')
+        self.focus_hash = browse.FocusHash(test_util.get_tag())
+
+        arcconfig_data = {
+            'phabricator.uri': self.phabricator_url,
+            'repository.callsign': self.repository_callsign,
+        }
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.temp_dir_name = pathlib.Path(self.temp_dir.name)
+        self.arcconfig_file = self.temp_dir_name / '.arcconfig'
+        with open(self.arcconfig_file, 'w') as handle:
+            handle.write(json.dumps(arcconfig_data))
+
+    def tearDown(self) -> None:
+        os.remove(self.arcconfig_file)
+        self.temp_dir.cleanup()
+
+    def test_create(self) -> None:
+        repo = 'gitolite@code.uber.internal:a/b'
+        match = re.search(browse.UBER_SSH_GITOLITE_URL, repo)
+        assert match is not None
+        with patch('git_browse.browse.get_repository_root') as mock_root:
+            mock_root.return_value = self.temp_dir_name
+            host = browse.PhabricatorHost.create(match)
+        phabricator_host = cast(browse.PhabricatorHost, host)
+        self.assertEqual(
+            phabricator_host.phabricator_url,
+            self.phabricator_url,
+        )
+        self.assertEqual(
+            phabricator_host.repository_callsign,
+            self.repository_callsign,
+        )
+
+    def test_parse_arcconfig(self) -> None:
+        self.phabricator_host._parse_arcconfig(self.temp_dir_name)
+        self.assertEqual(
+            self.phabricator_host.phabricator_url,
+            self.phabricator_url,
+        )
+        self.assertEqual(
+            self.phabricator_host.repository_callsign,
+            self.repository_callsign,
+        )
+
+
+"""
+    def test_get_url(self) -> None:
+        url = self.phabricator_host.get_url(self.focus_object)
+        self.assertEqual(url, self.repository_url)
+
+    def test_root_url(self) -> None:
+        url = self.phabricator_host.root_url(
+            self.repository_url,
+            self.focus_object,
+        )
+        self.assertEqual(url, self.repository_url)
+
+    def test_directory_url(self) -> None:
+        self.focus_object.identifier = 'asdf/'
+        url = self.phabricator_host.directory_url(
+            self.repository_url,
+            self.focus_object
+        )
+        self.assertEqual(
+            url,
+            'https://bitbucket.org/albertyw/git-browse/src/master/asdf/'
+        )
+
+    def test_file_url(self) -> None:
+        self.focus_object.identifier = 'README.md'
+        url = self.phabricator_host.file_url(
+            self.repository_url,
+            self.focus_object,
+        )
+        self.assertEqual(
+            url,
+            'https://bitbucket.org/albertyw/git-browse/src/master/README.md'
+        )
+
+    def test_commit_hash_url(self) -> None:
+        url = self.phabricator_host.commit_hash_url(
+            self.repository_url,
+            self.focus_hash
+        )
+        self.assertEqual(
+            url,
+            'https://bitbucket.org/albertyw/git-browse/commits/%s'
+            % test_util.get_tag()
+        )
+"""
 
 
 class SourcegraphHost(unittest.TestCase):
