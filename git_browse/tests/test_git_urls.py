@@ -137,12 +137,6 @@ GIT_URLS: List[TestConfig] = [
         ['arc', 'browse', test_util.get_tag_commit_hash()],
     ),
     TestConfig(
-        'gitolite@code.uber.internal:a/b',
-        'D123',
-        None,
-        ['arc', 'browse', 'D123'],
-    ),
-    TestConfig(
         'gitolite@code.uber.internal:a',
         'README.md',
         None,

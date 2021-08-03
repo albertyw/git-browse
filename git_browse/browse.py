@@ -214,7 +214,6 @@ class BitbucketHost(Host):
 
 
 class PhabricatorHost(Host):
-    PHABRICATOR_OBJECT_REGEX = '^[DT][0-9]+$'
     user: str = ''
     repository: str = ''
 
@@ -268,8 +267,6 @@ class PhabricatorHost(Host):
         return url
 
     def valid_focus_object(self, arg: str) -> Optional['PhabricatorObject']:
-        if re.search(self.PHABRICATOR_OBJECT_REGEX, arg):
-            return PhabricatorObject(arg)
         return None
 
 

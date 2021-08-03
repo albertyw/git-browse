@@ -430,12 +430,6 @@ class TestGetFocusObject(unittest.TestCase):
         )
         self.assertTrue(focus_object.__class__ is browse.FocusHash)
 
-    def test_phabricator_object(self) -> None:
-        assert self.placeholder_match is not None
-        host = browse.PhabricatorHost.create(self.placeholder_match)
-        focus_object = browse.get_git_object('D123', os.getcwd(), host)
-        self.assertTrue(focus_object.__class__ is browse.PhabricatorObject)
-
     def test_invalid_phabricator_object(self) -> None:
         assert self.placeholder_match is not None
         phabricator_host = browse.PhabricatorHost.create(
