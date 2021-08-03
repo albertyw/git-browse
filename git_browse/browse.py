@@ -4,6 +4,7 @@ from abc import ABCMeta, abstractmethod
 import argparse
 import configparser
 import os
+import pathlib
 import re
 import subprocess
 from typing import Dict, Match, Optional, Type
@@ -458,16 +459,12 @@ class PhabricatorObject(GitObject):
     pass
 
 
-def get_repository_root() -> str:
-    current_directory = ''
-    new_directory = os.getcwd()
-    while current_directory != new_directory:
-        current_directory = new_directory
-        git_config = os.path.join(current_directory, '.git')
-        if os.path.exists(git_config):
-            return current_directory
-        new_directory = os.path.join(current_directory, '..')
-        new_directory = os.path.normpath(new_directory)
+def get_repository_root() -> pathlib.Path:
+    path = pathlib.Path(os.getcwd())
+    for path in [path] + list(path.parents):
+        git_config = path / '.git'
+        if git_config.exists():
+            return path
     raise FileNotFoundError('.git/config file not found')
 
 

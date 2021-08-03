@@ -1,4 +1,5 @@
 import os
+import pathlib
 import re
 import shutil
 import sys
@@ -282,7 +283,7 @@ class GetRepositoryRoot(unittest.TestCase):
     def test_get(self) -> None:
         os.chdir(BASE_DIRECTORY)
         directory = browse.get_repository_root()
-        self.assertEqual(directory, BASE_DIRECTORY)
+        self.assertEqual(directory, pathlib.Path(BASE_DIRECTORY))
 
     def test_fail_get(self) -> None:
         os.chdir(os.sep)
