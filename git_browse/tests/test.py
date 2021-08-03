@@ -165,6 +165,9 @@ class TestPhabricatorHost(unittest.TestCase):
             self.default_branch,
         )
 
+    def test_set_host_class(self) -> None:
+        self.phabricator_host.set_host_class(browse.PhabricatorHost)
+
     def test_parse_arcconfig(self) -> None:
         self.phabricator_host._parse_arcconfig(self.temp_dir_name)
         self.assertEqual(
@@ -176,52 +179,41 @@ class TestPhabricatorHost(unittest.TestCase):
             self.repository_callsign,
         )
 
-
-"""
     def test_get_url(self) -> None:
         url = self.phabricator_host.get_url(self.focus_object)
-        self.assertEqual(url, self.repository_url)
+        self.assertEqual(
+            url,
+            'https://example.com/diffusion/ASDF/repository/master/',
+        )
 
     def test_root_url(self) -> None:
         url = self.phabricator_host.root_url(
-            self.repository_url,
             self.focus_object,
-        )
-        self.assertEqual(url, self.repository_url)
-
-    def test_directory_url(self) -> None:
-        self.focus_object.identifier = 'asdf/'
-        url = self.phabricator_host.directory_url(
-            self.repository_url,
-            self.focus_object
         )
         self.assertEqual(
             url,
-            'https://bitbucket.org/albertyw/git-browse/src/master/asdf/'
+            'https://example.com/diffusion/ASDF/repository/master/',
         )
 
     def test_file_url(self) -> None:
         self.focus_object.identifier = 'README.md'
         url = self.phabricator_host.file_url(
-            self.repository_url,
             self.focus_object,
         )
         self.assertEqual(
             url,
-            'https://bitbucket.org/albertyw/git-browse/src/master/README.md'
+            'https://example.com/diffusion/ASDF/browse/master/README.md',
         )
 
     def test_commit_hash_url(self) -> None:
         url = self.phabricator_host.commit_hash_url(
-            self.repository_url,
             self.focus_hash
         )
         self.assertEqual(
             url,
-            'https://bitbucket.org/albertyw/git-browse/commits/%s'
+            'https://example.com/rASDF%s'
             % test_util.get_tag()
         )
-"""
 
 
 class SourcegraphHost(unittest.TestCase):
