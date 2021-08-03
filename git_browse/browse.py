@@ -3,6 +3,7 @@
 from abc import ABCMeta, abstractmethod
 import argparse
 import configparser
+import json
 import os
 import pathlib
 import re
@@ -213,14 +214,34 @@ class PhabricatorHost(Host):
     repository: str = ''
 
     def __init__(self) -> None:
-        pass
+        self.phabricator_url = ''
+        self.repository_callsign = ''
 
     @staticmethod
     def create(url_regex_match: Match[str]) -> 'Host':
-        return PhabricatorHost()
+        host = PhabricatorHost()
+        host._parse_arcconfig(get_repository_root())
+        return host
 
     def set_host_class(self, host_class: Type[Host]) -> None:
         return
+
+    def _parse_arcconfig(self, repository_root: pathlib.Path) -> None:
+        arcconfig_file = repository_root / '.arcconfig'
+        try:
+            with open(arcconfig_file, 'r') as handle:
+                data = handle.read()
+        except FileNotFoundError:
+            raise RuntimeError(
+                'Cannot find a ".arcconfig" file to parse '
+                'for repository configuration'
+            )
+        try:
+            arcconfig_data = json.loads(data)
+        except json.decoder.JSONDecodeError:
+            raise RuntimeError('Cannot parse ".arcconfig" file as json')
+        self.repository_callsign = arcconfig_data.get('repository.callsign')
+        self.phabricator_url = arcconfig_data.get('phabricator.uri')
 
     def get_url(self, git_object: 'GitObject') -> str:
         """
