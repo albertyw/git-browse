@@ -424,14 +424,6 @@ class TestGetFocusObject(unittest.TestCase):
         )
         self.assertTrue(focus_object.__class__ is browse.FocusHash)
 
-    def test_invalid_phabricator_object(self) -> None:
-        assert self.placeholder_match is not None
-        phabricator_host = browse.PhabricatorHost.create(
-            self.placeholder_match
-        )
-        with self.assertRaises(FileNotFoundError):
-            browse.get_git_object('asdf', pathlib.Path.cwd(), phabricator_host)
-
     def test_nonexistend_focus_object(self) -> None:
         with self.assertRaises(FileNotFoundError):
             browse.get_git_object('asdf', pathlib.Path.cwd(), self.host)
