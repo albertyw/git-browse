@@ -522,13 +522,11 @@ def get_repository_host(
     return repo_host
 
 
-def get_git_object(focus_object: str, path: str, host: Host) -> GitObject:
+def get_git_object(focus_object: str, path: pathlib.Path, host: Host) -> GitObject:
     if not focus_object:
         return FocusObject.default()
-    directory = path
-    object_path = os.path.join(directory, focus_object)
-    object_path = os.path.normpath(object_path)
-    if not os.path.exists(object_path):
+    object_path = path.joinpath(focus_object).resolve()
+    if not object_path.exists():
         focus_hash = get_commit_hash(focus_object)
         if focus_hash:
             return focus_hash
@@ -537,11 +535,10 @@ def get_git_object(focus_object: str, path: str, host: Host) -> GitObject:
             return host_focus_object
         error = "specified file does not exist: %s" % object_path
         raise FileNotFoundError(error)
-    is_dir = os.path.isdir(object_path) and object_path[-1] != os.sep
-    object_path = os.path.relpath(object_path, get_repository_root())
-    if is_dir:
-        object_path += os.sep
-    return FocusObject(object_path)
+    object_path_str = str(object_path.relative_to(get_repository_root()))
+    if object_path.is_dir() and object_path_str[-1] != os.sep:
+        object_path_str += os.sep
+    return FocusObject(object_path_str)
 
 
 def get_commit_hash(identifier: str) -> Optional[FocusHash]:
@@ -616,7 +613,7 @@ def main() -> None:
         return
 
     host = get_repository_host(args.sourcegraph, args.godocs)
-    path = os.path.join(os.getcwd(), args.path)
+    path = pathlib.Path.cwd().joinpath(args.path)
     git_object = get_git_object(args.target, path, host)
     url = host.get_url(git_object)
     open_url(url, args.dry_run, args.copy)

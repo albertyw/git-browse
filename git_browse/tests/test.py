@@ -411,25 +411,25 @@ class TestGetFocusObject(unittest.TestCase):
         self.placeholder_match = re.match(r'', '')
 
     def test_default_focus_object(self) -> None:
-        focus_object = browse.get_git_object('', os.getcwd(), self.host)
+        focus_object = browse.get_git_object('', pathlib.Path.cwd(), self.host)
         self.assertTrue(focus_object.is_root())
         self.assertTrue(focus_object.is_directory())
 
     def test_file_focus_object(self) -> None:
         target = 'README.md'
-        focus_object = browse.get_git_object(target, os.getcwd(), self.host)
+        focus_object = browse.get_git_object(target, pathlib.Path.cwd(), self.host)
         self.assertFalse(focus_object.is_root())
         self.assertFalse(focus_object.is_directory())
         self.assertEqual(focus_object.identifier[-10:], 'README.md')
 
     def test_directory_focus_object(self) -> None:
-        focus_object = browse.get_git_object('.', os.getcwd(), self.host)
+        focus_object = browse.get_git_object('.', pathlib.Path.cwd(), self.host)
         self.assertFalse(focus_object.is_root())
         self.assertTrue(focus_object.is_directory())
 
     def test_get_focus_hash(self) -> None:
         focus_object = browse.get_git_object(
-            test_util.get_tag(), os.getcwd(), self.host
+            test_util.get_tag(), pathlib.Path.cwd(), self.host
         )
         self.assertTrue(focus_object.__class__ is browse.FocusHash)
 
@@ -439,11 +439,11 @@ class TestGetFocusObject(unittest.TestCase):
             self.placeholder_match
         )
         with self.assertRaises(FileNotFoundError):
-            browse.get_git_object('asdf', os.getcwd(), phabricator_host)
+            browse.get_git_object('asdf', pathlib.Path.cwd(), phabricator_host)
 
     def test_nonexistend_focus_object(self) -> None:
         with self.assertRaises(FileNotFoundError):
-            browse.get_git_object('asdf', os.getcwd(), self.host)
+            browse.get_git_object('asdf', pathlib.Path.cwd(), self.host)
 
 
 class TestGetCommitHash(unittest.TestCase):
