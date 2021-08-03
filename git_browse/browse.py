@@ -460,7 +460,7 @@ class PhabricatorObject(GitObject):
 
 
 def get_repository_root() -> pathlib.Path:
-    path = pathlib.Path(os.getcwd())
+    path = pathlib.Path.cwd()
     for path in [path] + list(path.parents):
         git_config = path / '.git'
         if git_config.exists():

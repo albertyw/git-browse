@@ -16,10 +16,9 @@ class TestConfig(NamedTuple):
     subprocess_command: Optional[List[str]]
 
 
-directory = os.path.dirname(os.path.realpath(__file__))
-REPO_PATH = os.path.normpath(os.path.join(directory, '..', '..'))
+REPO_PATH = pathlib.Path(__file__).parents[2]
 TEST_DIR = 'testdir'
-TEST_DIR_PATH = os.path.join(REPO_PATH, 'testdir')
+TEST_DIR_PATH = REPO_PATH / TEST_DIR
 GIT_URLS: List[TestConfig] = [
     TestConfig(
         'git@github.com:albertyw/git-browse',

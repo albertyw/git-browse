@@ -11,8 +11,7 @@ from unittest.mock import MagicMock, patch
 from git_browse import browse
 from git_browse.tests import test_util
 
-directory = os.path.dirname(os.path.realpath(__file__))
-BASE_DIRECTORY = os.path.normpath(os.path.join(directory, '..', '..'))
+BASE_DIRECTORY = pathlib.Path(__file__).parents[2]
 
 
 class TestGithubHost(unittest.TestCase):
@@ -283,7 +282,7 @@ class GetRepositoryRoot(unittest.TestCase):
     def test_get(self) -> None:
         os.chdir(BASE_DIRECTORY)
         directory = browse.get_repository_root()
-        self.assertEqual(directory, pathlib.Path(BASE_DIRECTORY))
+        self.assertEqual(directory, BASE_DIRECTORY)
 
     def test_fail_get(self) -> None:
         os.chdir(os.sep)
@@ -295,14 +294,14 @@ class GetGitConfig(unittest.TestCase):
     def test_get(self) -> None:
         os.chdir(BASE_DIRECTORY)
         directory = browse.get_git_config()
-        expected = pathlib.Path(BASE_DIRECTORY) / '.git' / 'config'
+        expected = BASE_DIRECTORY / '.git' / 'config'
         self.assertEqual(directory, expected)
 
     def test_submodule_get(self) -> None:
         temp_dir = tempfile.TemporaryDirectory()
-        config_dir = pathlib.Path(BASE_DIRECTORY) / '.git'
+        config_dir = BASE_DIRECTORY / '.git'
         data = 'gitdir: %s' % config_dir
-        with open(os.path.join(temp_dir.name, '.git'), 'w') as handle:
+        with open(pathlib.Path(temp_dir.name) / '.git', 'w') as handle:
             handle.write(data)
         os.chdir(temp_dir.name)
         directory = browse.get_git_config()
@@ -313,11 +312,7 @@ class GetGitConfig(unittest.TestCase):
 
 class GetGitURL(unittest.TestCase):
     def setUp(self) -> None:
-        git_config_file = os.path.join(
-            BASE_DIRECTORY,
-            '.git',
-            'config'
-        )
+        git_config_file = BASE_DIRECTORY / '.git' / 'config'
         with open(git_config_file, 'rb') as handle:
             configs = handle.read()
         self.git_config_file = tempfile.NamedTemporaryFile()
@@ -339,7 +334,7 @@ class GetGitURL(unittest.TestCase):
 
     def test_bad_url(self) -> None:
         with self.assertRaises(RuntimeError):
-            browse.get_git_url(pathlib.Path(BASE_DIRECTORY))
+            browse.get_git_url(BASE_DIRECTORY)
 
     def test_multiple_fetch(self) -> None:
         # For https://github.com/albertyw/git-browse/issues/48
@@ -473,8 +468,8 @@ class TestOpenURL(unittest.TestCase):
 class FullTest(unittest.TestCase):
     def setUp(self) -> None:
         self.original_sys_argv = sys.argv
-        self.test_dir = os.path.join(BASE_DIRECTORY, 'test_dir')
-        test_file = os.path.join(self.test_dir, 'test_file')
+        self.test_dir = BASE_DIRECTORY / 'test_dir'
+        test_file = self.test_dir / 'test_file'
         os.makedirs(self.test_dir, exist_ok=True)
         with open(test_file, 'w'):
             pass
