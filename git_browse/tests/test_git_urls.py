@@ -143,6 +143,7 @@ class TestGitURLs(unittest.TestCase):
         data = {
             'phabricator.uri': 'https://example.com',
             'repository.callsign': 'ABCD',
+            'git.default-relative-commit': 'origin/master',
         }
         with open(ARCCONFIG_PATH, 'w') as handle:
             handle.write(json.dumps(data))

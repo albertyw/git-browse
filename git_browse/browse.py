@@ -216,6 +216,7 @@ class PhabricatorHost(Host):
     def __init__(self) -> None:
         self.phabricator_url = ''
         self.repository_callsign = ''
+        self.default_branch = ''
 
     @staticmethod
     def create(url_regex_match: Match[str]) -> 'Host':
@@ -242,6 +243,10 @@ class PhabricatorHost(Host):
             raise RuntimeError('Cannot parse ".arcconfig" file as json')
         self.repository_callsign = arcconfig_data.get('repository.callsign')
         self.phabricator_url = arcconfig_data.get('phabricator.uri')
+        default_branch = arcconfig_data.get('git.default-relative-commit')
+        if '/' in default_branch:
+            default_branch = default_branch.split('/', 1)[1]
+        self.default_branch = default_branch
 
     def get_url(self, git_object: 'GitObject') -> str:
         if git_object.is_commit_hash():
@@ -262,7 +267,7 @@ class PhabricatorHost(Host):
         repository_url = '%s/diffusion/%s/repository/%s/' % (
             self.phabricator_url,
             self.repository_callsign,
-            "master",
+            self.default_branch,
         )
         return repository_url
 
@@ -270,7 +275,7 @@ class PhabricatorHost(Host):
         repository_url = "%s/diffusion/%s/browse/%s/%s" % (
             self.phabricator_url,
             self.repository_callsign,
-            "master",
+            self.default_branch,
             focus_object.identifier
         )
         return repository_url

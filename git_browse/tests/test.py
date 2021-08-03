@@ -122,12 +122,17 @@ class TestPhabricatorHost(unittest.TestCase):
         self.phabricator_host = browse.PhabricatorHost()
         self.phabricator_url = 'https://example.com'
         self.repository_callsign = 'ASDF'
+        self.default_branch = 'master'
+        self.phabricator_host.phabricator_url = self.phabricator_url
+        self.phabricator_host.repository_callsign = self.repository_callsign
+        self.phabricator_host.default_branch = self.default_branch
         self.focus_object = browse.FocusObject('/')
         self.focus_hash = browse.FocusHash(test_util.get_tag())
 
         arcconfig_data = {
             'phabricator.uri': self.phabricator_url,
             'repository.callsign': self.repository_callsign,
+            'git.default-relative-commit': 'origin/master',
         }
         self.temp_dir = tempfile.TemporaryDirectory()
         self.temp_dir_name = pathlib.Path(self.temp_dir.name)
@@ -154,6 +159,10 @@ class TestPhabricatorHost(unittest.TestCase):
         self.assertEqual(
             phabricator_host.repository_callsign,
             self.repository_callsign,
+        )
+        self.assertEqual(
+            phabricator_host.default_branch,
+            self.default_branch,
         )
 
     def test_parse_arcconfig(self) -> None:
