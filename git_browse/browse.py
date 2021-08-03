@@ -468,18 +468,18 @@ def get_repository_root() -> pathlib.Path:
     raise FileNotFoundError('.git/config file not found')
 
 
-def get_git_config() -> str:
+def get_git_config() -> pathlib.Path:
     repository_root = get_repository_root()
-    git_directory = os.path.join(repository_root, '.git')
-    if os.path.isfile(git_directory):
+    git_directory = repository_root / '.git'
+    if git_directory.is_file():
         with open(git_directory, 'r') as handle:
             data = handle.read()
-            git_directory = data.split(' ')[1].strip()
-    git_config_path = os.path.join(git_directory, 'config')
+            git_directory = pathlib.Path(data.split(' ')[1].strip())
+    git_config_path = git_directory / 'config'
     return git_config_path
 
 
-def get_git_url(git_config_file: str) -> str:
+def get_git_url(git_config_file: pathlib.Path) -> str:
     # strict is removed here because gitconfig allows for multiple "fetch" keys
     config = configparser.ConfigParser(strict=False)
     config.read(git_config_file)

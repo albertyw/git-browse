@@ -295,18 +295,18 @@ class GetGitConfig(unittest.TestCase):
     def test_get(self) -> None:
         os.chdir(BASE_DIRECTORY)
         directory = browse.get_git_config()
-        expected = os.path.join(BASE_DIRECTORY, '.git', 'config')
+        expected = pathlib.Path(BASE_DIRECTORY) / '.git' / 'config'
         self.assertEqual(directory, expected)
 
     def test_submodule_get(self) -> None:
         temp_dir = tempfile.TemporaryDirectory()
-        config_dir = os.path.join(BASE_DIRECTORY, '.git')
+        config_dir = pathlib.Path(BASE_DIRECTORY) / '.git'
         data = 'gitdir: %s' % config_dir
         with open(os.path.join(temp_dir.name, '.git'), 'w') as handle:
             handle.write(data)
         os.chdir(temp_dir.name)
         directory = browse.get_git_config()
-        expected = os.path.join(BASE_DIRECTORY, '.git', 'config')
+        expected = config_dir / 'config'
         self.assertEqual(directory, expected)
         temp_dir.cleanup()
 
