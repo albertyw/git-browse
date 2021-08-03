@@ -174,10 +174,6 @@ class SourcegraphHost(unittest.TestCase):
             'code.uber.internal/asdf/-/blob/zxcv'
         )
 
-    def test_valid_focus_object(self) -> None:
-        valid = self.obj.valid_focus_object('asdf')
-        self.assertEqual(valid, None)
-
 
 class TestGodocsHost(unittest.TestCase):
     def setUp(self) -> None:
@@ -230,10 +226,6 @@ class TestGodocsHost(unittest.TestCase):
         git_object = browse.FocusObject('zxcv')
         with self.assertRaises(NotImplementedError):
             self.obj.get_url(git_object)
-
-    def test_valid_focus_object(self) -> None:
-        valid = self.obj.valid_focus_object('asdf')
-        self.assertEqual(valid, None)
 
 
 class GitObject(unittest.TestCase):

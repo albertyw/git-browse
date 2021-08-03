@@ -73,10 +73,6 @@ class Host(metaclass=ABCMeta):
     def get_url(self, git_object: 'GitObject') -> str:
         pass
 
-    @abstractmethod
-    def valid_focus_object(self, arg: str) -> Optional['GitObject']:
-        pass
-
 
 class GithubHost(Host):
     GITHUB_URL = "https://github.com/"
@@ -141,9 +137,6 @@ class GithubHost(Host):
             focus_object.identifier
         )
         return repository_url
-
-    def valid_focus_object(self, arg: str) -> Optional['GitObject']:
-        return None
 
 
 class BitbucketHost(Host):
@@ -210,9 +203,6 @@ class BitbucketHost(Host):
         )
         return repository_url
 
-    def valid_focus_object(self, arg: str) -> Optional['GitObject']:
-        return None
-
 
 class PhabricatorHost(Host):
     user: str = ''
@@ -266,9 +256,6 @@ class PhabricatorHost(Host):
         )
         url = process.stdout.strip().split("\n")[-1]
         return url
-
-    def valid_focus_object(self, arg: str) -> Optional['PhabricatorObject']:
-        return None
 
 
 class SourcegraphHost(Host):
@@ -342,9 +329,6 @@ class SourcegraphHost(Host):
         )
         return repository_url
 
-    def valid_focus_object(self, arg: str) -> Optional['GitObject']:
-        return None
-
 
 class GodocsHost(Host):
     PUBLIC_GODOCS_URL = 'https://pkg.go.dev/'
@@ -408,9 +392,6 @@ class GodocsHost(Host):
 
     def file_url(self, repository_url: str, focus_object: 'GitObject') -> str:
         raise NotImplementedError("Cannot look up individual files in godocs")
-
-    def valid_focus_object(self, arg: str) -> Optional['GitObject']:
-        return None
 
 
 HOST_REGEXES: Dict[str, Type[Host]] = {
@@ -532,9 +513,6 @@ def get_git_object(
         focus_hash = get_commit_hash(focus_object)
         if focus_hash:
             return focus_hash
-        host_focus_object = host.valid_focus_object(focus_object)
-        if host_focus_object:
-            return host_focus_object
         error = "specified file does not exist: %s" % object_path
         raise FileNotFoundError(error)
     object_path_str = str(object_path.relative_to(get_repository_root()))
