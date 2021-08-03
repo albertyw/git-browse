@@ -1,5 +1,6 @@
 import os
 import pathlib
+import json
 import subprocess
 from typing import Callable, List, NamedTuple, Optional, cast
 import unittest
@@ -19,6 +20,7 @@ class TestConfig(NamedTuple):
 REPO_PATH = pathlib.Path(__file__).parents[2]
 TEST_DIR = 'testdir'
 TEST_DIR_PATH = REPO_PATH / TEST_DIR
+ARCCONFIG_PATH = REPO_PATH / '.arcconfig'
 GIT_URLS: List[TestConfig] = [
     TestConfig(
         'git@github.com:albertyw/git-browse',
@@ -156,9 +158,19 @@ class TestGitURLs(unittest.TestCase):
         os.mkdir(TEST_DIR_PATH)
         self.mock_run_patcher = patch('subprocess.run')
         self.addCleanup(self.mock_run_patcher.stop)
+        self.mock_arcconfig()
 
     def tearDown(self) -> None:
         os.rmdir(TEST_DIR_PATH)
+        os.remove(ARCCONFIG_PATH)
+
+    def mock_arcconfig(self) -> None:
+        data = {
+            'phabricator.uri': 'https://example.com',
+            'repository.callsign': 'ABCD',
+        }
+        with open(ARCCONFIG_PATH, 'w') as handle:
+            handle.write(json.dumps(data))
 
 
 def generate_test(test_config: TestConfig) -> Callable[[], None]:
