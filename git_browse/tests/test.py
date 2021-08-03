@@ -323,12 +323,13 @@ class GetGitURL(unittest.TestCase):
         self.git_config_file = tempfile.NamedTemporaryFile()
         self.git_config_file.write(configs)
         self.git_config_file.seek(0)
+        self.git_config_file_name = pathlib.Path(self.git_config_file.name)
 
     def tearDown(self) -> None:
         self.git_config_file.close()
 
     def test_url(self) -> None:
-        git_url = browse.get_git_url(self.git_config_file.name)
+        git_url = browse.get_git_url(self.git_config_file_name)
         git_url = git_url.replace('.git', '')
         expected = [
             'git@github.com:albertyw/git-browse',
@@ -338,7 +339,7 @@ class GetGitURL(unittest.TestCase):
 
     def test_bad_url(self) -> None:
         with self.assertRaises(RuntimeError):
-            browse.get_git_url(BASE_DIRECTORY)
+            browse.get_git_url(pathlib.Path(BASE_DIRECTORY))
 
     def test_multiple_fetch(self) -> None:
         # For https://github.com/albertyw/git-browse/issues/48
@@ -351,7 +352,8 @@ class GetGitURL(unittest.TestCase):
         config_file = tempfile.NamedTemporaryFile()
         config_file.write(config_contents.encode('utf-8'))
         config_file.seek(0)
-        git_url = browse.get_git_url(config_file.name)
+        config_file_name = pathlib.Path(config_file.name)
+        git_url = browse.get_git_url(config_file_name)
         expected = 'git@github.com:albertyw/git-browse'
         self.assertEqual(git_url.replace('.git', ''), expected)
 
