@@ -417,13 +417,17 @@ class TestGetFocusObject(unittest.TestCase):
 
     def test_file_focus_object(self) -> None:
         target = 'README.md'
-        focus_object = browse.get_git_object(target, pathlib.Path.cwd(), self.host)
+        focus_object = browse.get_git_object(
+            target, pathlib.Path.cwd(), self.host,
+        )
         self.assertFalse(focus_object.is_root())
         self.assertFalse(focus_object.is_directory())
         self.assertEqual(focus_object.identifier[-10:], 'README.md')
 
     def test_directory_focus_object(self) -> None:
-        focus_object = browse.get_git_object('.', pathlib.Path.cwd(), self.host)
+        focus_object = browse.get_git_object(
+            '.', pathlib.Path.cwd(), self.host,
+        )
         self.assertFalse(focus_object.is_root())
         self.assertTrue(focus_object.is_directory())
 

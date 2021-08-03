@@ -522,7 +522,9 @@ def get_repository_host(
     return repo_host
 
 
-def get_git_object(focus_object: str, path: pathlib.Path, host: Host) -> GitObject:
+def get_git_object(
+    focus_object: str, path: pathlib.Path, host: Host
+) -> GitObject:
     if not focus_object:
         return FocusObject.default()
     object_path = path.joinpath(focus_object).resolve()
