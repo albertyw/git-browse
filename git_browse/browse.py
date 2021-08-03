@@ -125,15 +125,17 @@ class GithubHost(Host):
             self,
             repository_url: str,
             focus_object: 'GitObject') -> str:
-        repository_url = "%s/tree/master/%s" % (
+        repository_url = "%s/tree/%s/%s" % (
             repository_url,
+            "master",
             focus_object.identifier
         )
         return repository_url
 
     def file_url(self, repository_url: str, focus_object: 'GitObject') -> str:
-        repository_url = "%s/blob/master/%s" % (
+        repository_url = "%s/blob/%s/%s" % (
             repository_url,
+            "master",
             focus_object.identifier
         )
         return repository_url
@@ -190,15 +192,17 @@ class BitbucketHost(Host):
             self,
             repository_url: str,
             focus_object: 'GitObject') -> str:
-        repository_url = "%s/src/master/%s" % (
+        repository_url = "%s/src/%s/%s" % (
             repository_url,
+            "master",
             focus_object.identifier
         )
         return repository_url
 
     def file_url(self, repository_url: str, focus_object: 'GitObject') -> str:
-        repository_url = "%s/src/master/%s" % (
+        repository_url = "%s/src/%s/%s" % (
             repository_url,
+            "master",
             focus_object.identifier
         )
         return repository_url
