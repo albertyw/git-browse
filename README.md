@@ -87,10 +87,10 @@ Development
 
 ```bash
 pip install -r requirements-test.txt
-coverage run setup.py test
-coverage report
 flake8
-mypy git_browse/browse.py
+mypy . --strict --ignore-missing-imports
+coverage run -m unittest
+coverage report
 ```
 
 Publishing
