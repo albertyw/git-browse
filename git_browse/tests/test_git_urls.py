@@ -115,7 +115,7 @@ GIT_URLS: List[TestConfig] = [
     TestConfig(
         'gitolite@code.uber.internal:a/b',
         test_util.get_tag(),
-        'https://example.com/rABCD19a97d746645d6ad8fdfad9ca2eed22684188c0e',
+        'https://example.com/rABCD' + test_util.get_tag_commit_hash(),
     ),
     TestConfig(
         'gitolite@code.uber.internal:a',
