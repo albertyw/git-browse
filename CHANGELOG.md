@@ -1,6 +1,14 @@
 Changelog
 =========
 
+v2.12.0 (2021-08-03)
+--------------------
+
+ - Removed support for opening Phabricator Differentials and Maniphest tasks
+ - Remove dependency on Arcanist when opening Phabricator URLs
+ - Many refactors
+
+
 v2.11.0 (2021-07-15)
 --------------------
 
