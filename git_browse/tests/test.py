@@ -179,6 +179,17 @@ class TestPhabricatorHost(unittest.TestCase):
             self.repository_callsign,
         )
 
+    def test_parse_arcconfig_no_config(self) -> None:
+        random_path = pathlib.Path('asdf')
+        with self.assertRaises(FileNotFoundError):
+            self.phabricator_host._parse_arcconfig(random_path)
+
+    def test_parse_arcconfig_invalid_config(self) -> None:
+        with open(self.arcconfig_file, 'w') as handle:
+            handle.write('asdf')
+        with self.assertRaises(RuntimeError):
+            self.phabricator_host._parse_arcconfig(self.temp_dir_name)
+
     def test_get_url(self) -> None:
         url = self.phabricator_host.get_url(self.focus_object)
         self.assertEqual(

@@ -233,9 +233,10 @@ class PhabricatorHost(Host):
             with open(arcconfig_file, 'r') as handle:
                 data = handle.read()
         except FileNotFoundError:
-            raise RuntimeError(
+            raise FileNotFoundError(
                 'Cannot find a ".arcconfig" file to parse '
-                'for repository configuration'
+                'for repository configuration.  Expected file at %s.' %
+                arcconfig_file
             )
         try:
             arcconfig_data = json.loads(data)
