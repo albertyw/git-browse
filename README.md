@@ -11,19 +11,24 @@ Git Browse
 [![Test Coverage](https://codeclimate.com/github/albertyw/git-browse/badges/coverage.svg)](https://codeclimate.com/github/albertyw/git-browse/coverage)
 
 
-Open repositories, directories, and files in the browser. See also,
+Open git repositories, commits, directories, and files in the browser. See also,
 [git-reviewers](https://github.com/albertyw/git-reviewer).
 
 ![Preview](https://user-images.githubusercontent.com/3151040/28054498-e7cb0746-65c9-11e7-882e-dbf612f5b075.gif)
 
-This is a script that can be added as a gitconfig alias to easily browse
+This script can be added as a gitconfig alias to easily browse
 repositories on Git hosting services (e.g. github). It is built to model
 [arcanist's browse](https://github.com/phacility/arcanist/blob/master/src/workflow/ArcanistBrowseWorkflow.php)
 command. It is specifically designed to have no
 dependencies so it should be easily installable and very portable.
 
-If you're looking to browse different github repositories, you might
-like [hub browse](https://github.com/github/hub/blob/master/commands/browse.go).
+Git Browse supports opening git repositories, commits, directories, and files:
+
+ - [Github](https://github.com/)
+ - [Bitbucket](https://bitbucket.org/)
+ - [Phabricator](https://www.phacility.com/phabricator/)
+ - [Sourcegraph](https://about.sourcegraph.com/)
+ - [GoDocs](https://pkg.go.dev/)
 
 Installation
 ------------
@@ -49,7 +54,7 @@ Usage
 ```
 $ git browse -h
 'browse' is aliased to '!~/.dotfiles/scripts/git/git-browse/git_browse/browse.py --path=${GIT_PREFIX:-./}'
-usage: browse.py [-h] [--path PATH] [-d] [-s] [-g] [-v] [target]
+usage: browse.py [-h] [--path PATH] [-d] [-c] [-s] [-g] [-v] [target]
 
 Open repositories, directories, and files in the browser. https://github.com/albertyw/git-browse
 
@@ -60,6 +65,7 @@ optional arguments:
   -h, --help         show this help message and exit
   --path PATH        relative path to the current git repository
   -d, --dry-run      Do not open the url in the brower, and only print to stdout
+  -c, --copy         Copy url to clipboard, if available
   -s, --sourcegraph  Open objects in sourcegraph
   -g, --godocs       Open objects in godocs
   -v, --version      show program's version number and exit
