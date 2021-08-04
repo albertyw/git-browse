@@ -1,7 +1,7 @@
 import os
 import pathlib
-import subprocess
-from typing import Callable, List, NamedTuple, Optional, cast
+import json
+from typing import Callable, List, NamedTuple, cast
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -12,141 +12,120 @@ from git_browse.tests import test_util
 class TestConfig(NamedTuple):
     git_url: str
     target_path: str
-    host_url: Optional[str]
-    subprocess_command: Optional[List[str]]
+    host_url: str
 
 
 REPO_PATH = pathlib.Path(__file__).parents[2]
 TEST_DIR = 'testdir'
 TEST_DIR_PATH = REPO_PATH / TEST_DIR
+ARCCONFIG_PATH = REPO_PATH / '.arcconfig'
 GIT_URLS: List[TestConfig] = [
     TestConfig(
         'git@github.com:albertyw/git-browse',
         '',
         'https://github.com/albertyw/git-browse',
-        None,
     ),
     TestConfig(
         'git@github.com:albertyw/git-browse.git',
         '',
         'https://github.com/albertyw/git-browse',
-        None,
     ),
     TestConfig(
         'https://github.com/albertyw/git-browse.git',
         '',
         'https://github.com/albertyw/git-browse',
-        None,
     ),
     TestConfig(
         'https://github.com/albertyw/git-browse',
         '',
         'https://github.com/albertyw/git-browse',
-        None,
     ),
     TestConfig(
         'git@github.com:albertyw/git-browse',
         'README.md',
         'https://github.com/albertyw/git-browse/blob/master/README.md',
-        None,
     ),
     TestConfig(
         'git@github.com:albertyw/git-browse',
         TEST_DIR,
         'https://github.com/albertyw/git-browse/tree/master/testdir/',
-        None,
     ),
     TestConfig(
         'git@github.com:albertyw/git-browse',
         test_util.get_tag(),
         'https://github.com/albertyw/git-browse/commit/' +
         test_util.get_tag_commit_hash(),
-        None,
     ),
     TestConfig(
         'git@bitbucket.org:albertyw/git-browse',
         '',
         'https://bitbucket.org/albertyw/git-browse',
-        None,
     ),
     TestConfig(
         'git@bitbucket.org:albertyw/git-browse.git',
         '',
         'https://bitbucket.org/albertyw/git-browse',
-        None,
     ),
     TestConfig(
         'https://albertyw@bitbucket.org/albertyw/git-browse.git',
         '',
         'https://bitbucket.org/albertyw/git-browse',
-        None,
     ),
     TestConfig(
         'https://albertyw@bitbucket.org/albertyw/git-browse',
         '',
         'https://bitbucket.org/albertyw/git-browse',
-        None,
     ),
     TestConfig(
         'git@bitbucket.org:albertyw/git-browse',
         'README.md',
         'https://bitbucket.org/albertyw/git-browse/src/master/README.md',
-        None,
     ),
     TestConfig(
         'git@bitbucket.org:albertyw/git-browse',
         TEST_DIR,
         'https://bitbucket.org/albertyw/git-browse/src/master/testdir/',
-        None,
     ),
     TestConfig(
         'git@bitbucket.org:albertyw/git-browse',
         test_util.get_tag(),
         'https://bitbucket.org/albertyw/git-browse/commits/' +
         test_util.get_tag_commit_hash(),
-        None,
     ),
     TestConfig(
         'gitolite@code.uber.internal:a/b',
         '',
-        None,
-        ['arc', 'browse', '.'],
+        'https://example.com/diffusion/ABCD/repository/master/',
     ),
     TestConfig(
         'gitolite@config.uber.internal:a/b',
         '',
-        None,
-        ['arc', 'browse', '.'],
+        'https://example.com/diffusion/ABCD/repository/master/',
     ),
     TestConfig(
         'gitolite@code.uber.internal:a/b',
         'README.md',
-        None,
-        ['arc', 'browse', 'README.md'],
+        'https://example.com/diffusion/ABCD/browse/master/README.md',
     ),
     TestConfig(
         'gitolite@code.uber.internal:a/b',
         TEST_DIR,
-        None,
-        ['arc', 'browse', TEST_DIR+'/'],
+        'https://example.com/diffusion/ABCD/browse/master/testdir/',
     ),
     TestConfig(
         'gitolite@code.uber.internal:a/b',
         test_util.get_tag(),
-        None,
-        ['arc', 'browse', test_util.get_tag_commit_hash()],
+        'https://example.com/rABCD19a97d746645d6ad8fdfad9ca2eed22684188c0e',
     ),
     TestConfig(
         'gitolite@code.uber.internal:a',
         'README.md',
-        None,
-        ['arc', 'browse', 'README.md'],
+        'https://example.com/diffusion/ABCD/browse/master/README.md',
     ),
     TestConfig(
         'https://code.uber.internal/x/y',
         'README.md',
-        None,
-        ['arc', 'browse', 'README.md'],
+        'https://example.com/diffusion/ABCD/browse/master/README.md',
     ),
 ]
 
@@ -154,11 +133,20 @@ GIT_URLS: List[TestConfig] = [
 class TestGitURLs(unittest.TestCase):
     def setUp(self) -> None:
         os.mkdir(TEST_DIR_PATH)
-        self.mock_run_patcher = patch('subprocess.run')
-        self.addCleanup(self.mock_run_patcher.stop)
+        self.mock_arcconfig()
 
     def tearDown(self) -> None:
         os.rmdir(TEST_DIR_PATH)
+        os.remove(ARCCONFIG_PATH)
+
+    def mock_arcconfig(self) -> None:
+        data = {
+            'phabricator.uri': 'https://example.com',
+            'repository.callsign': 'ABCD',
+            'git.default-relative-commit': 'origin/master',
+        }
+        with open(ARCCONFIG_PATH, 'w') as handle:
+            handle.write(json.dumps(data))
 
 
 def generate_test(test_config: TestConfig) -> Callable[[], None]:
@@ -173,30 +161,10 @@ def generate_test(test_config: TestConfig) -> Callable[[], None]:
         focus_object = browse.get_git_object(
             test_config.target_path, pathlib.Path(REPO_PATH), host
         )
-        self.mock_run_patcher.start()
-        mock_run = cast(MagicMock, subprocess.run)
-
-        if test_config.subprocess_command:
-            self.assertEqual(test_config.host_url, None)
-            return_data = 'asdf\nurl'
-            mock_run().stdout = return_data
-            host_url = 'url'
-        else:
-            self.assertEqual(test_config.subprocess_command, None)
-            assert test_config.host_url is not None
-            host_url = test_config.host_url
 
         url = host.get_url(focus_object)
-        self.assertEqual(host_url, url)
+        self.assertEqual(test_config.host_url, url)
 
-        if test_config.subprocess_command:
-            found = False
-            for call in mock_run.call_args_list:
-                if call.args and call.args[0] == \
-                        test_config.subprocess_command:
-                    found = True
-                    break
-            self.assertTrue(found)
     test = cast(Callable[[], None], test)
     return test
 

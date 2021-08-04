@@ -3,6 +3,7 @@
 from abc import ABCMeta, abstractmethod
 import argparse
 import configparser
+import json
 import os
 import pathlib
 import re
@@ -213,53 +214,72 @@ class PhabricatorHost(Host):
     repository: str = ''
 
     def __init__(self) -> None:
-        pass
+        self.phabricator_url = ''
+        self.repository_callsign = ''
+        self.default_branch = ''
 
     @staticmethod
     def create(url_regex_match: Match[str]) -> 'Host':
-        return PhabricatorHost()
+        host = PhabricatorHost()
+        host._parse_arcconfig(get_repository_root())
+        return host
 
     def set_host_class(self, host_class: Type[Host]) -> None:
         return
 
-    def get_url(self, git_object: 'GitObject') -> str:
-        """
-        arc browse will try to open a browser for you.  Instead, configure arc
-        browse to send the url to "echo" so that git-browse can open the
-        url instead, then reset the arc config
-        """
-        self.set_arc_browse_echo()
+    def _parse_arcconfig(self, repository_root: pathlib.Path) -> None:
+        arcconfig_file = repository_root / '.arcconfig'
         try:
-            url = self.arc_browse_read(git_object)
-        finally:
-            # Unset arc config even if SubprocessError was encountered earlier
-            self.unset_arc_browse_echo()
-        return url
+            with open(arcconfig_file, 'r') as handle:
+                data = handle.read()
+        except FileNotFoundError:
+            raise FileNotFoundError(
+                'Cannot find a ".arcconfig" file to parse '
+                'for repository configuration.  Expected file at %s.' %
+                arcconfig_file
+            )
+        try:
+            arcconfig_data = json.loads(data)
+        except json.decoder.JSONDecodeError:
+            raise RuntimeError('Cannot parse ".arcconfig" file as json')
+        self.repository_callsign = arcconfig_data.get('repository.callsign')
+        self.phabricator_url = arcconfig_data.get('phabricator.uri')
+        default_branch = arcconfig_data.get('git.default-relative-commit')
+        if '/' in default_branch:
+            default_branch = default_branch.split('/', 1)[1]
+        self.default_branch = default_branch
 
-    def set_arc_browse_echo(self) -> None:
-        command = ['arc', 'set-config', '--local', 'browser', 'echo']
-        subprocess.run(command, capture_output=True, check=True)
-
-    def unset_arc_browse_echo(self) -> None:
-        command = ['arc', 'set-config', '--local', 'browser', '""']
-        subprocess.run(command, capture_output=True, check=True)
-
-    def arc_browse_read(self, git_object: 'GitObject') -> str:
-        path = git_object.identifier
-        # arc browse requires an object, provide the root object by default
+    def get_url(self, git_object: 'GitObject') -> str:
+        if git_object.is_commit_hash():
+            return self.commit_hash_url(git_object)
         if git_object.is_root():
-            path = '.'
-        command = ['arc', 'browse']
-        if path:
-            command.append(path)
-        process = subprocess.run(
-            command,
-            capture_output=True,
-            check=True,
-            universal_newlines=True,
+            return self.root_url(git_object)
+        return self.file_url(git_object)
+
+    def commit_hash_url(self, focus_hash: 'GitObject') -> str:
+        repository_url = "%s/r%s%s" % (
+            self.phabricator_url,
+            self.repository_callsign,
+            focus_hash.identifier
         )
-        url = process.stdout.strip().split("\n")[-1]
-        return url
+        return repository_url
+
+    def root_url(self, focus_object: 'GitObject') -> str:
+        repository_url = '%s/diffusion/%s/repository/%s/' % (
+            self.phabricator_url,
+            self.repository_callsign,
+            self.default_branch,
+        )
+        return repository_url
+
+    def file_url(self, focus_object: 'GitObject') -> str:
+        repository_url = "%s/diffusion/%s/browse/%s/%s" % (
+            self.phabricator_url,
+            self.repository_callsign,
+            self.default_branch,
+            focus_object.identifier
+        )
+        return repository_url
 
 
 class SourcegraphHost(Host):
