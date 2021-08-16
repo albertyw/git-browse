@@ -3,6 +3,11 @@ import os
 from typing import Match, Type
 
 
+USER_REGEX = '(?P<user>[\\w\\.@:\\/~_-]+)'
+REPOSITORY_REGEX = '(?P<repository>[\\w\\.@:\\/~_-]+)'
+ACCOUNT_REGEX = '(?P<account>[\\w\\.@:\\/~_-]+)'
+
+
 class Host(metaclass=ABCMeta):
     @property
     @abstractmethod
