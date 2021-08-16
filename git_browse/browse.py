@@ -460,10 +460,6 @@ class FocusHash(GitObject):
         return True
 
 
-class PhabricatorObject(GitObject):
-    pass
-
-
 def get_repository_root() -> pathlib.Path:
     path = pathlib.Path.cwd()
     for path in [path] + list(path.parents):
