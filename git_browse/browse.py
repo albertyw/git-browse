@@ -10,18 +10,13 @@ import subprocess
 from typing import Dict, Match, Optional, Type
 import webbrowser
 
-from . import types
+from . import types, github
 
 
 __version__ = '2.12.0'
-GITHUB_HOST = '(?P<host>github\\.com)'
 UBER_HOST = '(?P<host>code\\.uber\\.internal)'
 UBER_CONFIG_HOST = '(?P<host>config\\.uber\\.internal)'
 BITBUCKET_HOST = '(?P<host>bitbucket\\.org)'
-GITHUB_SSH_URL = 'git@%s:%s/%s' % \
-    (GITHUB_HOST, types.USER_REGEX, types.REPOSITORY_REGEX)
-GITHUB_HTTPS_URL = 'https://%s/%s/%s' % \
-    (GITHUB_HOST, types.USER_REGEX, types.REPOSITORY_REGEX)
 BITBUCKET_SSH_URL = 'git@%s:%s/%s' % \
     (BITBUCKET_HOST, types.USER_REGEX, types.REPOSITORY_REGEX)
 BITBUCKET_HTTPS_URL = 'https://%s@%s/%s/%s' % (
@@ -41,77 +36,6 @@ def copy_text_to_clipboard(text: str) -> None:
         subprocess.run(['pbcopy', 'w'], input=stdin, close_fds=True)
     except FileNotFoundError:
         pass
-
-
-class GithubHost(types.Host):
-    GITHUB_URL = "https://github.com/"
-    user: str = ''
-    repository: str = ''
-
-    def __init__(self, user: str, repository: str) -> None:
-        self.user = user
-        self.repository = repository
-
-    @staticmethod
-    def create(url_regex_match: Match[str]) -> 'types.Host':
-        repository = url_regex_match.group('repository')
-        if repository[-4:] == '.git':
-            repository = repository[:-4]
-        user = url_regex_match.group('user')
-        return GithubHost(user, repository)
-
-    def set_host_class(self, host_class: Type[types.Host]) -> None:
-        return
-
-    def get_url(self, git_object: 'types.GitObject') -> str:
-        repository_url = "%s%s/%s" % (
-            self.GITHUB_URL,
-            self.user,
-            self.repository
-        )
-        if git_object.is_commit_hash():
-            return self.commit_hash_url(repository_url, git_object)
-        if git_object.is_root():
-            return self.root_url(repository_url, git_object)
-        if git_object.is_directory():
-            return self.directory_url(repository_url, git_object)
-        return self.file_url(repository_url, git_object)
-
-    def commit_hash_url(
-            self,
-            repository_url: str,
-            focus_hash: 'types.GitObject') -> str:
-        repository_url = "%s/commit/%s" % (
-            repository_url,
-            focus_hash.identifier
-        )
-        return repository_url
-
-    def root_url(
-        self, repository_url: str, focus_object: 'types.GitObject'
-    ) -> str:
-        return repository_url
-
-    def directory_url(
-            self,
-            repository_url: str,
-            focus_object: 'types.GitObject') -> str:
-        repository_url = "%s/tree/%s/%s" % (
-            repository_url,
-            "master",
-            focus_object.identifier
-        )
-        return repository_url
-
-    def file_url(
-        self, repository_url: str, focus_object: 'types.GitObject'
-    ) -> str:
-        repository_url = "%s/blob/%s/%s" % (
-            repository_url,
-            "master",
-            focus_object.identifier
-        )
-        return repository_url
 
 
 class BitbucketHost(types.Host):
@@ -399,8 +323,8 @@ class GodocsHost(types.Host):
 
 
 HOST_REGEXES: Dict[str, Type[types.Host]] = {
-    GITHUB_SSH_URL: GithubHost,
-    GITHUB_HTTPS_URL: GithubHost,
+    github.GITHUB_SSH_URL: github.GithubHost,
+    github.GITHUB_HTTPS_URL: github.GithubHost,
     BITBUCKET_SSH_URL: BitbucketHost,
     BITBUCKET_HTTPS_URL: BitbucketHost,
     UBER_SSH_GITOLITE_URL: PhabricatorHost,
