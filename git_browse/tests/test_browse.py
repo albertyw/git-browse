@@ -9,7 +9,7 @@ from typing import List, cast
 import unittest
 from unittest.mock import MagicMock, patch
 
-from git_browse import browse
+from git_browse import browse, types
 from git_browse.tests import test_util
 
 BASE_DIRECTORY = pathlib.Path(__file__).parents[2]
@@ -19,8 +19,8 @@ class TestGithubHost(unittest.TestCase):
     def setUp(self) -> None:
         self.github_host = browse.GithubHost('albertyw', 'git-browse')
         self.repository_url = 'https://github.com/albertyw/git-browse'
-        self.focus_object = browse.FocusObject('/')
-        self.focus_hash = browse.FocusHash(test_util.get_tag())
+        self.focus_object = types.FocusObject('/')
+        self.focus_hash = types.FocusHash(test_util.get_tag())
 
     def test_init(self) -> None:
         host = browse.GithubHost('user', 'repository')
@@ -70,8 +70,8 @@ class TestBitbucketHost(unittest.TestCase):
     def setUp(self) -> None:
         self.host = browse.BitbucketHost('albertyw', 'git-browse')
         self.repository_url = 'https://bitbucket.org/albertyw/git-browse'
-        self.focus_object = browse.FocusObject('/')
-        self.focus_hash = browse.FocusHash(test_util.get_tag())
+        self.focus_object = types.FocusObject('/')
+        self.focus_hash = types.FocusHash(test_util.get_tag())
 
     def test_init(self) -> None:
         host = browse.BitbucketHost('user', 'repository')
@@ -126,8 +126,8 @@ class TestPhabricatorHost(unittest.TestCase):
         self.phabricator_host.phabricator_url = self.phabricator_url
         self.phabricator_host.repository_callsign = self.repository_callsign
         self.phabricator_host.default_branch = self.default_branch
-        self.focus_object = browse.FocusObject('/')
-        self.focus_hash = browse.FocusHash(test_util.get_tag())
+        self.focus_object = types.FocusObject('/')
+        self.focus_hash = types.FocusHash(test_util.get_tag())
 
         arcconfig_data = {
             'phabricator.uri': self.phabricator_url,
@@ -251,7 +251,7 @@ class SourcegraphHost(unittest.TestCase):
         self.assertEqual(obj.repository, 'a/b')
 
     def test_get_url_commit(self) -> None:
-        git_object = browse.FocusHash('abcd')
+        git_object = types.FocusHash('abcd')
         url = self.obj.get_url(git_object)
         self.assertEqual(
             url,
@@ -260,7 +260,7 @@ class SourcegraphHost(unittest.TestCase):
         )
 
     def test_get_url_root(self) -> None:
-        git_object = browse.FocusObject(os.sep)
+        git_object = types.FocusObject(os.sep)
         url = self.obj.get_url(git_object)
         self.assertEqual(
             url,
@@ -268,7 +268,7 @@ class SourcegraphHost(unittest.TestCase):
         )
 
     def test_get_url_directory(self) -> None:
-        git_object = browse.FocusObject('zxcv' + os.sep)
+        git_object = types.FocusObject('zxcv' + os.sep)
         url = self.obj.get_url(git_object)
         self.assertEqual(
             url,
@@ -277,7 +277,7 @@ class SourcegraphHost(unittest.TestCase):
         )
 
     def test_get_url_file(self) -> None:
-        git_object = browse.FocusObject('zxcv')
+        git_object = types.FocusObject('zxcv')
         url = self.obj.get_url(git_object)
         self.assertEqual(
             url,
@@ -312,12 +312,12 @@ class TestGodocsHost(unittest.TestCase):
         self.assertEqual(obj.repository, 'qwer')
 
     def test_get_url_commit(self) -> None:
-        git_object = browse.FocusHash('abcd')
+        git_object = types.FocusHash('abcd')
         with self.assertRaises(NotImplementedError):
             self.obj.get_url(git_object)
 
     def test_get_url_root(self) -> None:
-        git_object = browse.FocusObject(os.sep)
+        git_object = types.FocusObject(os.sep)
         url = self.obj.get_url(git_object)
         self.assertEqual(
             url,
@@ -325,7 +325,7 @@ class TestGodocsHost(unittest.TestCase):
         )
 
     def test_get_url_directory(self) -> None:
-        git_object = browse.FocusObject('zxcv' + os.sep)
+        git_object = types.FocusObject('zxcv' + os.sep)
         url = self.obj.get_url(git_object)
         self.assertEqual(
             url,
@@ -334,51 +334,9 @@ class TestGodocsHost(unittest.TestCase):
         )
 
     def test_get_url_file(self) -> None:
-        git_object = browse.FocusObject('zxcv')
+        git_object = types.FocusObject('zxcv')
         with self.assertRaises(NotImplementedError):
             self.obj.get_url(git_object)
-
-
-class GitObject(unittest.TestCase):
-    def test_is_directory(self) -> None:
-        obj = browse.GitObject('/asdf')
-        self.assertFalse(obj.is_directory())
-
-
-class FocusObject(unittest.TestCase):
-    def test_init(self) -> None:
-        obj = browse.FocusObject('/asdf')
-        self.assertEqual(obj.identifier, '/asdf')
-
-    def test_is_root(self) -> None:
-        obj = browse.FocusObject('/')
-        self.assertTrue(obj.is_root())
-
-    def test_is_not_root(self) -> None:
-        obj = browse.FocusObject('/asdf/')
-        self.assertFalse(obj.is_root())
-
-    def test_is_directory(self) -> None:
-        obj = browse.FocusObject('/asdf/')
-        self.assertTrue(obj.is_directory())
-
-    def test_is_not_directory(self) -> None:
-        obj = browse.FocusObject('/asdf')
-        self.assertFalse(obj.is_directory())
-
-    def test_default(self) -> None:
-        obj = browse.FocusObject.default()
-        self.assertTrue(obj.is_root())
-
-
-class FocusHash(unittest.TestCase):
-    def test_init(self) -> None:
-        obj = browse.FocusHash('abcde')
-        self.assertEqual(obj.identifier, 'abcde')
-
-    def test_is_commit_hash(self) -> None:
-        obj = browse.FocusHash('abcde')
-        self.assertTrue(obj.is_commit_hash())
 
 
 class GetRepositoryRoot(unittest.TestCase):
@@ -471,7 +429,7 @@ class ParseGitURL(unittest.TestCase):
         host = browse.parse_git_url(self.https_url)
         self.check_host(host)
 
-    def check_host(self, host: browse.Host) -> None:
+    def check_host(self, host: types.Host) -> None:
         self.assertTrue(host.__class__ is browse.GithubHost)
         self.assertEqual(host.user, 'albertyw')
         self.assertEqual(host.repository, 'git-browse')
@@ -533,7 +491,7 @@ class TestGetFocusObject(unittest.TestCase):
         focus_object = browse.get_git_object(
             test_util.get_tag(), pathlib.Path.cwd(), self.host
         )
-        self.assertTrue(focus_object.__class__ is browse.FocusHash)
+        self.assertTrue(focus_object.__class__ is types.FocusHash)
 
     def test_nonexistend_focus_object(self) -> None:
         with self.assertRaises(FileNotFoundError):
@@ -548,8 +506,8 @@ class TestGetCommitHash(unittest.TestCase):
 
     def test_get_hash(self) -> None:
         focus_hash = browse.get_commit_hash(test_util.get_tag())
-        self.assertTrue(focus_hash.__class__ is browse.FocusHash)
-        focus_hash = cast(browse.FocusHash, focus_hash)
+        self.assertTrue(focus_hash.__class__ is types.FocusHash)
+        focus_hash = cast(types.FocusHash, focus_hash)
         self.assertTrue(focus_hash.identifier)
 
 
