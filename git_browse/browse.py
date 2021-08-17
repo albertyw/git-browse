@@ -6,10 +6,22 @@ import os
 import pathlib
 import re
 import subprocess
+import sys
 from typing import Dict, Optional, Type
 import webbrowser
 
-from . import bitbucket, github, godocs, phabricator, sourcegraph, typedefs
+# Configure paths/modules from
+# https://stackoverflow.com/questions/16981921/relative-imports-in-python-3
+file_path = pathlib.Path(__file__).resolve()
+parent, root = file_path.parent, file_path.parents[1]
+sys.path.append(str(root))
+try:
+    sys.path.remove(str(parent))
+except ValueError:  # Already removed
+    pass
+
+from git_browse import bitbucket, github, godocs, phabricator, sourcegraph, \
+    typedefs  # NOQA
 
 
 __version__ = '2.12.0'

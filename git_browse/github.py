@@ -1,6 +1,6 @@
 from typing import Match, Type
 
-from . import typedefs
+from git_browse import typedefs
 
 
 GITHUB_HOST = '(?P<host>github\\.com)'

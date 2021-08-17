@@ -1,6 +1,6 @@
 from typing import Match, Type
 
-from . import typedefs
+from git_browse import typedefs
 
 
 BITBUCKET_HOST = '(?P<host>bitbucket\\.org)'

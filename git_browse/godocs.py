@@ -1,6 +1,6 @@
 from typing import Match, Optional, Type
 
-from . import phabricator, typedefs
+from git_browse import phabricator, typedefs
 
 
 class GodocsHost(typedefs.Host):

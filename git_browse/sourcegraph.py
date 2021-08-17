@@ -1,6 +1,6 @@
 from typing import Match, Optional, Type
 
-from . import phabricator, typedefs
+from git_browse import phabricator, typedefs
 
 
 __version__ = '2.12.0'

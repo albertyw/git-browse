@@ -2,7 +2,7 @@ import json
 import pathlib
 from typing import Match, Type
 
-from . import browse, typedefs
+from git_browse import typedefs
 
 
 UBER_HOST = '(?P<host>code\\.uber\\.internal)'
@@ -26,6 +26,7 @@ class PhabricatorHost(typedefs.Host):
 
     @staticmethod
     def create(url_regex_match: Match[str]) -> 'typedefs.Host':
+        from git_browse import browse  # Fix circular import
         host = PhabricatorHost()
         host._parse_arcconfig(browse.get_repository_root())
         return host
