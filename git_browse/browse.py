@@ -24,7 +24,7 @@ from git_browse import bitbucket, github, godocs, phabricator, sourcegraph, \
     typedefs  # NOQA
 
 
-__version__ = '2.12.0'
+__version__ = '2.12.1'
 HOST_REGEXES: Dict[str, Type[typedefs.Host]] = {
     github.GITHUB_SSH_URL: github.GithubHost,
     github.GITHUB_HTTPS_URL: github.GithubHost,
