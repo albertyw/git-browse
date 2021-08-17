@@ -1,37 +1,39 @@
 #!/usr/bin/env python3
 
-from abc import ABCMeta, abstractmethod
 import argparse
 import configparser
-import json
 import os
 import pathlib
 import re
 import subprocess
-from typing import Dict, Match, Optional, Type
+import sys
+from typing import Dict, Optional, Type
 import webbrowser
+
+# Configure paths/modules from
+# https://stackoverflow.com/questions/16981921/relative-imports-in-python-3
+file_path = pathlib.Path(__file__).resolve()
+parent, root = file_path.parent, file_path.parents[1]
+sys.path.append(str(root))
+try:
+    sys.path.remove(str(parent))
+except ValueError:  # Already removed
+    pass
+
+from git_browse import bitbucket, github, godocs, phabricator, sourcegraph, \
+    typedefs  # NOQA
 
 
 __version__ = '2.12.0'
-GITHUB_HOST = '(?P<host>github\\.com)'
-UBER_HOST = '(?P<host>code\\.uber\\.internal)'
-UBER_CONFIG_HOST = '(?P<host>config\\.uber\\.internal)'
-USER_REGEX = '(?P<user>[\\w\\.@:\\/~_-]+)'
-REPOSITORY_REGEX = '(?P<repository>[\\w\\.@:\\/~_-]+)'
-ACCOUNT_REGEX = '(?P<account>[\\w\\.@:\\/~_-]+)'
-BITBUCKET_HOST = '(?P<host>bitbucket\\.org)'
-GITHUB_SSH_URL = 'git@%s:%s/%s' % (GITHUB_HOST, USER_REGEX, REPOSITORY_REGEX)
-GITHUB_HTTPS_URL = 'https://%s/%s/%s' % \
-    (GITHUB_HOST, USER_REGEX, REPOSITORY_REGEX)
-BITBUCKET_SSH_URL = 'git@%s:%s/%s' % \
-    (BITBUCKET_HOST, USER_REGEX, REPOSITORY_REGEX)
-BITBUCKET_HTTPS_URL = 'https://%s@%s/%s/%s' % \
-    (ACCOUNT_REGEX, BITBUCKET_HOST, USER_REGEX, REPOSITORY_REGEX)
-UBER_SSH_GITOLITE_URL = 'gitolite@%s:%s' % (UBER_HOST, REPOSITORY_REGEX)
-UBER_SSH_CONFIG_GITOLITE_URL = 'gitolite@%s:%s' % \
-    (UBER_CONFIG_HOST, REPOSITORY_REGEX)
-UBER_HTTPS_GITOLITE_URL = 'https://%s/%s/%s' % \
-    (UBER_HOST, USER_REGEX, REPOSITORY_REGEX)
+HOST_REGEXES: Dict[str, Type[typedefs.Host]] = {
+    github.GITHUB_SSH_URL: github.GithubHost,
+    github.GITHUB_HTTPS_URL: github.GithubHost,
+    bitbucket.BITBUCKET_SSH_URL: bitbucket.BitbucketHost,
+    bitbucket.BITBUCKET_HTTPS_URL: bitbucket.BitbucketHost,
+    phabricator.UBER_SSH_GITOLITE_URL: phabricator.PhabricatorHost,
+    phabricator.UBER_SSH_CONFIG_GITOLITE_URL: phabricator.PhabricatorHost,
+    phabricator.UBER_HTTPS_GITOLITE_URL: phabricator.PhabricatorHost,
+}
 
 
 def copy_text_to_clipboard(text: str) -> None:
@@ -40,424 +42,6 @@ def copy_text_to_clipboard(text: str) -> None:
         subprocess.run(['pbcopy', 'w'], input=stdin, close_fds=True)
     except FileNotFoundError:
         pass
-
-
-class Host(metaclass=ABCMeta):
-    @property
-    @abstractmethod
-    def user(self) -> str:
-        pass
-
-    @user.setter
-    def user(self, user: str) -> None:
-        pass
-
-    @property
-    @abstractmethod
-    def repository(self) -> str:
-        pass
-
-    @repository.setter
-    def repository(self, repository: str) -> None:
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def create(url_regex_match: Match[str]) -> 'Host':
-        pass
-
-    @abstractmethod
-    def set_host_class(self, host_class: 'Type[Host]') -> None:
-        pass
-
-    @abstractmethod
-    def get_url(self, git_object: 'GitObject') -> str:
-        pass
-
-
-class GithubHost(Host):
-    GITHUB_URL = "https://github.com/"
-    user: str = ''
-    repository: str = ''
-
-    def __init__(self, user: str, repository: str) -> None:
-        self.user = user
-        self.repository = repository
-
-    @staticmethod
-    def create(url_regex_match: Match[str]) -> 'Host':
-        repository = url_regex_match.group('repository')
-        if repository[-4:] == '.git':
-            repository = repository[:-4]
-        user = url_regex_match.group('user')
-        return GithubHost(user, repository)
-
-    def set_host_class(self, host_class: Type[Host]) -> None:
-        return
-
-    def get_url(self, git_object: 'GitObject') -> str:
-        repository_url = "%s%s/%s" % (
-            self.GITHUB_URL,
-            self.user,
-            self.repository
-        )
-        if git_object.is_commit_hash():
-            return self.commit_hash_url(repository_url, git_object)
-        if git_object.is_root():
-            return self.root_url(repository_url, git_object)
-        if git_object.is_directory():
-            return self.directory_url(repository_url, git_object)
-        return self.file_url(repository_url, git_object)
-
-    def commit_hash_url(
-            self,
-            repository_url: str,
-            focus_hash: 'GitObject') -> str:
-        repository_url = "%s/commit/%s" % (
-            repository_url,
-            focus_hash.identifier
-        )
-        return repository_url
-
-    def root_url(self, repository_url: str, focus_object: 'GitObject') -> str:
-        return repository_url
-
-    def directory_url(
-            self,
-            repository_url: str,
-            focus_object: 'GitObject') -> str:
-        repository_url = "%s/tree/%s/%s" % (
-            repository_url,
-            "master",
-            focus_object.identifier
-        )
-        return repository_url
-
-    def file_url(self, repository_url: str, focus_object: 'GitObject') -> str:
-        repository_url = "%s/blob/%s/%s" % (
-            repository_url,
-            "master",
-            focus_object.identifier
-        )
-        return repository_url
-
-
-class BitbucketHost(Host):
-    BITBUCKET_URL = "https://bitbucket.org/"
-    user: str = ''
-    repository: str = ''
-
-    def __init__(self, user: str, repository: str) -> None:
-        self.user = user
-        self.repository = repository
-
-    @staticmethod
-    def create(url_regex_match: Match[str]) -> 'Host':
-        repository = url_regex_match.group('repository')
-        if repository[-4:] == '.git':
-            repository = repository[:-4]
-        user = url_regex_match.group('user')
-        return BitbucketHost(user, repository)
-
-    def set_host_class(self, host_class: Type[Host]) -> None:
-        return
-
-    def get_url(self, git_object: 'GitObject') -> str:
-        repository_url = "%s%s/%s" % (
-            self.BITBUCKET_URL,
-            self.user,
-            self.repository
-        )
-        if git_object.is_commit_hash():
-            return self.commit_hash_url(repository_url, git_object)
-        if git_object.is_root():
-            return self.root_url(repository_url, git_object)
-        if git_object.is_directory():
-            return self.directory_url(repository_url, git_object)
-        return self.file_url(repository_url, git_object)
-
-    def commit_hash_url(
-            self,
-            repository_url: str,
-            focus_hash: 'GitObject') -> str:
-        repository_url = "%s/commits/%s" % (
-            repository_url,
-            focus_hash.identifier
-        )
-        return repository_url
-
-    def root_url(self, repository_url: str, focus_object: 'GitObject') -> str:
-        return repository_url
-
-    def directory_url(
-            self,
-            repository_url: str,
-            focus_object: 'GitObject') -> str:
-        repository_url = "%s/src/%s/%s" % (
-            repository_url,
-            "master",
-            focus_object.identifier
-        )
-        return repository_url
-
-    def file_url(self, repository_url: str, focus_object: 'GitObject') -> str:
-        repository_url = "%s/src/%s/%s" % (
-            repository_url,
-            "master",
-            focus_object.identifier
-        )
-        return repository_url
-
-
-class PhabricatorHost(Host):
-    user: str = ''
-    repository: str = ''
-
-    def __init__(self) -> None:
-        self.phabricator_url = ''
-        self.repository_callsign = ''
-        self.default_branch = ''
-
-    @staticmethod
-    def create(url_regex_match: Match[str]) -> 'Host':
-        host = PhabricatorHost()
-        host._parse_arcconfig(get_repository_root())
-        return host
-
-    def set_host_class(self, host_class: Type[Host]) -> None:
-        return
-
-    def _parse_arcconfig(self, repository_root: pathlib.Path) -> None:
-        arcconfig_file = repository_root / '.arcconfig'
-        try:
-            with open(arcconfig_file, 'r') as handle:
-                data = handle.read()
-        except FileNotFoundError:
-            raise FileNotFoundError(
-                'Cannot find a ".arcconfig" file to parse '
-                'for repository configuration.  Expected file at %s.' %
-                arcconfig_file
-            )
-        try:
-            arcconfig_data = json.loads(data)
-        except json.decoder.JSONDecodeError:
-            raise RuntimeError('Cannot parse ".arcconfig" file as json')
-        self.repository_callsign = arcconfig_data.get('repository.callsign')
-        self.phabricator_url = arcconfig_data.get('phabricator.uri')
-        default_branch = arcconfig_data.get('git.default-relative-commit')
-        if '/' in default_branch:
-            default_branch = default_branch.split('/', 1)[1]
-        self.default_branch = default_branch
-
-    def get_url(self, git_object: 'GitObject') -> str:
-        if git_object.is_commit_hash():
-            return self.commit_hash_url(git_object)
-        if git_object.is_root():
-            return self.root_url(git_object)
-        return self.file_url(git_object)
-
-    def commit_hash_url(self, focus_hash: 'GitObject') -> str:
-        repository_url = "%s/r%s%s" % (
-            self.phabricator_url,
-            self.repository_callsign,
-            focus_hash.identifier
-        )
-        return repository_url
-
-    def root_url(self, focus_object: 'GitObject') -> str:
-        repository_url = '%s/diffusion/%s/repository/%s/' % (
-            self.phabricator_url,
-            self.repository_callsign,
-            self.default_branch,
-        )
-        return repository_url
-
-    def file_url(self, focus_object: 'GitObject') -> str:
-        repository_url = "%s/diffusion/%s/browse/%s/%s" % (
-            self.phabricator_url,
-            self.repository_callsign,
-            self.default_branch,
-            focus_object.identifier
-        )
-        return repository_url
-
-
-class SourcegraphHost(Host):
-    PUBLIC_SOURCEGRAPH_URL = 'https://sourcegraph.com/'
-    UBER_SOURCEGRAPH_URL = 'https://sourcegraph.uberinternal.com/'
-    user: str = ''
-    repository: str = ''
-
-    def __init__(self, host: str, repository: str):
-        self.host_class: Optional[Type[Host]] = None
-        self.host = host
-        self.repository = repository
-
-    @staticmethod
-    def create(url_regex_match: Match[str]) -> 'Host':
-        repository = url_regex_match.group('repository')
-        if repository[-4:] == '.git':
-            repository = repository[:-4]
-        host = url_regex_match.group('host')
-        try:
-            user = url_regex_match.group('user')
-            repository = '%s/%s' % (user, repository)
-        except IndexError:
-            pass
-        return SourcegraphHost(host, repository)
-
-    def set_host_class(self, host_class: Type[Host]) -> None:
-        self.host_class = host_class
-
-    def get_url(self, git_object: 'GitObject') -> str:
-        sourcegraph_url = self.PUBLIC_SOURCEGRAPH_URL
-        if self.host_class == PhabricatorHost:
-            sourcegraph_url = self.UBER_SOURCEGRAPH_URL
-        repository_url = "%s%s/%s" % (
-            sourcegraph_url,
-            self.host,
-            self.repository
-        )
-        if git_object.is_commit_hash():
-            return self.commit_hash_url(repository_url, git_object)
-        if git_object.is_root():
-            return repository_url
-        if git_object.is_directory():
-            return self.directory_url(repository_url, git_object)
-        return self.file_url(repository_url, git_object)
-
-    def commit_hash_url(
-            self,
-            repository_url: str,
-            focus_hash: 'GitObject') -> str:
-        repository_url = "%s/-/commit/%s" % (
-            repository_url,
-            focus_hash.identifier
-        )
-        return repository_url
-
-    def directory_url(
-            self,
-            repository_url: str,
-            focus_object: 'GitObject') -> str:
-        repository_url = "%s/-/tree/%s" % (
-            repository_url,
-            focus_object.identifier
-        )
-        return repository_url
-
-    def file_url(self, repository_url: str, focus_object: 'GitObject') -> str:
-        repository_url = "%s/-/blob/%s" % (
-            repository_url,
-            focus_object.identifier
-        )
-        return repository_url
-
-
-class GodocsHost(Host):
-    PUBLIC_GODOCS_URL = 'https://pkg.go.dev/'
-    UBER_GODOCS_URL = 'https://eng.uberinternal.com/docs/api/go/pkg/'
-    user: str = ''
-    repository: str = ''
-
-    def __init__(self, host: str, repository: str):
-        self.host_class: Optional[Type[Host]] = None
-        self.host = host
-        self.repository = repository
-
-    @staticmethod
-    def create(url_regex_match: Match[str]) -> 'Host':
-        repository = url_regex_match.group('repository')
-        if repository[-4:] == '.git':
-            repository = repository[:-4]
-        host = url_regex_match.group('host')
-        try:
-            user = url_regex_match.group('user')
-            repository = '%s/%s' % (user, repository)
-        except IndexError:
-            pass
-        return GodocsHost(host, repository)
-
-    def set_host_class(self, host_class: Type[Host]) -> None:
-        self.host_class = host_class
-
-    def get_url(self, git_object: 'GitObject') -> str:
-        godocs_url = self.PUBLIC_GODOCS_URL
-        if self.host_class == PhabricatorHost:
-            godocs_url = self.UBER_GODOCS_URL
-        repository_url = "%s%s/%s" % (
-            godocs_url,
-            self.host,
-            self.repository
-        )
-        if git_object.is_commit_hash():
-            return self.commit_hash_url(repository_url, git_object)
-        if git_object.is_root():
-            return repository_url
-        if git_object.is_directory():
-            return self.directory_url(repository_url, git_object)
-        return self.file_url(repository_url, git_object)
-
-    def commit_hash_url(
-            self,
-            repository_url: str,
-            focus_hash: 'GitObject') -> str:
-        raise NotImplementedError("Cannot look up commits in godocs")
-
-    def directory_url(
-            self,
-            repository_url: str,
-            focus_object: 'GitObject') -> str:
-        repository_url = "%s/%s" % (
-            repository_url,
-            focus_object.identifier
-        )
-        return repository_url
-
-    def file_url(self, repository_url: str, focus_object: 'GitObject') -> str:
-        raise NotImplementedError("Cannot look up individual files in godocs")
-
-
-HOST_REGEXES: Dict[str, Type[Host]] = {
-    GITHUB_SSH_URL: GithubHost,
-    GITHUB_HTTPS_URL: GithubHost,
-    BITBUCKET_SSH_URL: BitbucketHost,
-    BITBUCKET_HTTPS_URL: BitbucketHost,
-    UBER_SSH_GITOLITE_URL: PhabricatorHost,
-    UBER_SSH_CONFIG_GITOLITE_URL: PhabricatorHost,
-    UBER_HTTPS_GITOLITE_URL: PhabricatorHost,
-}
-
-
-class GitObject(object):
-    def __init__(self, identifier: str) -> None:
-        self.identifier = identifier
-
-    def is_commit_hash(self) -> bool:
-        return False
-
-    def is_root(self) -> bool:
-        return False
-
-    def is_directory(self) -> bool:
-        return False
-
-
-class FocusObject(GitObject):
-    def is_root(self) -> bool:
-        return self.identifier == os.sep
-
-    def is_directory(self) -> bool:
-        return self.identifier[-1] == os.sep
-
-    @staticmethod
-    def default() -> 'FocusObject':
-        return FocusObject(os.sep)
-
-
-class FocusHash(GitObject):
-    def is_commit_hash(self) -> bool:
-        return True
 
 
 def get_repository_root() -> pathlib.Path:
@@ -493,20 +77,20 @@ def get_git_url(git_config_file: pathlib.Path) -> str:
 
 def parse_git_url(
     git_url: str,
-    sourcegraph: bool = False,
-    godocs: bool = False,
-) -> Host:
+    use_sourcegraph: bool = False,
+    use_godocs: bool = False,
+) -> typedefs.Host:
     for regex, host_class in HOST_REGEXES.items():
         match = re.search(regex, git_url)
         if match:
             break
     if not match:
         raise ValueError("git url not parseable")
-    if sourcegraph:
-        host = SourcegraphHost.create(match)
+    if use_sourcegraph:
+        host = sourcegraph.SourcegraphHost.create(match)
         host.set_host_class(host_class)
-    elif godocs:
-        host = GodocsHost.create(match)
+    elif use_godocs:
+        host = godocs.GodocsHost.create(match)
         host.set_host_class(host_class)
     else:
         host = host_class.create(match)
@@ -514,20 +98,20 @@ def parse_git_url(
 
 
 def get_repository_host(
-    sourcegraph: bool = False,
+    use_sourcegraph: bool = False,
     godocs: bool = False,
-) -> Host:
+) -> typedefs.Host:
     git_config_file = get_git_config()
     git_url = get_git_url(git_config_file)
-    repo_host = parse_git_url(git_url, sourcegraph, godocs)
+    repo_host = parse_git_url(git_url, use_sourcegraph, godocs)
     return repo_host
 
 
 def get_git_object(
-    focus_object: str, path: pathlib.Path, host: Host
-) -> GitObject:
+    focus_object: str, path: pathlib.Path, host: typedefs.Host
+) -> typedefs.GitObject:
     if not focus_object:
-        return FocusObject.default()
+        return typedefs.FocusObject.default()
     object_path = path.joinpath(focus_object).resolve()
     if not object_path.exists():
         focus_hash = get_commit_hash(focus_object)
@@ -538,10 +122,10 @@ def get_git_object(
     object_path_str = str(object_path.relative_to(get_repository_root()))
     if object_path.is_dir() and object_path_str[-1] != os.sep:
         object_path_str += os.sep
-    return FocusObject(object_path_str)
+    return typedefs.FocusObject(object_path_str)
 
 
-def get_commit_hash(identifier: str) -> Optional[FocusHash]:
+def get_commit_hash(identifier: str) -> Optional[typedefs.FocusHash]:
     command = ['git', 'show', identifier, '--no-abbrev-commit']
     process = subprocess.run(
         command,
@@ -551,7 +135,7 @@ def get_commit_hash(identifier: str) -> Optional[FocusHash]:
     if process.returncode != 0:
         return None
     commit_hash = process.stdout.split("\n")[0].split(" ")[1]
-    return FocusHash(commit_hash)
+    return typedefs.FocusHash(commit_hash)
 
 
 def open_url(
