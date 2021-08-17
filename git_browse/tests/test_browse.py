@@ -8,69 +8,10 @@ from typing import List, cast
 import unittest
 from unittest.mock import MagicMock, patch
 
-from git_browse import browse, github, phabricator, types
+from git_browse import browse, github, sourcegraph, types
 from git_browse.tests import test_util
 
 BASE_DIRECTORY = pathlib.Path(__file__).parents[2]
-
-
-class SourcegraphHost(unittest.TestCase):
-    def setUp(self) -> None:
-        self.obj = browse.SourcegraphHost('code.uber.internal', 'asdf')
-        self.obj.host_class = phabricator.PhabricatorHost
-
-    def test_init(self) -> None:
-        self.assertEqual(self.obj.host, 'code.uber.internal')
-        self.assertEqual(self.obj.repository, 'asdf')
-
-    def test_create(self) -> None:
-        repo = 'gitolite@code.uber.internal:a/b'
-        match = re.search(phabricator.UBER_SSH_GITOLITE_URL, repo)
-        assert match is not None
-        obj = browse.SourcegraphHost.create(match)
-        self.assertEqual(obj.repository, 'a/b')
-
-    def test_create_dot_git(self) -> None:
-        repo = 'gitolite@code.uber.internal:a/b.git'
-        match = re.search(phabricator.UBER_SSH_GITOLITE_URL, repo)
-        assert match is not None
-        obj = browse.SourcegraphHost.create(match)
-        self.assertEqual(obj.repository, 'a/b')
-
-    def test_get_url_commit(self) -> None:
-        git_object = types.FocusHash('abcd')
-        url = self.obj.get_url(git_object)
-        self.assertEqual(
-            url,
-            self.obj.UBER_SOURCEGRAPH_URL +
-            'code.uber.internal/asdf/-/commit/abcd'
-        )
-
-    def test_get_url_root(self) -> None:
-        git_object = types.FocusObject(os.sep)
-        url = self.obj.get_url(git_object)
-        self.assertEqual(
-            url,
-            self.obj.UBER_SOURCEGRAPH_URL + 'code.uber.internal/asdf'
-        )
-
-    def test_get_url_directory(self) -> None:
-        git_object = types.FocusObject('zxcv' + os.sep)
-        url = self.obj.get_url(git_object)
-        self.assertEqual(
-            url,
-            self.obj.UBER_SOURCEGRAPH_URL +
-            'code.uber.internal/asdf/-/tree/zxcv/'
-        )
-
-    def test_get_url_file(self) -> None:
-        git_object = types.FocusObject('zxcv')
-        url = self.obj.get_url(git_object)
-        self.assertEqual(
-            url,
-            self.obj.UBER_SOURCEGRAPH_URL +
-            'code.uber.internal/asdf/-/blob/zxcv'
-        )
 
 
 class TestGodocsHost(unittest.TestCase):
@@ -222,16 +163,16 @@ class ParseGitURL(unittest.TestCase):
         self.assertEqual(host.repository, 'git-browse')
 
     def test_sourcegraph_github_host(self) -> None:
-        host = browse.parse_git_url(self.ssh_url, sourcegraph=True)
-        self.assertTrue(host.__class__ is browse.SourcegraphHost)
-        host = cast(browse.SourcegraphHost, host)
+        host = browse.parse_git_url(self.ssh_url, use_sourcegraph=True)
+        self.assertTrue(host.__class__ is sourcegraph.SourcegraphHost)
+        host = cast(sourcegraph.SourcegraphHost, host)
         self.assertEqual(host.host, 'github.com')
         self.assertEqual(host.repository, 'albertyw/git-browse')
 
     def test_sourcegraph_uber_host(self) -> None:
-        host = browse.parse_git_url(self.uber_ssh_url, sourcegraph=True)
-        self.assertTrue(host.__class__ is browse.SourcegraphHost)
-        host = cast(browse.SourcegraphHost, host)
+        host = browse.parse_git_url(self.uber_ssh_url, use_sourcegraph=True)
+        self.assertTrue(host.__class__ is sourcegraph.SourcegraphHost)
+        host = cast(sourcegraph.SourcegraphHost, host)
         self.assertEqual(host.host, 'code.uber.internal')
         self.assertEqual(host.repository, 'abcd/efgh')
 
