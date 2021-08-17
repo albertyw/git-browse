@@ -1,6 +1,6 @@
 import unittest
 
-from git_browse import bitbucket, types
+from git_browse import bitbucket, typedefs
 from git_browse.tests import test_util
 
 
@@ -8,8 +8,8 @@ class TestBitbucketHost(unittest.TestCase):
     def setUp(self) -> None:
         self.host = bitbucket.BitbucketHost('albertyw', 'git-browse')
         self.repository_url = 'https://bitbucket.org/albertyw/git-browse'
-        self.focus_object = types.FocusObject('/')
-        self.focus_hash = types.FocusHash(test_util.get_tag())
+        self.focus_object = typedefs.FocusObject('/')
+        self.focus_hash = typedefs.FocusHash(test_util.get_tag())
 
     def test_init(self) -> None:
         host = bitbucket.BitbucketHost('user', 'repository')

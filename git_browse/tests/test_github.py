@@ -1,7 +1,7 @@
 import pathlib
 import unittest
 
-from git_browse import github, types
+from git_browse import github, typedefs
 from git_browse.tests import test_util
 
 BASE_DIRECTORY = pathlib.Path(__file__).parents[2]
@@ -11,8 +11,8 @@ class TestGithubHost(unittest.TestCase):
     def setUp(self) -> None:
         self.github_host = github.GithubHost('albertyw', 'git-browse')
         self.repository_url = 'https://github.com/albertyw/git-browse'
-        self.focus_object = types.FocusObject('/')
-        self.focus_hash = types.FocusHash(test_util.get_tag())
+        self.focus_object = typedefs.FocusObject('/')
+        self.focus_hash = typedefs.FocusHash(test_util.get_tag())
 
     def test_init(self) -> None:
         host = github.GithubHost('user', 'repository')

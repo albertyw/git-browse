@@ -9,11 +9,11 @@ import subprocess
 from typing import Dict, Optional, Type
 import webbrowser
 
-from . import bitbucket, github, godocs, phabricator, sourcegraph, types
+from . import bitbucket, github, godocs, phabricator, sourcegraph, typedefs
 
 
 __version__ = '2.12.0'
-HOST_REGEXES: Dict[str, Type[types.Host]] = {
+HOST_REGEXES: Dict[str, Type[typedefs.Host]] = {
     github.GITHUB_SSH_URL: github.GithubHost,
     github.GITHUB_HTTPS_URL: github.GithubHost,
     bitbucket.BITBUCKET_SSH_URL: bitbucket.BitbucketHost,
@@ -67,7 +67,7 @@ def parse_git_url(
     git_url: str,
     use_sourcegraph: bool = False,
     use_godocs: bool = False,
-) -> types.Host:
+) -> typedefs.Host:
     for regex, host_class in HOST_REGEXES.items():
         match = re.search(regex, git_url)
         if match:
@@ -88,7 +88,7 @@ def parse_git_url(
 def get_repository_host(
     use_sourcegraph: bool = False,
     godocs: bool = False,
-) -> types.Host:
+) -> typedefs.Host:
     git_config_file = get_git_config()
     git_url = get_git_url(git_config_file)
     repo_host = parse_git_url(git_url, use_sourcegraph, godocs)
@@ -96,10 +96,10 @@ def get_repository_host(
 
 
 def get_git_object(
-    focus_object: str, path: pathlib.Path, host: types.Host
-) -> types.GitObject:
+    focus_object: str, path: pathlib.Path, host: typedefs.Host
+) -> typedefs.GitObject:
     if not focus_object:
-        return types.FocusObject.default()
+        return typedefs.FocusObject.default()
     object_path = path.joinpath(focus_object).resolve()
     if not object_path.exists():
         focus_hash = get_commit_hash(focus_object)
@@ -110,10 +110,10 @@ def get_git_object(
     object_path_str = str(object_path.relative_to(get_repository_root()))
     if object_path.is_dir() and object_path_str[-1] != os.sep:
         object_path_str += os.sep
-    return types.FocusObject(object_path_str)
+    return typedefs.FocusObject(object_path_str)
 
 
-def get_commit_hash(identifier: str) -> Optional[types.FocusHash]:
+def get_commit_hash(identifier: str) -> Optional[typedefs.FocusHash]:
     command = ['git', 'show', identifier, '--no-abbrev-commit']
     process = subprocess.run(
         command,
@@ -123,7 +123,7 @@ def get_commit_hash(identifier: str) -> Optional[types.FocusHash]:
     if process.returncode != 0:
         return None
     commit_hash = process.stdout.split("\n")[0].split(" ")[1]
-    return types.FocusHash(commit_hash)
+    return typedefs.FocusHash(commit_hash)
 
 
 def open_url(

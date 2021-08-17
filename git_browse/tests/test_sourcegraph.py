@@ -3,7 +3,7 @@ import pathlib
 import re
 import unittest
 
-from git_browse import sourcegraph, phabricator, types
+from git_browse import sourcegraph, phabricator, typedefs
 
 BASE_DIRECTORY = pathlib.Path(__file__).parents[2]
 
@@ -32,7 +32,7 @@ class SourcegraphHost(unittest.TestCase):
         self.assertEqual(obj.repository, 'a/b')
 
     def test_get_url_commit(self) -> None:
-        git_object = types.FocusHash('abcd')
+        git_object = typedefs.FocusHash('abcd')
         url = self.obj.get_url(git_object)
         self.assertEqual(
             url,
@@ -41,7 +41,7 @@ class SourcegraphHost(unittest.TestCase):
         )
 
     def test_get_url_root(self) -> None:
-        git_object = types.FocusObject(os.sep)
+        git_object = typedefs.FocusObject(os.sep)
         url = self.obj.get_url(git_object)
         self.assertEqual(
             url,
@@ -49,7 +49,7 @@ class SourcegraphHost(unittest.TestCase):
         )
 
     def test_get_url_directory(self) -> None:
-        git_object = types.FocusObject('zxcv' + os.sep)
+        git_object = typedefs.FocusObject('zxcv' + os.sep)
         url = self.obj.get_url(git_object)
         self.assertEqual(
             url,
@@ -58,7 +58,7 @@ class SourcegraphHost(unittest.TestCase):
         )
 
     def test_get_url_file(self) -> None:
-        git_object = types.FocusObject('zxcv')
+        git_object = typedefs.FocusObject('zxcv')
         url = self.obj.get_url(git_object)
         self.assertEqual(
             url,

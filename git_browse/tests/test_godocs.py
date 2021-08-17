@@ -2,7 +2,7 @@ import os
 import re
 import unittest
 
-from git_browse import github, godocs, types
+from git_browse import github, godocs, typedefs
 
 
 class TestGodocsHost(unittest.TestCase):
@@ -31,12 +31,12 @@ class TestGodocsHost(unittest.TestCase):
         self.assertEqual(obj.repository, 'qwer')
 
     def test_get_url_commit(self) -> None:
-        git_object = types.FocusHash('abcd')
+        git_object = typedefs.FocusHash('abcd')
         with self.assertRaises(NotImplementedError):
             self.obj.get_url(git_object)
 
     def test_get_url_root(self) -> None:
-        git_object = types.FocusObject(os.sep)
+        git_object = typedefs.FocusObject(os.sep)
         url = self.obj.get_url(git_object)
         self.assertEqual(
             url,
@@ -44,7 +44,7 @@ class TestGodocsHost(unittest.TestCase):
         )
 
     def test_get_url_directory(self) -> None:
-        git_object = types.FocusObject('zxcv' + os.sep)
+        git_object = typedefs.FocusObject('zxcv' + os.sep)
         url = self.obj.get_url(git_object)
         self.assertEqual(
             url,
@@ -53,6 +53,6 @@ class TestGodocsHost(unittest.TestCase):
         )
 
     def test_get_url_file(self) -> None:
-        git_object = types.FocusObject('zxcv')
+        git_object = typedefs.FocusObject('zxcv')
         with self.assertRaises(NotImplementedError):
             self.obj.get_url(git_object)

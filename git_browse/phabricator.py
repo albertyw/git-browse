@@ -2,19 +2,20 @@ import json
 import pathlib
 from typing import Match, Type
 
-from . import browse, types
+from . import browse, typedefs
 
 
 UBER_HOST = '(?P<host>code\\.uber\\.internal)'
 UBER_CONFIG_HOST = '(?P<host>config\\.uber\\.internal)'
-UBER_SSH_GITOLITE_URL = 'gitolite@%s:%s' % (UBER_HOST, types.REPOSITORY_REGEX)
+UBER_SSH_GITOLITE_URL = 'gitolite@%s:%s' % \
+    (UBER_HOST, typedefs.REPOSITORY_REGEX)
 UBER_SSH_CONFIG_GITOLITE_URL = 'gitolite@%s:%s' % \
-    (UBER_CONFIG_HOST, types.REPOSITORY_REGEX)
+    (UBER_CONFIG_HOST, typedefs.REPOSITORY_REGEX)
 UBER_HTTPS_GITOLITE_URL = 'https://%s/%s/%s' % \
-    (UBER_HOST, types.USER_REGEX, types.REPOSITORY_REGEX)
+    (UBER_HOST, typedefs.USER_REGEX, typedefs.REPOSITORY_REGEX)
 
 
-class PhabricatorHost(types.Host):
+class PhabricatorHost(typedefs.Host):
     user: str = ''
     repository: str = ''
 
@@ -24,12 +25,12 @@ class PhabricatorHost(types.Host):
         self.default_branch = ''
 
     @staticmethod
-    def create(url_regex_match: Match[str]) -> 'types.Host':
+    def create(url_regex_match: Match[str]) -> 'typedefs.Host':
         host = PhabricatorHost()
         host._parse_arcconfig(browse.get_repository_root())
         return host
 
-    def set_host_class(self, host_class: Type[types.Host]) -> None:
+    def set_host_class(self, host_class: Type[typedefs.Host]) -> None:
         return
 
     def _parse_arcconfig(self, repository_root: pathlib.Path) -> None:
@@ -54,14 +55,14 @@ class PhabricatorHost(types.Host):
             default_branch = default_branch.split('/', 1)[1]
         self.default_branch = default_branch
 
-    def get_url(self, git_object: 'types.GitObject') -> str:
+    def get_url(self, git_object: 'typedefs.GitObject') -> str:
         if git_object.is_commit_hash():
             return self.commit_hash_url(git_object)
         if git_object.is_root():
             return self.root_url(git_object)
         return self.file_url(git_object)
 
-    def commit_hash_url(self, focus_hash: 'types.GitObject') -> str:
+    def commit_hash_url(self, focus_hash: 'typedefs.GitObject') -> str:
         repository_url = "%s/r%s%s" % (
             self.phabricator_url,
             self.repository_callsign,
@@ -69,7 +70,7 @@ class PhabricatorHost(types.Host):
         )
         return repository_url
 
-    def root_url(self, focus_object: 'types.GitObject') -> str:
+    def root_url(self, focus_object: 'typedefs.GitObject') -> str:
         repository_url = '%s/diffusion/%s/repository/%s/' % (
             self.phabricator_url,
             self.repository_callsign,
@@ -77,7 +78,7 @@ class PhabricatorHost(types.Host):
         )
         return repository_url
 
-    def file_url(self, focus_object: 'types.GitObject') -> str:
+    def file_url(self, focus_object: 'typedefs.GitObject') -> str:
         repository_url = "%s/diffusion/%s/browse/%s/%s" % (
             self.phabricator_url,
             self.repository_callsign,

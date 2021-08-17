@@ -1,16 +1,16 @@
 from typing import Match, Type
 
-from . import types
+from . import typedefs
 
 
 GITHUB_HOST = '(?P<host>github\\.com)'
 GITHUB_SSH_URL = 'git@%s:%s/%s' % \
-    (GITHUB_HOST, types.USER_REGEX, types.REPOSITORY_REGEX)
+    (GITHUB_HOST, typedefs.USER_REGEX, typedefs.REPOSITORY_REGEX)
 GITHUB_HTTPS_URL = 'https://%s/%s/%s' % \
-    (GITHUB_HOST, types.USER_REGEX, types.REPOSITORY_REGEX)
+    (GITHUB_HOST, typedefs.USER_REGEX, typedefs.REPOSITORY_REGEX)
 
 
-class GithubHost(types.Host):
+class GithubHost(typedefs.Host):
     GITHUB_URL = "https://github.com/"
     user: str = ''
     repository: str = ''
@@ -20,17 +20,17 @@ class GithubHost(types.Host):
         self.repository = repository
 
     @staticmethod
-    def create(url_regex_match: Match[str]) -> 'types.Host':
+    def create(url_regex_match: Match[str]) -> 'typedefs.Host':
         repository = url_regex_match.group('repository')
         if repository[-4:] == '.git':
             repository = repository[:-4]
         user = url_regex_match.group('user')
         return GithubHost(user, repository)
 
-    def set_host_class(self, host_class: Type[types.Host]) -> None:
+    def set_host_class(self, host_class: Type[typedefs.Host]) -> None:
         return
 
-    def get_url(self, git_object: 'types.GitObject') -> str:
+    def get_url(self, git_object: 'typedefs.GitObject') -> str:
         repository_url = "%s%s/%s" % (
             self.GITHUB_URL,
             self.user,
@@ -47,7 +47,7 @@ class GithubHost(types.Host):
     def commit_hash_url(
             self,
             repository_url: str,
-            focus_hash: 'types.GitObject') -> str:
+            focus_hash: 'typedefs.GitObject') -> str:
         repository_url = "%s/commit/%s" % (
             repository_url,
             focus_hash.identifier
@@ -55,14 +55,14 @@ class GithubHost(types.Host):
         return repository_url
 
     def root_url(
-        self, repository_url: str, focus_object: 'types.GitObject'
+        self, repository_url: str, focus_object: 'typedefs.GitObject'
     ) -> str:
         return repository_url
 
     def directory_url(
             self,
             repository_url: str,
-            focus_object: 'types.GitObject') -> str:
+            focus_object: 'typedefs.GitObject') -> str:
         repository_url = "%s/tree/%s/%s" % (
             repository_url,
             "master",
@@ -71,7 +71,7 @@ class GithubHost(types.Host):
         return repository_url
 
     def file_url(
-        self, repository_url: str, focus_object: 'types.GitObject'
+        self, repository_url: str, focus_object: 'typedefs.GitObject'
     ) -> str:
         repository_url = "%s/blob/%s/%s" % (
             repository_url,

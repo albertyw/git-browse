@@ -1,24 +1,24 @@
 from typing import Match, Optional, Type
 
-from . import phabricator, types
+from . import phabricator, typedefs
 
 
 __version__ = '2.12.0'
 
 
-class SourcegraphHost(types.Host):
+class SourcegraphHost(typedefs.Host):
     PUBLIC_SOURCEGRAPH_URL = 'https://sourcegraph.com/'
     UBER_SOURCEGRAPH_URL = 'https://sourcegraph.uberinternal.com/'
     user: str = ''
     repository: str = ''
 
     def __init__(self, host: str, repository: str):
-        self.host_class: Optional[Type[types.Host]] = None
+        self.host_class: Optional[Type[typedefs.Host]] = None
         self.host = host
         self.repository = repository
 
     @staticmethod
-    def create(url_regex_match: Match[str]) -> 'types.Host':
+    def create(url_regex_match: Match[str]) -> 'typedefs.Host':
         repository = url_regex_match.group('repository')
         if repository[-4:] == '.git':
             repository = repository[:-4]
@@ -30,10 +30,10 @@ class SourcegraphHost(types.Host):
             pass
         return SourcegraphHost(host, repository)
 
-    def set_host_class(self, host_class: Type[types.Host]) -> None:
+    def set_host_class(self, host_class: Type[typedefs.Host]) -> None:
         self.host_class = host_class
 
-    def get_url(self, git_object: 'types.GitObject') -> str:
+    def get_url(self, git_object: 'typedefs.GitObject') -> str:
         sourcegraph_url = self.PUBLIC_SOURCEGRAPH_URL
         if self.host_class == phabricator.PhabricatorHost:
             sourcegraph_url = self.UBER_SOURCEGRAPH_URL
@@ -53,7 +53,7 @@ class SourcegraphHost(types.Host):
     def commit_hash_url(
             self,
             repository_url: str,
-            focus_hash: 'types.GitObject') -> str:
+            focus_hash: 'typedefs.GitObject') -> str:
         repository_url = "%s/-/commit/%s" % (
             repository_url,
             focus_hash.identifier
@@ -63,7 +63,7 @@ class SourcegraphHost(types.Host):
     def directory_url(
             self,
             repository_url: str,
-            focus_object: 'types.GitObject') -> str:
+            focus_object: 'typedefs.GitObject') -> str:
         repository_url = "%s/-/tree/%s" % (
             repository_url,
             focus_object.identifier
@@ -71,7 +71,7 @@ class SourcegraphHost(types.Host):
         return repository_url
 
     def file_url(
-        self, repository_url: str, focus_object: 'types.GitObject'
+        self, repository_url: str, focus_object: 'typedefs.GitObject'
     ) -> str:
         repository_url = "%s/-/blob/%s" % (
             repository_url,

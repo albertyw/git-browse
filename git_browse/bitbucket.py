@@ -1,18 +1,18 @@
 from typing import Match, Type
 
-from . import types
+from . import typedefs
 
 
 BITBUCKET_HOST = '(?P<host>bitbucket\\.org)'
 BITBUCKET_SSH_URL = 'git@%s:%s/%s' % \
-    (BITBUCKET_HOST, types.USER_REGEX, types.REPOSITORY_REGEX)
+    (BITBUCKET_HOST, typedefs.USER_REGEX, typedefs.REPOSITORY_REGEX)
 BITBUCKET_HTTPS_URL = 'https://%s@%s/%s/%s' % (
-    types.ACCOUNT_REGEX, BITBUCKET_HOST, types.USER_REGEX,
-    types.REPOSITORY_REGEX
+    typedefs.ACCOUNT_REGEX, BITBUCKET_HOST, typedefs.USER_REGEX,
+    typedefs.REPOSITORY_REGEX
 )
 
 
-class BitbucketHost(types.Host):
+class BitbucketHost(typedefs.Host):
     BITBUCKET_URL = "https://bitbucket.org/"
     user: str = ''
     repository: str = ''
@@ -22,17 +22,17 @@ class BitbucketHost(types.Host):
         self.repository = repository
 
     @staticmethod
-    def create(url_regex_match: Match[str]) -> 'types.Host':
+    def create(url_regex_match: Match[str]) -> 'typedefs.Host':
         repository = url_regex_match.group('repository')
         if repository[-4:] == '.git':
             repository = repository[:-4]
         user = url_regex_match.group('user')
         return BitbucketHost(user, repository)
 
-    def set_host_class(self, host_class: Type[types.Host]) -> None:
+    def set_host_class(self, host_class: Type[typedefs.Host]) -> None:
         return
 
-    def get_url(self, git_object: 'types.GitObject') -> str:
+    def get_url(self, git_object: 'typedefs.GitObject') -> str:
         repository_url = "%s%s/%s" % (
             self.BITBUCKET_URL,
             self.user,
@@ -49,7 +49,7 @@ class BitbucketHost(types.Host):
     def commit_hash_url(
             self,
             repository_url: str,
-            focus_hash: 'types.GitObject') -> str:
+            focus_hash: 'typedefs.GitObject') -> str:
         repository_url = "%s/commits/%s" % (
             repository_url,
             focus_hash.identifier
@@ -57,14 +57,14 @@ class BitbucketHost(types.Host):
         return repository_url
 
     def root_url(
-        self, repository_url: str, focus_object: 'types.GitObject'
+        self, repository_url: str, focus_object: 'typedefs.GitObject'
     ) -> str:
         return repository_url
 
     def directory_url(
             self,
             repository_url: str,
-            focus_object: 'types.GitObject') -> str:
+            focus_object: 'typedefs.GitObject') -> str:
         repository_url = "%s/src/%s/%s" % (
             repository_url,
             "master",
@@ -73,7 +73,7 @@ class BitbucketHost(types.Host):
         return repository_url
 
     def file_url(
-        self, repository_url: str, focus_object: 'types.GitObject'
+        self, repository_url: str, focus_object: 'typedefs.GitObject'
     ) -> str:
         repository_url = "%s/src/%s/%s" % (
             repository_url,

@@ -7,7 +7,7 @@ from typing import cast
 import unittest
 from unittest.mock import patch
 
-from git_browse import phabricator, types
+from git_browse import phabricator, typedefs
 from git_browse.tests import test_util
 
 
@@ -20,8 +20,8 @@ class TestPhabricatorHost(unittest.TestCase):
         self.phabricator_host.phabricator_url = self.phabricator_url
         self.phabricator_host.repository_callsign = self.repository_callsign
         self.phabricator_host.default_branch = self.default_branch
-        self.focus_object = types.FocusObject('/')
-        self.focus_hash = types.FocusHash(test_util.get_tag())
+        self.focus_object = typedefs.FocusObject('/')
+        self.focus_hash = typedefs.FocusHash(test_util.get_tag())
 
         arcconfig_data = {
             'phabricator.uri': self.phabricator_url,

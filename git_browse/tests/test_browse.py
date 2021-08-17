@@ -8,7 +8,7 @@ from typing import List, cast
 import unittest
 from unittest.mock import MagicMock, patch
 
-from git_browse import browse, github, sourcegraph, types
+from git_browse import browse, github, sourcegraph, typedefs
 from git_browse.tests import test_util
 
 BASE_DIRECTORY = pathlib.Path(__file__).parents[2]
@@ -104,7 +104,7 @@ class ParseGitURL(unittest.TestCase):
         host = browse.parse_git_url(self.https_url)
         self.check_host(host)
 
-    def check_host(self, host: types.Host) -> None:
+    def check_host(self, host: typedefs.Host) -> None:
         self.assertTrue(host.__class__ is github.GithubHost)
         self.assertEqual(host.user, 'albertyw')
         self.assertEqual(host.repository, 'git-browse')
@@ -166,7 +166,7 @@ class TestGetFocusObject(unittest.TestCase):
         focus_object = browse.get_git_object(
             test_util.get_tag(), pathlib.Path.cwd(), self.host
         )
-        self.assertTrue(focus_object.__class__ is types.FocusHash)
+        self.assertTrue(focus_object.__class__ is typedefs.FocusHash)
 
     def test_nonexistend_focus_object(self) -> None:
         with self.assertRaises(FileNotFoundError):
@@ -181,8 +181,8 @@ class TestGetCommitHash(unittest.TestCase):
 
     def test_get_hash(self) -> None:
         focus_hash = browse.get_commit_hash(test_util.get_tag())
-        self.assertTrue(focus_hash.__class__ is types.FocusHash)
-        focus_hash = cast(types.FocusHash, focus_hash)
+        self.assertTrue(focus_hash.__class__ is typedefs.FocusHash)
+        focus_hash = cast(typedefs.FocusHash, focus_hash)
         self.assertTrue(focus_hash.identifier)
 
 
