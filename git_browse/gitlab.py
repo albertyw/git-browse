@@ -10,10 +10,10 @@ GITLAB_HTTPS_URL = 'https://%s/%s/%s' % (
     GITLAB_HOST, typedefs.USER_REGEX,
     typedefs.REPOSITORY_REGEX
 )
+GITLAB_URL = "https://gitlab.com/"
 
 
 class GitlabHost(typedefs.Host):
-    GITLAB_URL = "https://gitlab.com/"
     user: str = ''
     repository: str = ''
 
@@ -34,7 +34,7 @@ class GitlabHost(typedefs.Host):
 
     def get_url(self, git_object: 'typedefs.GitObject') -> str:
         repository_url = "%s%s/%s" % (
-            self.GITLAB_URL,
+            GITLAB_URL,
             self.user,
             self.repository
         )

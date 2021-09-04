@@ -10,10 +10,10 @@ BITBUCKET_HTTPS_URL = 'https://%s@%s/%s/%s' % (
     typedefs.ACCOUNT_REGEX, BITBUCKET_HOST, typedefs.USER_REGEX,
     typedefs.REPOSITORY_REGEX
 )
+BITBUCKET_URL = "https://bitbucket.org/"
 
 
 class BitbucketHost(typedefs.Host):
-    BITBUCKET_URL = "https://bitbucket.org/"
     user: str = ''
     repository: str = ''
 
@@ -34,7 +34,7 @@ class BitbucketHost(typedefs.Host):
 
     def get_url(self, git_object: 'typedefs.GitObject') -> str:
         repository_url = "%s%s/%s" % (
-            self.BITBUCKET_URL,
+            BITBUCKET_URL,
             self.user,
             self.repository
         )

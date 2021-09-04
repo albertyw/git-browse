@@ -8,10 +8,10 @@ GITHUB_SSH_URL = 'git@%s:%s/%s' % \
     (GITHUB_HOST, typedefs.USER_REGEX, typedefs.REPOSITORY_REGEX)
 GITHUB_HTTPS_URL = 'https://%s/%s/%s' % \
     (GITHUB_HOST, typedefs.USER_REGEX, typedefs.REPOSITORY_REGEX)
+GITHUB_URL = "https://github.com/"
 
 
 class GithubHost(typedefs.Host):
-    GITHUB_URL = "https://github.com/"
     user: str = ''
     repository: str = ''
 
@@ -32,7 +32,7 @@ class GithubHost(typedefs.Host):
 
     def get_url(self, git_object: 'typedefs.GitObject') -> str:
         repository_url = "%s%s/%s" % (
-            self.GITHUB_URL,
+            GITHUB_URL,
             self.user,
             self.repository
         )

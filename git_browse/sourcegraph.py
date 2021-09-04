@@ -3,9 +3,11 @@ from typing import Match, Optional, Type
 from git_browse import phabricator, typedefs
 
 
+PUBLIC_SOURCEGRAPH_URL = 'https://sourcegraph.com/'
+UBER_SOURCEGRAPH_URL = 'https://sourcegraph.uberinternal.com/'
+
+
 class SourcegraphHost(typedefs.Host):
-    PUBLIC_SOURCEGRAPH_URL = 'https://sourcegraph.com/'
-    UBER_SOURCEGRAPH_URL = 'https://sourcegraph.uberinternal.com/'
     user: str = ''
     repository: str = ''
 
@@ -31,9 +33,9 @@ class SourcegraphHost(typedefs.Host):
         self.host_class = host_class
 
     def get_url(self, git_object: 'typedefs.GitObject') -> str:
-        sourcegraph_url = self.PUBLIC_SOURCEGRAPH_URL
+        sourcegraph_url = PUBLIC_SOURCEGRAPH_URL
         if self.host_class == phabricator.PhabricatorHost:
-            sourcegraph_url = self.UBER_SOURCEGRAPH_URL
+            sourcegraph_url = UBER_SOURCEGRAPH_URL
         repository_url = "%s%s/%s" % (
             sourcegraph_url,
             self.host,

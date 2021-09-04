@@ -3,9 +3,11 @@ from typing import Match, Optional, Type
 from git_browse import phabricator, typedefs
 
 
+PUBLIC_GODOCS_URL = 'https://pkg.go.dev/'
+UBER_GODOCS_URL = 'https://eng.uberinternal.com/docs/api/go/pkg/'
+
+
 class GodocsHost(typedefs.Host):
-    PUBLIC_GODOCS_URL = 'https://pkg.go.dev/'
-    UBER_GODOCS_URL = 'https://eng.uberinternal.com/docs/api/go/pkg/'
     user: str = ''
     repository: str = ''
 
@@ -31,9 +33,9 @@ class GodocsHost(typedefs.Host):
         self.host_class = host_class
 
     def get_url(self, git_object: 'typedefs.GitObject') -> str:
-        godocs_url = self.PUBLIC_GODOCS_URL
+        godocs_url = PUBLIC_GODOCS_URL
         if self.host_class == phabricator.PhabricatorHost:
-            godocs_url = self.UBER_GODOCS_URL
+            godocs_url = UBER_GODOCS_URL
         repository_url = "%s%s/%s" % (
             godocs_url,
             self.host,
