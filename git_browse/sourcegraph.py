@@ -3,9 +3,6 @@ from typing import Match, Optional, Type
 from git_browse import phabricator, typedefs
 
 
-__version__ = '2.12.0'
-
-
 class SourcegraphHost(typedefs.Host):
     PUBLIC_SOURCEGRAPH_URL = 'https://sourcegraph.com/'
     UBER_SOURCEGRAPH_URL = 'https://sourcegraph.uberinternal.com/'
