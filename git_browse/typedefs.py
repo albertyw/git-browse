@@ -41,7 +41,7 @@ class Host(metaclass=ABCMeta):
         pass
 
 
-class GitObject(object):
+class GitObject():
     def __init__(self, identifier: str) -> None:
         self.identifier = identifier
 
