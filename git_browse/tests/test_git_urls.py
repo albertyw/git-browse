@@ -42,14 +42,24 @@ GIT_URLS: List[TestConfig] = [
         'https://github.com/albertyw/git-browse',
     ),
     TestConfig(
-        GitConfig('git@github.com:albertyw/git-browse', ''),
+        GitConfig('git@github.com:albertyw/git-browse', 'master'),
         'README.md',
         'https://github.com/albertyw/git-browse/blob/master/README.md',
     ),
     TestConfig(
-        GitConfig('git@github.com:albertyw/git-browse', ''),
+        GitConfig('git@github.com:albertyw/git-browse', 'master'),
         TEST_DIR,
         'https://github.com/albertyw/git-browse/tree/master/testdir/',
+    ),
+    TestConfig(
+        GitConfig('git@github.com:albertyw/git-browse', 'main'),
+        'README.md',
+        'https://github.com/albertyw/git-browse/blob/main/README.md',
+    ),
+    TestConfig(
+        GitConfig('git@github.com:albertyw/git-browse', 'main'),
+        TEST_DIR,
+        'https://github.com/albertyw/git-browse/tree/main/testdir/',
     ),
     TestConfig(
         GitConfig('git@github.com:albertyw/git-browse', ''),
@@ -80,14 +90,24 @@ GIT_URLS: List[TestConfig] = [
         'https://bitbucket.org/albertyw/git-browse',
     ),
     TestConfig(
-        GitConfig('git@bitbucket.org:albertyw/git-browse', ''),
+        GitConfig('git@bitbucket.org:albertyw/git-browse', 'master'),
         'README.md',
         'https://bitbucket.org/albertyw/git-browse/src/master/README.md',
     ),
     TestConfig(
-        GitConfig('git@bitbucket.org:albertyw/git-browse', ''),
+        GitConfig('git@bitbucket.org:albertyw/git-browse', 'master'),
         TEST_DIR,
         'https://bitbucket.org/albertyw/git-browse/src/master/testdir/',
+    ),
+    TestConfig(
+        GitConfig('git@bitbucket.org:albertyw/git-browse', 'main'),
+        'README.md',
+        'https://bitbucket.org/albertyw/git-browse/src/main/README.md',
+    ),
+    TestConfig(
+        GitConfig('git@bitbucket.org:albertyw/git-browse', 'main'),
+        TEST_DIR,
+        'https://bitbucket.org/albertyw/git-browse/src/main/testdir/',
     ),
     TestConfig(
         GitConfig('git@bitbucket.org:albertyw/git-browse', ''),

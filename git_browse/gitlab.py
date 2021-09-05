@@ -74,7 +74,7 @@ class GitlabHost(typedefs.Host):
             focus_object: 'typedefs.GitObject') -> str:
         repository_url = "%s/-/tree/%s/%s" % (
             repository_url,
-            "main",
+            self.git_config.default_branch,
             focus_object.identifier
         )
         return repository_url
@@ -84,7 +84,7 @@ class GitlabHost(typedefs.Host):
     ) -> str:
         repository_url = "%s/-/blob/%s/%s" % (
             repository_url,
-            "main",
+            self.git_config.default_branch,
             focus_object.identifier
         )
         return repository_url

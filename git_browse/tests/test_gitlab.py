@@ -7,7 +7,7 @@ from git_browse.tests import test_util
 class TestGitlabHost(unittest.TestCase):
     def setUp(self) -> None:
         self.host = gitlab.GitlabHost(
-            typedefs.GitConfig('', 'master'),
+            typedefs.GitConfig('', 'main'),
             'albertyw',
             'git-browse',
         )

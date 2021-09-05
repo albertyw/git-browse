@@ -74,7 +74,7 @@ class BitbucketHost(typedefs.Host):
             focus_object: 'typedefs.GitObject') -> str:
         repository_url = "%s/src/%s/%s" % (
             repository_url,
-            "master",
+            self.git_config.default_branch,
             focus_object.identifier
         )
         return repository_url
@@ -84,7 +84,7 @@ class BitbucketHost(typedefs.Host):
     ) -> str:
         repository_url = "%s/src/%s/%s" % (
             repository_url,
-            "master",
+            self.git_config.default_branch,
             focus_object.identifier
         )
         return repository_url

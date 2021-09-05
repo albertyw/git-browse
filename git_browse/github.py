@@ -72,7 +72,7 @@ class GithubHost(typedefs.Host):
             focus_object: 'typedefs.GitObject') -> str:
         repository_url = "%s/tree/%s/%s" % (
             repository_url,
-            "master",
+            self.git_config.default_branch,
             focus_object.identifier
         )
         return repository_url
@@ -82,7 +82,7 @@ class GithubHost(typedefs.Host):
     ) -> str:
         repository_url = "%s/blob/%s/%s" % (
             repository_url,
-            "master",
+            self.git_config.default_branch,
             focus_object.identifier
         )
         return repository_url
