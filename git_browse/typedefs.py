@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
 import os
-from typing import Match, Type
+import re
+from typing import Match, Optional, Type
 
 
 USER_REGEX = '(?P<user>[\\w\\.@:\\/~_-]+)'
@@ -12,6 +13,14 @@ class GitConfig(object):
     def __init__(self, git_url: str, default_branch: str) -> None:
         self.git_url = git_url
         self.default_branch = default_branch
+        self.url_regex_match: Optional[Match[str]] = None
+
+    def try_url_match(self, regex: str) -> bool:
+        match = re.search(regex, self.git_url)
+        if match:
+            self.url_regex_match = match
+            return True
+        return False
 
 
 class Host(metaclass=ABCMeta):
