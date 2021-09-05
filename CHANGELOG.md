@@ -1,6 +1,12 @@
 Changelog
 =========
 
+v2.13.1 (2021-09-05)
+--------------------
+
+ - Try to read default branch from git configuration for generating bitbucket, github, and gitlab URLs
+
+
 v2.13.0 (2021-09-03)
 --------------------
 
