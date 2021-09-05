@@ -55,7 +55,7 @@ def get_repository_root() -> pathlib.Path:
     raise FileNotFoundError('.git/config file not found')
 
 
-def get_git_config() -> pathlib.Path:
+def get_git_config_path() -> pathlib.Path:
     repository_root = get_repository_root()
     git_directory = repository_root / '.git'
     if git_directory.is_file():
@@ -103,7 +103,7 @@ def get_repository_host(
     use_sourcegraph: bool = False,
     godocs: bool = False,
 ) -> typedefs.Host:
-    git_config_file = get_git_config()
+    git_config_file = get_git_config_path()
     git_url = get_git_url(git_config_file)
     repo_host = parse_git_url(git_url, use_sourcegraph, godocs)
     return repo_host

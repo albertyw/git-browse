@@ -26,10 +26,10 @@ class GetRepositoryRoot(unittest.TestCase):
             browse.get_repository_root()
 
 
-class GetGitConfig(unittest.TestCase):
+class GetGitConfigPath(unittest.TestCase):
     def test_get(self) -> None:
         os.chdir(BASE_DIRECTORY)
-        directory = browse.get_git_config()
+        directory = browse.get_git_config_path()
         expected = BASE_DIRECTORY / '.git' / 'config'
         self.assertEqual(directory, expected)
 
@@ -40,7 +40,7 @@ class GetGitConfig(unittest.TestCase):
         with open(pathlib.Path(temp_dir.name) / '.git', 'w') as handle:
             handle.write(data)
         os.chdir(temp_dir.name)
-        directory = browse.get_git_config()
+        directory = browse.get_git_config_path()
         expected = config_dir / 'config'
         self.assertEqual(directory, expected)
         temp_dir.cleanup()
