@@ -4,7 +4,6 @@ import argparse
 import configparser
 import os
 import pathlib
-import re
 import subprocess
 import sys
 from typing import Dict, Optional, Type
@@ -55,7 +54,7 @@ def get_repository_root() -> pathlib.Path:
     raise FileNotFoundError('.git/config file not found')
 
 
-def get_git_config() -> pathlib.Path:
+def get_git_config_path() -> pathlib.Path:
     repository_root = get_repository_root()
     git_directory = repository_root / '.git'
     if git_directory.is_file():
@@ -66,7 +65,7 @@ def get_git_config() -> pathlib.Path:
     return git_config_path
 
 
-def get_git_url(git_config_file: pathlib.Path) -> str:
+def get_git_config_data(git_config_file: pathlib.Path) -> typedefs.GitConfig:
     # strict is removed here because gitconfig allows for multiple "fetch" keys
     config = configparser.ConfigParser(strict=False)
     config.read(git_config_file)
@@ -74,28 +73,36 @@ def get_git_url(git_config_file: pathlib.Path) -> str:
         git_url = config['remote "origin"']['url']
     except KeyError:
         raise RuntimeError("git config file not parseable")
-    return git_url
+    branches = [b for b in config.keys() if 'branch "' in b]
+    branches = [b.lstrip('branch "').rstrip('"') for b in branches]
+    default_branch = 'master'
+    if 'master' not in branches:
+        if 'main' in branches:
+            default_branch = 'main'
+        elif branches:
+            default_branch = branches[0]
+    git_config = typedefs.GitConfig(git_url, default_branch)
+    return git_config
 
 
 def parse_git_url(
-    git_url: str,
+    git_config: typedefs.GitConfig,
     use_sourcegraph: bool = False,
     use_godocs: bool = False,
 ) -> typedefs.Host:
     for regex, host_class in HOST_REGEXES.items():
-        match = re.search(regex, git_url)
-        if match:
+        if git_config.try_url_match(regex):
             break
-    if not match:
+    else:
         raise ValueError("git url not parseable")
     if use_sourcegraph:
-        host = sourcegraph.SourcegraphHost.create(match)
+        host = sourcegraph.SourcegraphHost.create(git_config)
         host.set_host_class(host_class)
     elif use_godocs:
-        host = godocs.GodocsHost.create(match)
+        host = godocs.GodocsHost.create(git_config)
         host.set_host_class(host_class)
     else:
-        host = host_class.create(match)
+        host = host_class.create(git_config)
     return host
 
 
@@ -103,9 +110,9 @@ def get_repository_host(
     use_sourcegraph: bool = False,
     godocs: bool = False,
 ) -> typedefs.Host:
-    git_config_file = get_git_config()
-    git_url = get_git_url(git_config_file)
-    repo_host = parse_git_url(git_url, use_sourcegraph, godocs)
+    git_config_file = get_git_config_path()
+    git_config = get_git_config_data(git_config_file)
+    repo_host = parse_git_url(git_config, use_sourcegraph, godocs)
     return repo_host
 
 

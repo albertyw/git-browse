@@ -9,13 +9,19 @@ BASE_DIRECTORY = pathlib.Path(__file__).parents[2]
 
 class TestGithubHost(unittest.TestCase):
     def setUp(self) -> None:
-        self.github_host = github.GithubHost('albertyw', 'git-browse')
+        self.github_host = github.GithubHost(
+            typedefs.GitConfig('', 'master'),
+            'albertyw',
+            'git-browse',
+        )
         self.repository_url = 'https://github.com/albertyw/git-browse'
         self.focus_object = typedefs.FocusObject('/')
         self.focus_hash = typedefs.FocusHash(test_util.get_tag())
 
     def test_init(self) -> None:
-        host = github.GithubHost('user', 'repository')
+        git_config = typedefs.GitConfig('', 'master')
+        host = github.GithubHost(git_config, 'user', 'repository')
+        self.assertEqual(host.git_config, git_config)
         self.assertEqual(host.user, 'user')
         self.assertEqual(host.repository, 'repository')
 

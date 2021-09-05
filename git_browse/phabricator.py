@@ -1,6 +1,6 @@
 import json
 import pathlib
-from typing import Match, Type
+from typing import Type
 
 from git_browse import typedefs
 
@@ -25,7 +25,7 @@ class PhabricatorHost(typedefs.Host):
         self.default_branch = ''
 
     @staticmethod
-    def create(url_regex_match: Match[str]) -> 'typedefs.Host':
+    def create(git_config: typedefs.GitConfig) -> 'typedefs.Host':
         from git_browse import browse  # Fix circular import
         host = PhabricatorHost()
         host._parse_arcconfig(browse.get_repository_root())

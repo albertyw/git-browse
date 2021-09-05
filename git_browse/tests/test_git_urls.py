@@ -6,11 +6,12 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from git_browse import browse
+from git_browse.typedefs import GitConfig
 from git_browse.tests import test_util
 
 
 class TestConfig(NamedTuple):
-    git_url: str
+    git_config: GitConfig
     target_path: str
     host_url: str
 
@@ -21,109 +22,131 @@ TEST_DIR_PATH = REPO_PATH / TEST_DIR
 ARCCONFIG_PATH = REPO_PATH / '.arcconfig'
 GIT_URLS: List[TestConfig] = [
     TestConfig(
-        'git@github.com:albertyw/git-browse',
+        GitConfig('git@github.com:albertyw/git-browse', ''),
         '',
         'https://github.com/albertyw/git-browse',
     ),
     TestConfig(
-        'git@github.com:albertyw/git-browse.git',
+        GitConfig('git@github.com:albertyw/git-browse.git', ''),
         '',
         'https://github.com/albertyw/git-browse',
     ),
     TestConfig(
-        'https://github.com/albertyw/git-browse.git',
+        GitConfig('https://github.com/albertyw/git-browse.git', ''),
         '',
         'https://github.com/albertyw/git-browse',
     ),
     TestConfig(
-        'https://github.com/albertyw/git-browse',
+        GitConfig('https://github.com/albertyw/git-browse', ''),
         '',
         'https://github.com/albertyw/git-browse',
     ),
     TestConfig(
-        'git@github.com:albertyw/git-browse',
+        GitConfig('git@github.com:albertyw/git-browse', 'master'),
         'README.md',
         'https://github.com/albertyw/git-browse/blob/master/README.md',
     ),
     TestConfig(
-        'git@github.com:albertyw/git-browse',
+        GitConfig('git@github.com:albertyw/git-browse', 'master'),
         TEST_DIR,
         'https://github.com/albertyw/git-browse/tree/master/testdir/',
     ),
     TestConfig(
-        'git@github.com:albertyw/git-browse',
+        GitConfig('git@github.com:albertyw/git-browse', 'main'),
+        'README.md',
+        'https://github.com/albertyw/git-browse/blob/main/README.md',
+    ),
+    TestConfig(
+        GitConfig('git@github.com:albertyw/git-browse', 'main'),
+        TEST_DIR,
+        'https://github.com/albertyw/git-browse/tree/main/testdir/',
+    ),
+    TestConfig(
+        GitConfig('git@github.com:albertyw/git-browse', ''),
         test_util.get_tag(),
         'https://github.com/albertyw/git-browse/commit/' +
         test_util.get_tag_commit_hash(),
     ),
     TestConfig(
-        'git@bitbucket.org:albertyw/git-browse',
+        GitConfig('git@bitbucket.org:albertyw/git-browse', ''),
         '',
         'https://bitbucket.org/albertyw/git-browse',
     ),
     TestConfig(
-        'git@bitbucket.org:albertyw/git-browse.git',
+        GitConfig('git@bitbucket.org:albertyw/git-browse.git', ''),
         '',
         'https://bitbucket.org/albertyw/git-browse',
     ),
     TestConfig(
-        'https://albertyw@bitbucket.org/albertyw/git-browse.git',
+        GitConfig(
+            'https://albertyw@bitbucket.org/albertyw/git-browse.git', '',
+        ),
         '',
         'https://bitbucket.org/albertyw/git-browse',
     ),
     TestConfig(
-        'https://albertyw@bitbucket.org/albertyw/git-browse',
+        GitConfig('https://albertyw@bitbucket.org/albertyw/git-browse', ''),
         '',
         'https://bitbucket.org/albertyw/git-browse',
     ),
     TestConfig(
-        'git@bitbucket.org:albertyw/git-browse',
+        GitConfig('git@bitbucket.org:albertyw/git-browse', 'master'),
         'README.md',
         'https://bitbucket.org/albertyw/git-browse/src/master/README.md',
     ),
     TestConfig(
-        'git@bitbucket.org:albertyw/git-browse',
+        GitConfig('git@bitbucket.org:albertyw/git-browse', 'master'),
         TEST_DIR,
         'https://bitbucket.org/albertyw/git-browse/src/master/testdir/',
     ),
     TestConfig(
-        'git@bitbucket.org:albertyw/git-browse',
+        GitConfig('git@bitbucket.org:albertyw/git-browse', 'main'),
+        'README.md',
+        'https://bitbucket.org/albertyw/git-browse/src/main/README.md',
+    ),
+    TestConfig(
+        GitConfig('git@bitbucket.org:albertyw/git-browse', 'main'),
+        TEST_DIR,
+        'https://bitbucket.org/albertyw/git-browse/src/main/testdir/',
+    ),
+    TestConfig(
+        GitConfig('git@bitbucket.org:albertyw/git-browse', ''),
         test_util.get_tag(),
         'https://bitbucket.org/albertyw/git-browse/commits/' +
         test_util.get_tag_commit_hash(),
     ),
     TestConfig(
-        'gitolite@code.uber.internal:a/b',
+        GitConfig('gitolite@code.uber.internal:a/b', ''),
         '',
         'https://example.com/diffusion/ABCD/repository/master/',
     ),
     TestConfig(
-        'gitolite@config.uber.internal:a/b',
+        GitConfig('gitolite@config.uber.internal:a/b', ''),
         '',
         'https://example.com/diffusion/ABCD/repository/master/',
     ),
     TestConfig(
-        'gitolite@code.uber.internal:a/b',
+        GitConfig('gitolite@code.uber.internal:a/b', ''),
         'README.md',
         'https://example.com/diffusion/ABCD/browse/master/README.md',
     ),
     TestConfig(
-        'gitolite@code.uber.internal:a/b',
+        GitConfig('gitolite@code.uber.internal:a/b', ''),
         TEST_DIR,
         'https://example.com/diffusion/ABCD/browse/master/testdir/',
     ),
     TestConfig(
-        'gitolite@code.uber.internal:a/b',
+        GitConfig('gitolite@code.uber.internal:a/b', ''),
         test_util.get_tag(),
         'https://example.com/rABCD' + test_util.get_tag_commit_hash(),
     ),
     TestConfig(
-        'gitolite@code.uber.internal:a',
+        GitConfig('gitolite@code.uber.internal:a', ''),
         'README.md',
         'https://example.com/diffusion/ABCD/browse/master/README.md',
     ),
     TestConfig(
-        'https://code.uber.internal/x/y',
+        GitConfig('https://code.uber.internal/x/y', ''),
         'README.md',
         'https://example.com/diffusion/ABCD/browse/master/README.md',
     ),
@@ -150,13 +173,13 @@ class TestGitURLs(unittest.TestCase):
 
 
 def generate_test(test_config: TestConfig) -> Callable[[], None]:
-    @patch('git_browse.browse.get_git_url')
+    @patch('git_browse.browse.get_git_config_data')
     def test(
         self: TestGitURLs,
-        mock_get_git_url: MagicMock
+        mock_get_git_config_data: MagicMock
     ) -> None:
 
-        mock_get_git_url.return_value = test_config.git_url
+        mock_get_git_config_data.return_value = test_config.git_config
         host = browse.get_repository_host()
         focus_object = browse.get_git_object(
             test_config.target_path, pathlib.Path(REPO_PATH), host

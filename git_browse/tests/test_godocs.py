@@ -1,5 +1,4 @@
 import os
-import re
 import unittest
 
 from git_browse import github, godocs, typedefs
@@ -7,7 +6,11 @@ from git_browse import github, godocs, typedefs
 
 class TestGodocsHost(unittest.TestCase):
     def setUp(self) -> None:
-        self.obj = godocs.GodocsHost('github.com', 'asdf/qwer')
+        self.obj = godocs.GodocsHost(
+            typedefs.GitConfig('', 'master'),
+            'github.com',
+            'asdf/qwer',
+        )
         self.obj.host_class = github.GithubHost
 
     def test_init(self) -> None:
@@ -16,17 +19,17 @@ class TestGodocsHost(unittest.TestCase):
 
     def test_create(self) -> None:
         repo = 'git@github.com:asdf/qwer'
-        match = re.search(github.GITHUB_SSH_URL, repo)
-        assert match is not None
-        obj = github.GithubHost.create(match)
+        git_config = typedefs.GitConfig(repo, 'master')
+        git_config.try_url_match(github.GITHUB_SSH_URL)
+        obj = github.GithubHost.create(git_config)
         self.assertEqual(obj.user, 'asdf')
         self.assertEqual(obj.repository, 'qwer')
 
     def test_create_dot_git(self) -> None:
         repo = 'git@github.com:asdf/qwer.git'
-        match = re.search(github.GITHUB_SSH_URL, repo)
-        assert match is not None
-        obj = github.GithubHost.create(match)
+        git_config = typedefs.GitConfig(repo, 'master')
+        git_config.try_url_match(github.GITHUB_SSH_URL)
+        obj = github.GithubHost.create(git_config)
         self.assertEqual(obj.user, 'asdf')
         self.assertEqual(obj.repository, 'qwer')
 

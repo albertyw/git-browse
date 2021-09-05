@@ -1,4 +1,4 @@
-from typing import Match, Type
+from typing import Type
 
 from git_browse import typedefs
 
@@ -17,17 +17,24 @@ class BitbucketHost(typedefs.Host):
     user: str = ''
     repository: str = ''
 
-    def __init__(self, user: str, repository: str) -> None:
+    def __init__(
+        self,
+        git_config: typedefs.GitConfig,
+        user: str,
+        repository: str,
+    ) -> None:
+        self.git_config = git_config
         self.user = user
         self.repository = repository
 
     @staticmethod
-    def create(url_regex_match: Match[str]) -> 'typedefs.Host':
-        repository = url_regex_match.group('repository')
+    def create(git_config: typedefs.GitConfig) -> 'typedefs.Host':
+        assert git_config.url_regex_match
+        repository = git_config.url_regex_match.group('repository')
         if repository[-4:] == '.git':
             repository = repository[:-4]
-        user = url_regex_match.group('user')
-        return BitbucketHost(user, repository)
+        user = git_config.url_regex_match.group('user')
+        return BitbucketHost(git_config, user, repository)
 
     def set_host_class(self, host_class: Type[typedefs.Host]) -> None:
         return
@@ -67,7 +74,7 @@ class BitbucketHost(typedefs.Host):
             focus_object: 'typedefs.GitObject') -> str:
         repository_url = "%s/src/%s/%s" % (
             repository_url,
-            "master",
+            self.git_config.default_branch,
             focus_object.identifier
         )
         return repository_url
@@ -77,7 +84,7 @@ class BitbucketHost(typedefs.Host):
     ) -> str:
         repository_url = "%s/src/%s/%s" % (
             repository_url,
-            "master",
+            self.git_config.default_branch,
             focus_object.identifier
         )
         return repository_url
