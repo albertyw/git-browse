@@ -8,6 +8,12 @@ REPOSITORY_REGEX = '(?P<repository>[\\w\\.@:\\/~_-]+)'
 ACCOUNT_REGEX = '(?P<account>[\\w\\.@:\\/~_-]+)'
 
 
+class GitConfig(object):
+    def __init__(self, git_url: str, default_branch: str) -> None:
+        self.git_url = git_url
+        self.default_branch = default_branch
+
+
 class Host(metaclass=ABCMeta):
     @property
     @abstractmethod
