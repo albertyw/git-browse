@@ -74,7 +74,15 @@ def get_git_config_data(git_config_file: pathlib.Path) -> typedefs.GitConfig:
         git_url = config['remote "origin"']['url']
     except KeyError:
         raise RuntimeError("git config file not parseable")
-    git_config = typedefs.GitConfig(git_url, '')
+    branches = [b for b in config.keys() if 'branch "' in b]
+    branches = [b.lstrip('branch "').rstrip('"') for b in branches]
+    default_branch = 'master'
+    if 'master' not in branches:
+        if 'main' in branches:
+            default_branch = 'main'
+        elif branches:
+            default_branch = branches[0]
+    git_config = typedefs.GitConfig(git_url, default_branch)
     return git_config
 
 
