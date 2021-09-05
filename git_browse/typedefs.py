@@ -44,7 +44,7 @@ class Host(metaclass=ABCMeta):
 
     @staticmethod
     @abstractmethod
-    def create(url_regex_match: Match[str]) -> 'Host':
+    def create(git_config: GitConfig) -> 'Host':
         pass
 
     @abstractmethod

@@ -4,7 +4,6 @@ import argparse
 import configparser
 import os
 import pathlib
-import re
 import subprocess
 import sys
 from typing import Dict, Optional, Type
@@ -92,19 +91,18 @@ def parse_git_url(
     use_godocs: bool = False,
 ) -> typedefs.Host:
     for regex, host_class in HOST_REGEXES.items():
-        match = re.search(regex, git_config.git_url)
-        if match:
+        if git_config.try_url_match(regex):
             break
-    if not match:
+    else:
         raise ValueError("git url not parseable")
     if use_sourcegraph:
-        host = sourcegraph.SourcegraphHost.create(match)
+        host = sourcegraph.SourcegraphHost.create(git_config)
         host.set_host_class(host_class)
     elif use_godocs:
-        host = godocs.GodocsHost.create(match)
+        host = godocs.GodocsHost.create(git_config)
         host.set_host_class(host_class)
     else:
-        host = host_class.create(match)
+        host = host_class.create(git_config)
     return host
 
 

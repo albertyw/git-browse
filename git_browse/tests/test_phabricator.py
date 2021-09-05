@@ -1,7 +1,6 @@
 import json
 import os
 import pathlib
-import re
 import tempfile
 from typing import cast
 import unittest
@@ -40,11 +39,11 @@ class TestPhabricatorHost(unittest.TestCase):
 
     def test_create(self) -> None:
         repo = 'gitolite@code.uber.internal:a/b'
-        match = re.search(phabricator.UBER_SSH_GITOLITE_URL, repo)
-        assert match is not None
+        git_config = typedefs.GitConfig(repo, 'master')
+        git_config.try_url_match(phabricator.UBER_SSH_GITOLITE_URL)
         with patch('git_browse.browse.get_repository_root') as mock_root:
             mock_root.return_value = self.temp_dir_name
-            host = phabricator.PhabricatorHost.create(match)
+            host = phabricator.PhabricatorHost.create(git_config)
         phabricator_host = cast(phabricator.PhabricatorHost, host)
         self.assertEqual(
             phabricator_host.phabricator_url,

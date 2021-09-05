@@ -1,4 +1,4 @@
-from typing import Match, Optional, Type
+from typing import Optional, Type
 
 from git_browse import phabricator, typedefs
 
@@ -17,13 +17,14 @@ class GodocsHost(typedefs.Host):
         self.repository = repository
 
     @staticmethod
-    def create(url_regex_match: Match[str]) -> 'typedefs.Host':
-        repository = url_regex_match.group('repository')
+    def create(git_config: typedefs.GitConfig) -> 'typedefs.Host':
+        assert git_config.url_regex_match
+        repository = git_config.url_regex_match.group('repository')
         if repository[-4:] == '.git':
             repository = repository[:-4]
-        host = url_regex_match.group('host')
+        host = git_config.url_regex_match.group('host')
         try:
-            user = url_regex_match.group('user')
+            user = git_config.url_regex_match.group('user')
             repository = '%s/%s' % (user, repository)
         except IndexError:
             pass
