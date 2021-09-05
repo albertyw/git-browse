@@ -46,7 +46,7 @@ class GetGitConfigPath(unittest.TestCase):
         temp_dir.cleanup()
 
 
-class GetGitURL(unittest.TestCase):
+class GetGitConfigData(unittest.TestCase):
     def setUp(self) -> None:
         git_config_file = BASE_DIRECTORY / '.git' / 'config'
         with open(git_config_file, 'rb') as handle:
@@ -60,8 +60,8 @@ class GetGitURL(unittest.TestCase):
         self.git_config_file.close()
 
     def test_url(self) -> None:
-        git_url = browse.get_git_url(self.git_config_file_name)
-        git_url = git_url.replace('.git', '')
+        git_config = browse.get_git_config_data(self.git_config_file_name)
+        git_url = git_config.git_url.replace('.git', '')
         expected = [
             'git@github.com:albertyw/git-browse',
             'https://github.com/albertyw/git-browse',
@@ -70,7 +70,7 @@ class GetGitURL(unittest.TestCase):
 
     def test_bad_url(self) -> None:
         with self.assertRaises(RuntimeError):
-            browse.get_git_url(BASE_DIRECTORY)
+            browse.get_git_config_data(BASE_DIRECTORY)
 
     def test_multiple_fetch(self) -> None:
         # For https://github.com/albertyw/git-browse/issues/48
@@ -84,9 +84,9 @@ class GetGitURL(unittest.TestCase):
         config_file.write(config_contents.encode('utf-8'))
         config_file.seek(0)
         config_file_name = pathlib.Path(config_file.name)
-        git_url = browse.get_git_url(config_file_name)
+        git_config_data = browse.get_git_config_data(config_file_name)
         expected = 'git@github.com:albertyw/git-browse'
-        self.assertEqual(git_url.replace('.git', ''), expected)
+        self.assertEqual(git_config_data.git_url.replace('.git', ''), expected)
 
 
 class ParseGitURL(unittest.TestCase):
@@ -97,11 +97,11 @@ class ParseGitURL(unittest.TestCase):
         self.uber_ssh_url = 'gitolite@code.uber.internal:abcd/efgh'
 
     def test_ssh_url(self) -> None:
-        host = browse.parse_git_url(self.ssh_url)
+        host = browse.parse_git_url(typedefs.GitConfig(self.ssh_url, ''))
         self.check_host(host)
 
     def test_https_url(self) -> None:
-        host = browse.parse_git_url(self.https_url)
+        host = browse.parse_git_url(typedefs.GitConfig(self.https_url, ''))
         self.check_host(host)
 
     def check_host(self, host: typedefs.Host) -> None:
@@ -110,14 +110,20 @@ class ParseGitURL(unittest.TestCase):
         self.assertEqual(host.repository, 'git-browse')
 
     def test_sourcegraph_github_host(self) -> None:
-        host = browse.parse_git_url(self.ssh_url, use_sourcegraph=True)
+        host = browse.parse_git_url(
+            typedefs.GitConfig(self.ssh_url, ''),
+            use_sourcegraph=True,
+        )
         self.assertTrue(host.__class__ is sourcegraph.SourcegraphHost)
         host = cast(sourcegraph.SourcegraphHost, host)
         self.assertEqual(host.host, 'github.com')
         self.assertEqual(host.repository, 'albertyw/git-browse')
 
     def test_sourcegraph_uber_host(self) -> None:
-        host = browse.parse_git_url(self.uber_ssh_url, use_sourcegraph=True)
+        host = browse.parse_git_url(
+            typedefs.GitConfig(self.uber_ssh_url, ''),
+            use_sourcegraph=True,
+        )
         self.assertTrue(host.__class__ is sourcegraph.SourcegraphHost)
         host = cast(sourcegraph.SourcegraphHost, host)
         self.assertEqual(host.host, 'code.uber.internal')
@@ -125,7 +131,7 @@ class ParseGitURL(unittest.TestCase):
 
     def test_broken_url(self) -> None:
         with self.assertRaises(ValueError):
-            browse.parse_git_url(self.broken_url)
+            browse.parse_git_url(typedefs.GitConfig(self.broken_url, ''))
 
 
 class TestGetRepositoryHost(unittest.TestCase):

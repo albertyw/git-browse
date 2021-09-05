@@ -66,7 +66,7 @@ def get_git_config_path() -> pathlib.Path:
     return git_config_path
 
 
-def get_git_url(git_config_file: pathlib.Path) -> str:
+def get_git_config_data(git_config_file: pathlib.Path) -> typedefs.GitConfig:
     # strict is removed here because gitconfig allows for multiple "fetch" keys
     config = configparser.ConfigParser(strict=False)
     config.read(git_config_file)
@@ -74,16 +74,17 @@ def get_git_url(git_config_file: pathlib.Path) -> str:
         git_url = config['remote "origin"']['url']
     except KeyError:
         raise RuntimeError("git config file not parseable")
-    return git_url
+    git_config = typedefs.GitConfig(git_url, '')
+    return git_config
 
 
 def parse_git_url(
-    git_url: str,
+    git_config: typedefs.GitConfig,
     use_sourcegraph: bool = False,
     use_godocs: bool = False,
 ) -> typedefs.Host:
     for regex, host_class in HOST_REGEXES.items():
-        match = re.search(regex, git_url)
+        match = re.search(regex, git_config.git_url)
         if match:
             break
     if not match:
@@ -104,8 +105,8 @@ def get_repository_host(
     godocs: bool = False,
 ) -> typedefs.Host:
     git_config_file = get_git_config_path()
-    git_url = get_git_url(git_config_file)
-    repo_host = parse_git_url(git_url, use_sourcegraph, godocs)
+    git_config = get_git_config_data(git_config_file)
+    repo_host = parse_git_url(git_config, use_sourcegraph, godocs)
     return repo_host
 
 
