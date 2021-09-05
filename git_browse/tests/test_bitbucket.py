@@ -6,13 +6,19 @@ from git_browse.tests import test_util
 
 class TestBitbucketHost(unittest.TestCase):
     def setUp(self) -> None:
-        self.host = bitbucket.BitbucketHost('albertyw', 'git-browse')
+        self.host = bitbucket.BitbucketHost(
+            typedefs.GitConfig('', 'master'),
+            'albertyw',
+            'git-browse',
+        )
         self.repository_url = 'https://bitbucket.org/albertyw/git-browse'
         self.focus_object = typedefs.FocusObject('/')
         self.focus_hash = typedefs.FocusHash(test_util.get_tag())
 
     def test_init(self) -> None:
-        host = bitbucket.BitbucketHost('user', 'repository')
+        git_config = typedefs.GitConfig('', 'master')
+        host = bitbucket.BitbucketHost(git_config, 'user', 'repository')
+        self.assertEqual(host.git_config, git_config)
         self.assertEqual(host.user, 'user')
         self.assertEqual(host.repository, 'repository')
 

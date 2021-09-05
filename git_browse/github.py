@@ -15,7 +15,13 @@ class GithubHost(typedefs.Host):
     user: str = ''
     repository: str = ''
 
-    def __init__(self, user: str, repository: str) -> None:
+    def __init__(
+        self,
+        git_config: typedefs.GitConfig,
+        user: str,
+        repository: str,
+    ) -> None:
+        self.git_config = git_config
         self.user = user
         self.repository = repository
 
@@ -26,7 +32,7 @@ class GithubHost(typedefs.Host):
         if repository[-4:] == '.git':
             repository = repository[:-4]
         user = git_config.url_regex_match.group('user')
-        return GithubHost(user, repository)
+        return GithubHost(git_config, user, repository)
 
     def set_host_class(self, host_class: Type[typedefs.Host]) -> None:
         return

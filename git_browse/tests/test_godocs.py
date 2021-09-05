@@ -6,7 +6,11 @@ from git_browse import github, godocs, typedefs
 
 class TestGodocsHost(unittest.TestCase):
     def setUp(self) -> None:
-        self.obj = godocs.GodocsHost('github.com', 'asdf/qwer')
+        self.obj = godocs.GodocsHost(
+            typedefs.GitConfig('', 'master'),
+            'github.com',
+            'asdf/qwer',
+        )
         self.obj.host_class = github.GithubHost
 
     def test_init(self) -> None:

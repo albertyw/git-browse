@@ -144,7 +144,8 @@ class TestGetRepositoryHost(unittest.TestCase):
 
 class TestGetFocusObject(unittest.TestCase):
     def setUp(self) -> None:
-        self.host = github.GithubHost('albertyw', 'git-browse')
+        git_config = typedefs.GitConfig('', 'master')
+        self.host = github.GithubHost(git_config, 'albertyw', 'git-browse')
         self.placeholder_match = re.match(r'', '')
 
     def test_default_focus_object(self) -> None:

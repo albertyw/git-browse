@@ -9,7 +9,11 @@ BASE_DIRECTORY = pathlib.Path(__file__).parents[2]
 
 class SourcegraphHost(unittest.TestCase):
     def setUp(self) -> None:
-        self.obj = sourcegraph.SourcegraphHost('code.uber.internal', 'asdf')
+        self.obj = sourcegraph.SourcegraphHost(
+            typedefs.GitConfig('', 'master'),
+            'code.uber.internal',
+            'asdf',
+        )
         self.obj.host_class = phabricator.PhabricatorHost
 
     def test_init(self) -> None:

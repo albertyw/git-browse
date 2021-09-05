@@ -11,7 +11,13 @@ class GodocsHost(typedefs.Host):
     user: str = ''
     repository: str = ''
 
-    def __init__(self, host: str, repository: str):
+    def __init__(
+        self,
+        git_config: typedefs.GitConfig,
+        host: str,
+        repository: str,
+    ):
+        self.git_config = git_config
         self.host_class: Optional[Type[typedefs.Host]] = None
         self.host = host
         self.repository = repository
@@ -28,7 +34,7 @@ class GodocsHost(typedefs.Host):
             repository = '%s/%s' % (user, repository)
         except IndexError:
             pass
-        return GodocsHost(host, repository)
+        return GodocsHost(git_config, host, repository)
 
     def set_host_class(self, host_class: Type[typedefs.Host]) -> None:
         self.host_class = host_class
