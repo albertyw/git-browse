@@ -73,12 +73,17 @@ optional arguments:
 
 ### Examples
 
-| Command                 | Opens                                                                                    |
-|-------------------------|------------------------------------------------------------------------------------------|
-| `git browse`            | <https://github.com/albertyw/git-browse>                                                 |
-| `git browse README.md`  | <https://github.com/albertyw/git-browse/blob/master/README.md>                           |
-| `git browse git_browse` | <https://github.com/albertyw/git-browse/tree/master/git_browse/>                         |
-| `git browse v1.1.1`     | <https://github.com/albertyw/git-browse/commit/80b219dee0aaa86b378993cbf88511126b813c5f> |
+| Command                           | Opens                                                                                    |
+|-----------------------------------|------------------------------------------------------------------------------------------|
+| `git browse`                      | <https://github.com/albertyw/git-browse>                                                 |
+| `git browse README.md`            | <https://github.com/albertyw/git-browse/blob/master/README.md>                           |
+| `git browse git_browse`           | <https://github.com/albertyw/git-browse/tree/master/git_browse/>                         |
+| `git browse v1.1.1`               | <https://github.com/albertyw/git-browse/commit/80b219dee0aaa86b378993cbf88511126b813c5f> |
+| `git browse --sourcegraph`        | <https://sourcegraph.com/github.com/albertyw/git-browse>
+| `git browse --godocs`             | <https://pkg.go.dev/github.com/albertyw/git-browse>
+| `git browse` for Bitbucket        | <https://bitbucket.org/albertyw/asdf>
+| `git browse` for Gitlab           | <https://gitlab.com/albertyw/asdf>
+| `git browse` for Uber Phabricator | <https://code.uberinternal.com/diffusion/rASDF/repository/master/>
 
 Related Projects
 ----------------
