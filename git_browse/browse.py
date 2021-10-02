@@ -102,7 +102,11 @@ def parse_git_url(
         host = godocs.GodocsHost.create(git_config)
         host.set_host_class(host_class)
     else:
-        host = host_class.create(git_config)
+        try:
+            host = host_class.create(git_config)
+        except ValueError:
+            # Fall back to sorucegraph if the primary repository host fails
+            return parse_git_url(git_config, True, False)
     return host
 
 
