@@ -50,7 +50,11 @@ class PhabricatorHost(typedefs.Host):
         except json.decoder.JSONDecodeError:
             raise RuntimeError('Cannot parse ".arcconfig" file as json')
         self.repository_callsign = arcconfig_data.get('repository.callsign')
+        if not self.repository_callsign:
+            raise ValueError('Cannot get repository callsign')
         self.phabricator_url = arcconfig_data.get('phabricator.uri')
+        if not self.phabricator_url:
+            raise ValueError('Cannot get phabricator url')
         default_branch = arcconfig_data.get('git.default-relative-commit')
         if '/' in default_branch:
             default_branch = default_branch.split('/', 1)[1]
