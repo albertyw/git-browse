@@ -22,7 +22,7 @@ class TestPhabricatorHost(unittest.TestCase):
         self.focus_object = typedefs.FocusObject('/')
         self.focus_hash = typedefs.FocusHash(test_util.get_tag())
 
-        arcconfig_data = {
+        self.arcconfig_data = {
             'phabricator.uri': self.phabricator_url,
             'repository.callsign': self.repository_callsign,
             'git.default-relative-commit': 'origin/master',
@@ -31,7 +31,7 @@ class TestPhabricatorHost(unittest.TestCase):
         self.temp_dir_name = pathlib.Path(self.temp_dir.name)
         self.arcconfig_file = self.temp_dir_name / '.arcconfig'
         with open(self.arcconfig_file, 'w') as handle:
-            handle.write(json.dumps(arcconfig_data))
+            handle.write(json.dumps(self.arcconfig_data))
 
     def tearDown(self) -> None:
         os.remove(self.arcconfig_file)
@@ -82,6 +82,27 @@ class TestPhabricatorHost(unittest.TestCase):
             handle.write('asdf')
         with self.assertRaises(RuntimeError):
             self.phabricator_host._parse_arcconfig(self.temp_dir_name)
+
+    def test_parse_arcconfig_no_callsign(self) -> None:
+        del self.arcconfig_data['repository.callsign']
+        with open(self.arcconfig_file, 'w') as handle:
+            handle.write(json.dumps(self.arcconfig_data))
+        with self.assertRaises(ValueError):
+            self.phabricator_host._parse_arcconfig(self.temp_dir_name)
+
+    def test_parse_arcconfig_no_url(self) -> None:
+        del self.arcconfig_data['phabricator.uri']
+        with open(self.arcconfig_file, 'w') as handle:
+            handle.write(json.dumps(self.arcconfig_data))
+        with self.assertRaises(ValueError):
+            self.phabricator_host._parse_arcconfig(self.temp_dir_name)
+
+    def test_parse_arcconfig_no_default_branch(self) -> None:
+        del self.arcconfig_data['git.default-relative-commit']
+        with open(self.arcconfig_file, 'w') as handle:
+            handle.write(json.dumps(self.arcconfig_data))
+        self.phabricator_host._parse_arcconfig(self.temp_dir_name)
+        self.assertEqual(self.phabricator_host.default_branch, 'master')
 
     def test_get_url(self) -> None:
         url = self.phabricator_host.get_url(self.focus_object)
