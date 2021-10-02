@@ -87,14 +87,14 @@ class TestPhabricatorHost(unittest.TestCase):
         del self.arcconfig_data['repository.callsign']
         with open(self.arcconfig_file, 'w') as handle:
             handle.write(json.dumps(self.arcconfig_data))
-        with self.assertRaises(ValueError):
+        with self.assertRaises(RuntimeError):
             self.phabricator_host._parse_arcconfig(self.temp_dir_name)
 
     def test_parse_arcconfig_no_url(self) -> None:
         del self.arcconfig_data['phabricator.uri']
         with open(self.arcconfig_file, 'w') as handle:
             handle.write(json.dumps(self.arcconfig_data))
-        with self.assertRaises(ValueError):
+        with self.assertRaises(RuntimeError):
             self.phabricator_host._parse_arcconfig(self.temp_dir_name)
 
     def test_parse_arcconfig_no_default_branch(self) -> None:

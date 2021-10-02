@@ -104,7 +104,7 @@ def parse_git_url(
     else:
         try:
             host = host_class.create(git_config)
-        except ValueError:
+        except RuntimeError:
             # Fall back to sorucegraph if the primary repository host fails
             return parse_git_url(git_config, True, False)
     return host
