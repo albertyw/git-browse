@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v2.13.2 (2021-10-02)
+--------------------
+
+ - Default to sourcegraph links if phabricator configuration is not available
+ - Update readme
+
+
 v2.13.1 (2021-09-05)
 --------------------
 
