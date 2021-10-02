@@ -13,6 +13,7 @@ UBER_SSH_CONFIG_GITOLITE_URL = 'gitolite@%s:%s' % \
     (UBER_CONFIG_HOST, typedefs.REPOSITORY_REGEX)
 UBER_HTTPS_GITOLITE_URL = 'https://%s/%s/%s' % \
     (UBER_HOST, typedefs.USER_REGEX, typedefs.REPOSITORY_REGEX)
+DEFAULT_BRANCH = 'master'
 
 
 class PhabricatorHost(typedefs.Host):
@@ -55,7 +56,10 @@ class PhabricatorHost(typedefs.Host):
         self.phabricator_url = arcconfig_data.get('phabricator.uri')
         if not self.phabricator_url:
             raise ValueError('Cannot get phabricator url')
-        default_branch = arcconfig_data.get('git.default-relative-commit', 'master')
+        default_branch = arcconfig_data.get(
+            'git.default-relative-commit',
+            DEFAULT_BRANCH
+        )
         if '/' in default_branch:
             default_branch = default_branch.split('/', 1)[1]
         self.default_branch = default_branch
