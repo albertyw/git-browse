@@ -14,7 +14,7 @@ steps:
       - git fetch --tags
 
   - name: Test Python
-    image: python:3.9
+    image: python:3.10
     commands:
       - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > "${HOME}/bin/cc-test-reporter"
       - chmod +x "${HOME}/bin/cc-test-reporter"
@@ -31,7 +31,7 @@ steps:
       CC_TEST_REPORTER_ID: 3ed7f5ff3362f31338e19d26a3641748d004a598d0e68d67ecdcf4cb632b3cdb
 
   - name: Upload Python
-    image: python:3.9
+    image: python:3.10
     commands:
       - pip install twine
       - python setup.py sdist bdist_wheel
