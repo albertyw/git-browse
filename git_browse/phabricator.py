@@ -56,6 +56,7 @@ class PhabricatorHost(typedefs.Host):
         self.phabricator_url = arcconfig_data.get('phabricator.uri')
         if not self.phabricator_url:
             raise RuntimeError('Cannot get phabricator url')
+        self.phabricator_url = self.phabricator_url.rstrip('/')
         default_branch = arcconfig_data.get(
             'git.default-relative-commit',
             DEFAULT_BRANCH
