@@ -1,6 +1,14 @@
 Changelog
 =========
 
+v2.13.3 (2022-02-15)
+--------------------
+
+ - Remove possibility of double slashes when generating phabricator URLs
+ - Drop support for python 3.6; add support for python 3.10
+ - Update dependencies
+
+
 v2.13.2 (2021-10-02)
 --------------------
 
