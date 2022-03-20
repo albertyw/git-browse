@@ -14,13 +14,15 @@ steps:
       - git fetch --tags
 
   - name: Test Python
+    depends_on:
+      - fetch
     image: python:3.10
     commands:
       - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > "${HOME}/bin/cc-test-reporter"
       - chmod +x "${HOME}/bin/cc-test-reporter"
       - pip install -r requirements-test.txt
       - flake8
-      - mypy . --strict --ignore-missing-imports
+      - mypy . --strict --ignore-missing-imports --exclude build
       - cc-test-reporter before-build
       - coverage run -m unittest
       - exitcode="$?"
@@ -30,7 +32,17 @@ steps:
     environment:
       CC_TEST_REPORTER_ID: 3ed7f5ff3362f31338e19d26a3641748d004a598d0e68d67ecdcf4cb632b3cdb
 
+  - name: Test Python Packaging
+    image: python:3.10
+    commands:
+      - pip install twine
+      - python setup.py sdist bdist_wheel
+      - twine check --strict dist/*
+
   - name: Upload Python
+    depends_on:
+      - Test Python
+      - Test Python Packaging
     image: python:3.10
     commands:
       - pip install twine
