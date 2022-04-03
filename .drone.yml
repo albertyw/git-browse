@@ -22,7 +22,7 @@ steps:
       - chmod +x "${HOME}/bin/cc-test-reporter"
       - pip install -r requirements-test.txt
       - flake8
-      - mypy . --strict --ignore-missing-imports --exclude build
+      - mypy . --strict --exclude build
       - cc-test-reporter before-build
       - coverage run -m unittest
       - exitcode="$?"
