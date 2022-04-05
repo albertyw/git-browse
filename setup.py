@@ -49,7 +49,7 @@ setup(
     keywords='github phabricator repository browser',
 
     package_data={"git_browse": ["py.typed"]},
-    packages=find_packages("git_browse", exclude=["tests"]),
+    packages=find_packages(exclude=["tests"]),
 
     py_modules=["git_browse.browse"],
 
