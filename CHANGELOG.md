@@ -1,6 +1,14 @@
 Changelog
 =========
 
+v2.13.4 (2022-07-30)
+--------------------
+
+ - Update python packaging
+ - Test python packaging
+ - Update dependencies
+
+
 v2.13.3 (2022-02-15)
 --------------------
 
