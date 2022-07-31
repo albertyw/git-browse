@@ -24,11 +24,12 @@ dependencies so it should be easily installable and very portable.
 
 Git Browse supports opening git repositories, commits, directories, and files:
 
- - [Github](https://github.com/)
  - [Bitbucket](https://bitbucket.org/)
+ - [Github](https://github.com/)
+ - [Gitlab](https://gitlab.com/)
+ - [GoDocs](https://pkg.go.dev/)
  - [Phabricator](https://www.phacility.com/phabricator/)
  - [Sourcegraph](https://about.sourcegraph.com/)
- - [GoDocs](https://pkg.go.dev/)
 
 Installation
 ------------
