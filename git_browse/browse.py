@@ -6,7 +6,7 @@ import os
 import pathlib
 import subprocess
 import sys
-from typing import Dict, Optional, Type
+from typing import Optional
 import webbrowser
 
 # Configure paths/modules from
@@ -24,7 +24,7 @@ from git_browse import bitbucket, github, gitlab, godocs, phabricator, \
 
 
 __version__ = '2.13.4'
-HOST_REGEXES: Dict[str, Type[typedefs.Host]] = {
+HOST_REGEXES: dict[str, type[typedefs.Host]] = {
     github.GITHUB_SSH_URL: github.GithubHost,
     github.GITHUB_HTTPS_URL: github.GithubHost,
     bitbucket.BITBUCKET_SSH_URL: bitbucket.BitbucketHost,

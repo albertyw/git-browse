@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 import os
 import re
-from typing import Match, Optional, Type
+from typing import Match, Optional
 
 
 USER_REGEX = '(?P<user>[\\w\\.@:\\/~_-]+)'
@@ -48,7 +48,7 @@ class Host(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def set_host_class(self, host_class: 'Type[Host]') -> None:
+    def set_host_class(self, host_class: 'type[Host]') -> None:
         pass
 
     @abstractmethod

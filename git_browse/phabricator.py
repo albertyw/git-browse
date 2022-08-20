@@ -1,6 +1,5 @@
 import json
 import pathlib
-from typing import Type
 
 from git_browse import typedefs
 
@@ -32,7 +31,7 @@ class PhabricatorHost(typedefs.Host):
         host._parse_arcconfig(browse.get_repository_root())
         return host
 
-    def set_host_class(self, host_class: Type[typedefs.Host]) -> None:
+    def set_host_class(self, host_class: type[typedefs.Host]) -> None:
         return
 
     def _parse_arcconfig(self, repository_root: pathlib.Path) -> None:

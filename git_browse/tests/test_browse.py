@@ -4,7 +4,7 @@ import re
 import shutil
 import sys
 import tempfile
-from typing import List, cast
+from typing import cast
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -274,7 +274,7 @@ class FullTest(unittest.TestCase):
         self.check_main(sys_argv, expected, mock_open_url)
 
     def check_main(
-        self, sys_argv: List[str], expected: str, mock_open_url: MagicMock
+        self, sys_argv: list[str], expected: str, mock_open_url: MagicMock
     ) -> None:
         sys.argv = sys_argv
         browse.main()

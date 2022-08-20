@@ -1,5 +1,3 @@
-from typing import Type
-
 from git_browse import typedefs
 
 
@@ -36,7 +34,7 @@ class BitbucketHost(typedefs.Host):
         user = git_config.url_regex_match.group('user')
         return BitbucketHost(git_config, user, repository)
 
-    def set_host_class(self, host_class: Type[typedefs.Host]) -> None:
+    def set_host_class(self, host_class: type[typedefs.Host]) -> None:
         return
 
     def get_url(self, git_object: 'typedefs.GitObject') -> str:

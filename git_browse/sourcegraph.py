@@ -1,4 +1,4 @@
-from typing import Optional, Type
+from typing import Optional
 
 from git_browse import phabricator, typedefs
 
@@ -17,7 +17,7 @@ class SourcegraphHost(typedefs.Host):
         host: str,
         repository: str,
     ):
-        self.host_class: Optional[Type[typedefs.Host]] = None
+        self.host_class: Optional[type[typedefs.Host]] = None
         self.git_config = git_config
         self.host = host
         self.repository = repository
@@ -36,7 +36,7 @@ class SourcegraphHost(typedefs.Host):
             pass
         return SourcegraphHost(git_config, host, repository)
 
-    def set_host_class(self, host_class: Type[typedefs.Host]) -> None:
+    def set_host_class(self, host_class: type[typedefs.Host]) -> None:
         self.host_class = host_class
 
     def get_url(self, git_object: 'typedefs.GitObject') -> str:

@@ -1,7 +1,7 @@
 import os
 import pathlib
 import json
-from typing import Callable, List, NamedTuple, cast
+from typing import Callable, NamedTuple, cast
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -20,7 +20,7 @@ REPO_PATH = pathlib.Path(__file__).parents[2]
 TEST_DIR = 'testdir'
 TEST_DIR_PATH = REPO_PATH / TEST_DIR
 ARCCONFIG_PATH = REPO_PATH / '.arcconfig'
-GIT_URLS: List[TestConfig] = [
+GIT_URLS: list[TestConfig] = [
     TestConfig(
         GitConfig('git@github.com:albertyw/git-browse', ''),
         '',
