@@ -26,7 +26,7 @@ class BitbucketHost(typedefs.Host):
         self.repository = repository
 
     @staticmethod
-    def create(git_config: typedefs.GitConfig) -> 'typedefs.Host':
+    def create(git_config: typedefs.GitConfig) -> typedefs.Host:
         assert git_config.url_regex_match
         repository = git_config.url_regex_match.group('repository')
         if repository[-4:] == '.git':
@@ -37,7 +37,7 @@ class BitbucketHost(typedefs.Host):
     def set_host_class(self, host_class: type[typedefs.Host]) -> None:
         return
 
-    def get_url(self, git_object: 'typedefs.GitObject') -> str:
+    def get_url(self, git_object: typedefs.GitObject) -> str:
         repository_url = "%s%s/%s" % (
             BITBUCKET_URL,
             self.user,

@@ -23,7 +23,7 @@ class GodocsHost(typedefs.Host):
         self.repository = repository
 
     @staticmethod
-    def create(git_config: typedefs.GitConfig) -> 'typedefs.Host':
+    def create(git_config: typedefs.GitConfig) -> typedefs.Host:
         assert git_config.url_regex_match
         repository = git_config.url_regex_match.group('repository')
         if repository[-4:] == '.git':
@@ -39,7 +39,7 @@ class GodocsHost(typedefs.Host):
     def set_host_class(self, host_class: type[typedefs.Host]) -> None:
         self.host_class = host_class
 
-    def get_url(self, git_object: 'typedefs.GitObject') -> str:
+    def get_url(self, git_object: typedefs.GitObject) -> str:
         godocs_url = PUBLIC_GODOCS_URL
         if self.host_class == phabricator.PhabricatorHost:
             godocs_url = UBER_GODOCS_URL
@@ -59,13 +59,13 @@ class GodocsHost(typedefs.Host):
     def commit_hash_url(
             self,
             repository_url: str,
-            focus_hash: 'typedefs.GitObject') -> str:
+            focus_hash: typedefs.GitObject) -> str:
         raise NotImplementedError("Cannot look up commits in godocs")
 
     def directory_url(
             self,
             repository_url: str,
-            focus_object: 'typedefs.GitObject') -> str:
+            focus_object: typedefs.GitObject) -> str:
         repository_url = "%s/%s" % (
             repository_url,
             focus_object.identifier
@@ -73,6 +73,6 @@ class GodocsHost(typedefs.Host):
         return repository_url
 
     def file_url(
-        self, repository_url: str, focus_object: 'typedefs.GitObject'
+        self, repository_url: str, focus_object: typedefs.GitObject
     ) -> str:
         raise NotImplementedError("Cannot look up individual files in godocs")

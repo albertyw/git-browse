@@ -26,7 +26,7 @@ class GitlabHost(typedefs.Host):
         self.repository = repository
 
     @staticmethod
-    def create(git_config: typedefs.GitConfig) -> 'typedefs.Host':
+    def create(git_config: typedefs.GitConfig) -> typedefs.Host:
         assert git_config.url_regex_match
         repository = git_config.url_regex_match.group('repository')
         if repository[-4:] == '.git':
@@ -37,7 +37,7 @@ class GitlabHost(typedefs.Host):
     def set_host_class(self, host_class: type[typedefs.Host]) -> None:
         return
 
-    def get_url(self, git_object: 'typedefs.GitObject') -> str:
+    def get_url(self, git_object: typedefs.GitObject) -> str:
         repository_url = "%s%s/%s" % (
             GITLAB_URL,
             self.user,
@@ -62,7 +62,7 @@ class GitlabHost(typedefs.Host):
         return repository_url
 
     def root_url(
-        self, repository_url: str, focus_object: 'typedefs.GitObject'
+        self, repository_url: str, focus_object: typedefs.GitObject
     ) -> str:
         return repository_url
 
@@ -78,7 +78,7 @@ class GitlabHost(typedefs.Host):
         return repository_url
 
     def file_url(
-        self, repository_url: str, focus_object: 'typedefs.GitObject'
+        self, repository_url: str, focus_object: typedefs.GitObject
     ) -> str:
         repository_url = "%s/-/blob/%s/%s" % (
             repository_url,

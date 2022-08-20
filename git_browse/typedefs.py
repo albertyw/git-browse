@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import ABCMeta, abstractmethod
 import os
 import re
@@ -44,15 +46,15 @@ class Host(metaclass=ABCMeta):
 
     @staticmethod
     @abstractmethod
-    def create(git_config: GitConfig) -> 'Host':
+    def create(git_config: GitConfig) -> Host:
         pass
 
     @abstractmethod
-    def set_host_class(self, host_class: 'type[Host]') -> None:
+    def set_host_class(self, host_class: type[Host]) -> None:
         pass
 
     @abstractmethod
-    def get_url(self, git_object: 'GitObject') -> str:
+    def get_url(self, git_object: GitObject) -> str:
         pass
 
 
@@ -78,7 +80,7 @@ class FocusObject(GitObject):
         return self.identifier[-1] == os.sep
 
     @staticmethod
-    def default() -> 'FocusObject':
+    def default() -> FocusObject:
         return FocusObject(os.sep)
 
 

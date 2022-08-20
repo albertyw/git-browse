@@ -25,7 +25,7 @@ class PhabricatorHost(typedefs.Host):
         self.default_branch = ''
 
     @staticmethod
-    def create(git_config: typedefs.GitConfig) -> 'typedefs.Host':
+    def create(git_config: typedefs.GitConfig) -> typedefs.Host:
         from git_browse import browse  # Fix circular import
         host = PhabricatorHost()
         host._parse_arcconfig(browse.get_repository_root())
@@ -64,14 +64,14 @@ class PhabricatorHost(typedefs.Host):
             default_branch = default_branch.split('/', 1)[1]
         self.default_branch = default_branch
 
-    def get_url(self, git_object: 'typedefs.GitObject') -> str:
+    def get_url(self, git_object: typedefs.GitObject) -> str:
         if git_object.is_commit_hash():
             return self.commit_hash_url(git_object)
         if git_object.is_root():
             return self.root_url(git_object)
         return self.file_url(git_object)
 
-    def commit_hash_url(self, focus_hash: 'typedefs.GitObject') -> str:
+    def commit_hash_url(self, focus_hash: typedefs.GitObject) -> str:
         repository_url = "%s/r%s%s" % (
             self.phabricator_url,
             self.repository_callsign,
@@ -79,7 +79,7 @@ class PhabricatorHost(typedefs.Host):
         )
         return repository_url
 
-    def root_url(self, focus_object: 'typedefs.GitObject') -> str:
+    def root_url(self, focus_object: typedefs.GitObject) -> str:
         repository_url = '%s/diffusion/%s/repository/%s/' % (
             self.phabricator_url,
             self.repository_callsign,
@@ -87,7 +87,7 @@ class PhabricatorHost(typedefs.Host):
         )
         return repository_url
 
-    def file_url(self, focus_object: 'typedefs.GitObject') -> str:
+    def file_url(self, focus_object: typedefs.GitObject) -> str:
         repository_url = "%s/diffusion/%s/browse/%s/%s" % (
             self.phabricator_url,
             self.repository_callsign,

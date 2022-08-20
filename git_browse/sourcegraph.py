@@ -23,7 +23,7 @@ class SourcegraphHost(typedefs.Host):
         self.repository = repository
 
     @staticmethod
-    def create(git_config: typedefs.GitConfig) -> 'typedefs.Host':
+    def create(git_config: typedefs.GitConfig) -> typedefs.Host:
         assert git_config.url_regex_match
         repository = git_config.url_regex_match.group('repository')
         if repository[-4:] == '.git':
@@ -39,7 +39,7 @@ class SourcegraphHost(typedefs.Host):
     def set_host_class(self, host_class: type[typedefs.Host]) -> None:
         self.host_class = host_class
 
-    def get_url(self, git_object: 'typedefs.GitObject') -> str:
+    def get_url(self, git_object: typedefs.GitObject) -> str:
         sourcegraph_url = PUBLIC_SOURCEGRAPH_URL
         if self.host_class == phabricator.PhabricatorHost:
             sourcegraph_url = UBER_SOURCEGRAPH_URL
@@ -59,7 +59,7 @@ class SourcegraphHost(typedefs.Host):
     def commit_hash_url(
             self,
             repository_url: str,
-            focus_hash: 'typedefs.GitObject') -> str:
+            focus_hash: typedefs.GitObject) -> str:
         repository_url = "%s/-/commit/%s" % (
             repository_url,
             focus_hash.identifier
@@ -69,7 +69,7 @@ class SourcegraphHost(typedefs.Host):
     def directory_url(
             self,
             repository_url: str,
-            focus_object: 'typedefs.GitObject') -> str:
+            focus_object: typedefs.GitObject) -> str:
         repository_url = "%s/-/tree/%s" % (
             repository_url,
             focus_object.identifier
@@ -77,7 +77,7 @@ class SourcegraphHost(typedefs.Host):
         return repository_url
 
     def file_url(
-        self, repository_url: str, focus_object: 'typedefs.GitObject'
+        self, repository_url: str, focus_object: typedefs.GitObject
     ) -> str:
         repository_url = "%s/-/blob/%s" % (
             repository_url,
