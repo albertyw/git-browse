@@ -1,5 +1,5 @@
 # Testing
-coverage==6.4.2                  # Test coverage
+coverage==6.5.0                  # Test coverage
 flake8==5.0.0                    # Python linting
 
 # Types
