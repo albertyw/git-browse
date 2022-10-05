@@ -27,7 +27,7 @@ Git Browse supports opening git repositories, commits, directories, and files:
  - [Bitbucket](https://bitbucket.org/)
  - [Github](https://github.com/)
  - [Gitlab](https://gitlab.com/)
- - [GoDocs](https://pkg.go.dev/)
+ - [GoDocs](https://godocs.io/)
  - [Phabricator](https://www.phacility.com/phabricator/)
  - [Sourcegraph](https://about.sourcegraph.com/)
 
@@ -81,7 +81,7 @@ optional arguments:
 | `git browse git_browse`           | <https://github.com/albertyw/git-browse/tree/master/git_browse/>                         |
 | `git browse v1.1.1`               | <https://github.com/albertyw/git-browse/commit/80b219dee0aaa86b378993cbf88511126b813c5f> |
 | `git browse --sourcegraph`        | <https://sourcegraph.com/github.com/albertyw/git-browse>
-| `git browse --godocs`             | <https://pkg.go.dev/github.com/albertyw/git-browse>
+| `git browse --godocs`             | <https://godocs.io/github.com/albertyw/git-browse>
 | `git browse` for Bitbucket        | <https://bitbucket.org/albertyw/asdf>
 | `git browse` for Gitlab           | <https://gitlab.com/albertyw/asdf>
 | `git browse` for Uber Phabricator | <https://code.uberinternal.com/diffusion/rASDF/repository/master/>

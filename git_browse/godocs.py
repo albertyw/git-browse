@@ -3,7 +3,7 @@ from typing import Optional
 from git_browse import phabricator, typedefs
 
 
-PUBLIC_GODOCS_URL = 'https://pkg.go.dev/'
+PUBLIC_GODOCS_URL = 'https://godocs.io/'
 UBER_GODOCS_URL = 'https://eng.uberinternal.com/docs/api/go/pkg/'
 
 
