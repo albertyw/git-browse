@@ -1,6 +1,14 @@
 Changelog
 =========
 
+v2.13.5 (2022-10-05)
+--------------------
+
+ - Switch from pkg.go.dev to godocs.io
+ - Cleanup
+ - Update dependencies
+
+
 v2.13.4 (2022-07-30)
 --------------------
 

@@ -23,7 +23,7 @@ from git_browse import bitbucket, github, gitlab, godocs, phabricator, \
     sourcegraph, typedefs  # NOQA
 
 
-__version__ = '2.13.4'
+__version__ = '2.13.5'
 HOST_REGEXES: dict[str, type[typedefs.Host]] = {
     github.GITHUB_SSH_URL: github.GithubHost,
     github.GITHUB_HTTPS_URL: github.GithubHost,
