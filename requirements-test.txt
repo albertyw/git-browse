@@ -1,6 +1,6 @@
 # Testing
 coverage==7.0.5                  # Test coverage
-flake8==5.0.4                    # Python linting
+flake8==6.0.0                    # Python linting
 black==22.12.0                   # Python linting
 
 # Types
