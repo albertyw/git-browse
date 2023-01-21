@@ -3,13 +3,13 @@ from typing import Optional
 from git_browse import phabricator, typedefs
 
 
-PUBLIC_GODOCS_URL = 'https://godocs.io/'
-UBER_GODOCS_URL = 'https://eng.uberinternal.com/docs/api/go/pkg/'
+PUBLIC_GODOCS_URL = "https://godocs.io/"
+UBER_GODOCS_URL = "https://eng.uberinternal.com/docs/api/go/pkg/"
 
 
 class GodocsHost(typedefs.Host):
-    user: str = ''
-    repository: str = ''
+    user: str = ""
+    repository: str = ""
 
     def __init__(
         self,
@@ -25,13 +25,13 @@ class GodocsHost(typedefs.Host):
     @staticmethod
     def create(git_config: typedefs.GitConfig) -> typedefs.Host:
         assert git_config.url_regex_match
-        repository = git_config.url_regex_match.group('repository')
-        if repository[-4:] == '.git':
+        repository = git_config.url_regex_match.group("repository")
+        if repository[-4:] == ".git":
             repository = repository[:-4]
-        host = git_config.url_regex_match.group('host')
+        host = git_config.url_regex_match.group("host")
         try:
-            user = git_config.url_regex_match.group('user')
-            repository = '%s/%s' % (user, repository)
+            user = git_config.url_regex_match.group("user")
+            repository = "%s/%s" % (user, repository)
         except IndexError:
             pass
         return GodocsHost(git_config, host, repository)
@@ -43,11 +43,7 @@ class GodocsHost(typedefs.Host):
         godocs_url = PUBLIC_GODOCS_URL
         if self.host_class == phabricator.PhabricatorHost:
             godocs_url = UBER_GODOCS_URL
-        repository_url = "%s%s/%s" % (
-            godocs_url,
-            self.host,
-            self.repository
-        )
+        repository_url = "%s%s/%s" % (godocs_url, self.host, self.repository)
         if git_object.is_commit_hash():
             return self.commit_hash_url(repository_url, git_object)
         if git_object.is_root():
@@ -57,19 +53,14 @@ class GodocsHost(typedefs.Host):
         return self.file_url(repository_url, git_object)
 
     def commit_hash_url(
-            self,
-            repository_url: str,
-            focus_hash: typedefs.GitObject) -> str:
+        self, repository_url: str, focus_hash: typedefs.GitObject
+    ) -> str:
         raise NotImplementedError("Cannot look up commits in godocs")
 
     def directory_url(
-            self,
-            repository_url: str,
-            focus_object: typedefs.GitObject) -> str:
-        repository_url = "%s/%s" % (
-            repository_url,
-            focus_object.identifier
-        )
+        self, repository_url: str, focus_object: typedefs.GitObject
+    ) -> str:
+        repository_url = "%s/%s" % (repository_url, focus_object.identifier)
         return repository_url
 
     def file_url(

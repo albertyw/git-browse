@@ -6,9 +6,9 @@ import re
 from typing import Match, Optional
 
 
-USER_REGEX = '(?P<user>[\\w\\.@:\\/~_-]+)'
-REPOSITORY_REGEX = '(?P<repository>[\\w\\.@:\\/~_-]+)'
-ACCOUNT_REGEX = '(?P<account>[\\w\\.@:\\/~_-]+)'
+USER_REGEX = "(?P<user>[\\w\\.@:\\/~_-]+)"
+REPOSITORY_REGEX = "(?P<repository>[\\w\\.@:\\/~_-]+)"
+ACCOUNT_REGEX = "(?P<account>[\\w\\.@:\\/~_-]+)"
 
 
 class GitConfig(object):
@@ -58,7 +58,7 @@ class Host(metaclass=ABCMeta):
         pass
 
 
-class GitObject():
+class GitObject:
     def __init__(self, identifier: str) -> None:
         self.identifier = identifier
 

@@ -2,7 +2,7 @@ from git_browse import browse
 
 
 def get_tag() -> str:
-    return 'v%s' % browse.__version__
+    return "v%s" % browse.__version__
 
 
 def get_tag_commit_hash() -> str:

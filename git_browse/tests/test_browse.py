@@ -30,26 +30,26 @@ class GetGitConfigPath(unittest.TestCase):
     def test_get(self) -> None:
         os.chdir(BASE_DIRECTORY)
         directory = browse.get_git_config_path()
-        expected = BASE_DIRECTORY / '.git' / 'config'
+        expected = BASE_DIRECTORY / ".git" / "config"
         self.assertEqual(directory, expected)
 
     def test_submodule_get(self) -> None:
         temp_dir = tempfile.TemporaryDirectory()
-        config_dir = BASE_DIRECTORY / '.git'
-        data = 'gitdir: %s' % config_dir
-        with open(pathlib.Path(temp_dir.name) / '.git', 'w') as handle:
+        config_dir = BASE_DIRECTORY / ".git"
+        data = "gitdir: %s" % config_dir
+        with open(pathlib.Path(temp_dir.name) / ".git", "w") as handle:
             handle.write(data)
         os.chdir(temp_dir.name)
         directory = browse.get_git_config_path()
-        expected = config_dir / 'config'
+        expected = config_dir / "config"
         self.assertEqual(directory, expected)
         temp_dir.cleanup()
 
 
 class GetGitConfigData(unittest.TestCase):
     def setUp(self) -> None:
-        git_config_file = BASE_DIRECTORY / '.git' / 'config'
-        with open(git_config_file, 'rb') as handle:
+        git_config_file = BASE_DIRECTORY / ".git" / "config"
+        with open(git_config_file, "rb") as handle:
             configs = handle.read()
         self.git_config_file = tempfile.NamedTemporaryFile()
         self.git_config_file.write(configs)
@@ -61,10 +61,10 @@ class GetGitConfigData(unittest.TestCase):
 
     def test_url(self) -> None:
         git_config = browse.get_git_config_data(self.git_config_file_name)
-        git_url = git_config.git_url.replace('.git', '')
+        git_url = git_config.git_url.replace(".git", "")
         expected = [
-            'git@github.com:albertyw/git-browse',
-            'https://github.com/albertyw/git-browse',
+            "git@github.com:albertyw/git-browse",
+            "https://github.com/albertyw/git-browse",
         ]
         self.assertIn(git_url, expected)
 
@@ -76,95 +76,99 @@ class GetGitConfigData(unittest.TestCase):
         # For https://github.com/albertyw/git-browse/issues/48
         config_contents = (
             '[remote "origin"]\n'
-            '    fetch = refs/heads/my_name/*:refs/remotes/origin/my_name/*\n'
-            '    fetch = refs/heads/master:refs/remotes/origin/master\n'
-            '    url = git@github.com:albertyw/git-browse\n'
+            "    fetch = refs/heads/my_name/*:refs/remotes/origin/my_name/*\n"
+            "    fetch = refs/heads/master:refs/remotes/origin/master\n"
+            "    url = git@github.com:albertyw/git-browse\n"
         )
         config_file = tempfile.NamedTemporaryFile()
-        config_file.write(config_contents.encode('utf-8'))
+        config_file.write(config_contents.encode("utf-8"))
         config_file.seek(0)
         config_file_name = pathlib.Path(config_file.name)
         git_config_data = browse.get_git_config_data(config_file_name)
-        expected = 'git@github.com:albertyw/git-browse'
-        self.assertEqual(git_config_data.git_url.replace('.git', ''), expected)
+        expected = "git@github.com:albertyw/git-browse"
+        self.assertEqual(git_config_data.git_url.replace(".git", ""), expected)
 
 
 class ParseGitURL(unittest.TestCase):
     def setUp(self) -> None:
-        self.ssh_url = 'git@github.com:albertyw/git-browse.git'
-        self.https_url = 'https://github.com/albertyw/git-browse'
-        self.broken_url = 'asdfasdf'
-        self.uber_ssh_url = 'gitolite@code.uber.internal:abcd/efgh'
+        self.ssh_url = "git@github.com:albertyw/git-browse.git"
+        self.https_url = "https://github.com/albertyw/git-browse"
+        self.broken_url = "asdfasdf"
+        self.uber_ssh_url = "gitolite@code.uber.internal:abcd/efgh"
 
     def test_ssh_url(self) -> None:
-        host = browse.parse_git_url(typedefs.GitConfig(self.ssh_url, ''))
+        host = browse.parse_git_url(typedefs.GitConfig(self.ssh_url, ""))
         self.check_host(host)
 
     def test_https_url(self) -> None:
-        host = browse.parse_git_url(typedefs.GitConfig(self.https_url, ''))
+        host = browse.parse_git_url(typedefs.GitConfig(self.https_url, ""))
         self.check_host(host)
 
     def check_host(self, host: typedefs.Host) -> None:
         self.assertTrue(host.__class__ is github.GithubHost)
-        self.assertEqual(host.user, 'albertyw')
-        self.assertEqual(host.repository, 'git-browse')
+        self.assertEqual(host.user, "albertyw")
+        self.assertEqual(host.repository, "git-browse")
 
     def test_sourcegraph_github_host(self) -> None:
         host = browse.parse_git_url(
-            typedefs.GitConfig(self.ssh_url, ''),
+            typedefs.GitConfig(self.ssh_url, ""),
             use_sourcegraph=True,
         )
         self.assertTrue(host.__class__ is sourcegraph.SourcegraphHost)
         host = cast(sourcegraph.SourcegraphHost, host)
-        self.assertEqual(host.host, 'github.com')
-        self.assertEqual(host.repository, 'albertyw/git-browse')
+        self.assertEqual(host.host, "github.com")
+        self.assertEqual(host.repository, "albertyw/git-browse")
 
     def test_sourcegraph_uber_host(self) -> None:
         host = browse.parse_git_url(
-            typedefs.GitConfig(self.uber_ssh_url, ''),
+            typedefs.GitConfig(self.uber_ssh_url, ""),
             use_sourcegraph=True,
         )
         self.assertTrue(host.__class__ is sourcegraph.SourcegraphHost)
         host = cast(sourcegraph.SourcegraphHost, host)
-        self.assertEqual(host.host, 'code.uber.internal')
-        self.assertEqual(host.repository, 'abcd/efgh')
+        self.assertEqual(host.host, "code.uber.internal")
+        self.assertEqual(host.repository, "abcd/efgh")
 
     def test_broken_url(self) -> None:
         with self.assertRaises(ValueError):
-            browse.parse_git_url(typedefs.GitConfig(self.broken_url, ''))
+            browse.parse_git_url(typedefs.GitConfig(self.broken_url, ""))
 
 
 class TestGetRepositoryHost(unittest.TestCase):
     def test_repository_host(self) -> None:
         host = browse.get_repository_host()
         self.assertTrue(host.__class__ is github.GithubHost)
-        self.assertEqual(host.user, 'albertyw')
-        self.assertEqual(host.repository, 'git-browse')
+        self.assertEqual(host.user, "albertyw")
+        self.assertEqual(host.repository, "git-browse")
 
 
 class TestGetFocusObject(unittest.TestCase):
     def setUp(self) -> None:
-        git_config = typedefs.GitConfig('', 'master')
-        self.host = github.GithubHost(git_config, 'albertyw', 'git-browse')
-        self.placeholder_match = re.match(r'', '')
+        git_config = typedefs.GitConfig("", "master")
+        self.host = github.GithubHost(git_config, "albertyw", "git-browse")
+        self.placeholder_match = re.match(r"", "")
 
     def test_default_focus_object(self) -> None:
-        focus_object = browse.get_git_object('', pathlib.Path.cwd(), self.host)
+        focus_object = browse.get_git_object("", pathlib.Path.cwd(), self.host)
         self.assertTrue(focus_object.is_root())
         self.assertTrue(focus_object.is_directory())
 
     def test_file_focus_object(self) -> None:
-        target = 'README.md'
+        target = "README.md"
         focus_object = browse.get_git_object(
-            target, pathlib.Path.cwd(), self.host,
+            target,
+            pathlib.Path.cwd(),
+            self.host,
         )
         self.assertFalse(focus_object.is_root())
         self.assertFalse(focus_object.is_directory())
-        self.assertEqual(focus_object.identifier[-10:], 'README.md')
+        self.assertEqual(focus_object.identifier[-10:], "README.md")
 
     def test_directory_focus_object(self) -> None:
         focus_object = browse.get_git_object(
-            '.', pathlib.Path.cwd(), self.host,
+            ".",
+            pathlib.Path.cwd(),
+            self.host,
         )
         self.assertFalse(focus_object.is_root())
         self.assertTrue(focus_object.is_directory())
@@ -177,12 +181,12 @@ class TestGetFocusObject(unittest.TestCase):
 
     def test_nonexistend_focus_object(self) -> None:
         with self.assertRaises(FileNotFoundError):
-            browse.get_git_object('asdf', pathlib.Path.cwd(), self.host)
+            browse.get_git_object("asdf", pathlib.Path.cwd(), self.host)
 
 
 class TestGetCommitHash(unittest.TestCase):
     def test_get_unknown_hash(self) -> None:
-        focus_object = '!@#$'
+        focus_object = "!@#$"
         focus_hash = browse.get_commit_hash(focus_object)
         self.assertEqual(focus_hash, None)
 
@@ -196,17 +200,17 @@ class TestGetCommitHash(unittest.TestCase):
 class TestOpenURL(unittest.TestCase):
     @patch("builtins.print", autospec=True)
     def test_open_url(self, mock_print: MagicMock) -> None:
-        browse.open_url('asdf')
-        mock_print.assert_called_with('asdf')
+        browse.open_url("asdf")
+        mock_print.assert_called_with("asdf")
 
 
 class FullTest(unittest.TestCase):
     def setUp(self) -> None:
         self.original_sys_argv = sys.argv
-        self.test_dir = BASE_DIRECTORY / 'test_dir'
-        test_file = self.test_dir / 'test_file'
+        self.test_dir = BASE_DIRECTORY / "test_dir"
+        test_file = self.test_dir / "test_file"
         os.makedirs(self.test_dir, exist_ok=True)
-        with open(test_file, 'w'):
+        with open(test_file, "w"):
             pass
 
     def tearDown(self) -> None:
@@ -216,60 +220,57 @@ class FullTest(unittest.TestCase):
 
     @patch("git_browse.browse.open_url")
     def test_default(self, mock_open_url: MagicMock) -> None:
-        sys_argv = ['asdf']
-        expected = 'https://github.com/albertyw/git-browse'
+        sys_argv = ["asdf"]
+        expected = "https://github.com/albertyw/git-browse"
         self.check_main(sys_argv, expected, mock_open_url)
 
     @patch("git_browse.browse.open_url")
     def test_file(self, mock_open_url: MagicMock) -> None:
-        sys_argv = ['asdf', 'README.md']
+        sys_argv = ["asdf", "README.md"]
         expected = (
-            'https://github.com/albertyw/git-browse/'
-            'blob/master/README.md'
+            "https://github.com/albertyw/git-browse/" "blob/master/README.md"
         )
         self.check_main(sys_argv, expected, mock_open_url)
 
     @patch("git_browse.browse.open_url")
     def test_subdirectory_file(self, mock_open_url: MagicMock) -> None:
-        sys_argv = ['asdf', 'test_dir/test_file']
+        sys_argv = ["asdf", "test_dir/test_file"]
         expected = (
-            'https://github.com/albertyw/git-browse/'
-            'blob/master/test_dir/test_file'
+            "https://github.com/albertyw/git-browse/"
+            "blob/master/test_dir/test_file"
         )
         self.check_main(sys_argv, expected, mock_open_url)
 
     @patch("git_browse.browse.open_url")
     def test_chdir_subdirectory_file(self, mock_open_url: MagicMock) -> None:
         os.chdir(self.test_dir)
-        sys_argv = ['asdf', 'test_file']
+        sys_argv = ["asdf", "test_file"]
         expected = (
-            'https://github.com/albertyw/git-browse/'
-            'blob/master/test_dir/test_file'
+            "https://github.com/albertyw/git-browse/"
+            "blob/master/test_dir/test_file"
         )
         self.check_main(sys_argv, expected, mock_open_url)
 
     @patch("git_browse.browse.open_url")
     def test_directory(self, mock_open_url: MagicMock) -> None:
-        sys_argv = ['asdf', '.']
-        expected = 'https://github.com/albertyw/git-browse/tree/master/./'
+        sys_argv = ["asdf", "."]
+        expected = "https://github.com/albertyw/git-browse/tree/master/./"
         self.check_main(sys_argv, expected, mock_open_url)
 
     @patch("git_browse.browse.open_url")
     def test_subdirectory(self, mock_open_url: MagicMock) -> None:
-        sys_argv = ['asdf', 'test_dir']
+        sys_argv = ["asdf", "test_dir"]
         expected = (
-            'https://github.com/albertyw/git-browse/'
-            'tree/master/test_dir/'
+            "https://github.com/albertyw/git-browse/" "tree/master/test_dir/"
         )
         self.check_main(sys_argv, expected, mock_open_url)
 
     @patch("git_browse.browse.open_url")
     def test_chdir_subdirectory(self, mock_open_url: MagicMock) -> None:
         os.chdir(self.test_dir)
-        sys_argv = ['asdf', '.']
+        sys_argv = ["asdf", "."]
         expected = (
-            'https://github.com/albertyw/git-browse/'
-            'tree/master/test_dir/'
+            "https://github.com/albertyw/git-browse/" "tree/master/test_dir/"
         )
         self.check_main(sys_argv, expected, mock_open_url)
 
@@ -280,9 +281,9 @@ class FullTest(unittest.TestCase):
         browse.main()
         mock_open_url.assert_called_with(expected, False, False)
 
-    @patch('sys.stdout.write')
+    @patch("sys.stdout.write")
     def test_check_version(self, mock_print: MagicMock) -> None:
         with self.assertRaises(SystemExit):
-            sys.argv = ['asdf', '-v']
+            sys.argv = ["asdf", "-v"]
             browse.main()
         self.assertTrue(mock_print.called)

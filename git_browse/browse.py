@@ -19,11 +19,18 @@ try:
 except ValueError:  # Already removed
     pass
 
-from git_browse import bitbucket, github, gitlab, godocs, phabricator, \
-    sourcegraph, typedefs  # NOQA
+from git_browse import (  # NOQA
+    bitbucket,
+    github,
+    gitlab,
+    godocs,
+    phabricator,
+    sourcegraph,
+    typedefs,
+)
 
 
-__version__ = '2.13.5'
+__version__ = "2.13.5"
 HOST_REGEXES: dict[str, type[typedefs.Host]] = {
     github.GITHUB_SSH_URL: github.GithubHost,
     github.GITHUB_HTTPS_URL: github.GithubHost,
@@ -38,9 +45,9 @@ HOST_REGEXES: dict[str, type[typedefs.Host]] = {
 
 
 def copy_text_to_clipboard(text: str) -> None:
-    stdin = text.encode('utf-8')
+    stdin = text.encode("utf-8")
     try:
-        subprocess.run(['pbcopy', 'w'], input=stdin, close_fds=True)
+        subprocess.run(["pbcopy", "w"], input=stdin, close_fds=True)
     except FileNotFoundError:
         pass
 
@@ -48,20 +55,20 @@ def copy_text_to_clipboard(text: str) -> None:
 def get_repository_root() -> pathlib.Path:
     path = pathlib.Path.cwd()
     for path in [path] + list(path.parents):
-        git_config = path / '.git'
+        git_config = path / ".git"
         if git_config.exists():
             return path
-    raise FileNotFoundError('.git/config file not found')
+    raise FileNotFoundError(".git/config file not found")
 
 
 def get_git_config_path() -> pathlib.Path:
     repository_root = get_repository_root()
-    git_directory = repository_root / '.git'
+    git_directory = repository_root / ".git"
     if git_directory.is_file():
-        with open(git_directory, 'r') as handle:
+        with open(git_directory, "r") as handle:
             data = handle.read()
-            git_directory = pathlib.Path(data.split(' ')[1].strip())
-    git_config_path = git_directory / 'config'
+            git_directory = pathlib.Path(data.split(" ")[1].strip())
+    git_config_path = git_directory / "config"
     return git_config_path
 
 
@@ -70,15 +77,15 @@ def get_git_config_data(git_config_file: pathlib.Path) -> typedefs.GitConfig:
     config = configparser.ConfigParser(strict=False)
     config.read(git_config_file)
     try:
-        git_url = config['remote "origin"']['url']
+        git_url = config['remote "origin"']["url"]
     except KeyError:
         raise RuntimeError("git config file not parseable")
     branches = [b for b in config.keys() if 'branch "' in b]
     branches = [b.lstrip('branch "').rstrip('"') for b in branches]
-    default_branch = 'master'
-    if 'master' not in branches:
-        if 'main' in branches:
-            default_branch = 'main'
+    default_branch = "master"
+    if "master" not in branches:
+        if "main" in branches:
+            default_branch = "main"
         elif branches:
             default_branch = branches[0]
     git_config = typedefs.GitConfig(git_url, default_branch)
@@ -139,7 +146,7 @@ def get_git_object(
 
 
 def get_commit_hash(identifier: str) -> Optional[typedefs.FocusHash]:
-    command = ['git', 'show', identifier, '--no-abbrev-commit']
+    command = ["git", "show", identifier, "--no-abbrev-commit"]
     process = subprocess.run(
         command,
         capture_output=True,
@@ -152,10 +159,10 @@ def get_commit_hash(identifier: str) -> Optional[typedefs.FocusHash]:
 
 
 def open_url(
-        url: str,
-        dry_run: bool = False,
-        copy_clipboard: bool = False,
-        ) -> None:
+    url: str,
+    dry_run: bool = False,
+    copy_clipboard: bool = False,
+) -> None:
     print(url)
     if copy_clipboard:
         copy_text_to_clipboard(url)
@@ -168,45 +175,45 @@ def main() -> None:
     description += "https://github.com/albertyw/git-browse"
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument(
-        'target',
-        nargs='?',
-        help='file, directory, git hash, or git branch you wish to browse'
+        "target",
+        nargs="?",
+        help="file, directory, git hash, or git branch you wish to browse",
     )
     parser.add_argument(
-        '--path',
-        default='',
-        help='relative path to the current git repository'
+        "--path",
+        default="",
+        help="relative path to the current git repository",
     )
     parser.add_argument(
-        '-d',
-        '--dry-run',
-        action='store_true',
-        help='Do not open the url in the brower, and only print to stdout'
+        "-d",
+        "--dry-run",
+        action="store_true",
+        help="Do not open the url in the brower, and only print to stdout",
     )
     parser.add_argument(
-        '-c',
-        '--copy',
-        action='store_true',
-        help='Copy url to clipboard, if available',
+        "-c",
+        "--copy",
+        action="store_true",
+        help="Copy url to clipboard, if available",
     )
     parser.add_argument(
-        '-s',
-        '--sourcegraph',
-        action='store_true',
-        help='Open objects in sourcegraph'
+        "-s",
+        "--sourcegraph",
+        action="store_true",
+        help="Open objects in sourcegraph",
     )
     parser.add_argument(
-        '-g',
-        '--godocs',
-        action='store_true',
-        help='Open objects in godocs'
+        "-g", "--godocs", action="store_true", help="Open objects in godocs"
     )
     parser.add_argument(
-        '-v', '--version', action='version', version=__version__,
+        "-v",
+        "--version",
+        action="version",
+        version=__version__,
     )
     args = parser.parse_args()
     if args.sourcegraph and args.godocs:
-        print('Sourcegraph and Godocs flags are mutually exclusive')
+        print("Sourcegraph and Godocs flags are mutually exclusive")
         return
 
     host = get_repository_host(args.sourcegraph, args.godocs)

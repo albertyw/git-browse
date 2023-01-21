@@ -4,29 +4,37 @@ import pathlib
 from git_browse import typedefs
 
 
-UBER_HOST = '(?P<host>code\\.uber\\.internal)'
-UBER_CONFIG_HOST = '(?P<host>config\\.uber\\.internal)'
-UBER_SSH_GITOLITE_URL = 'gitolite@%s:%s' % \
-    (UBER_HOST, typedefs.REPOSITORY_REGEX)
-UBER_SSH_CONFIG_GITOLITE_URL = 'gitolite@%s:%s' % \
-    (UBER_CONFIG_HOST, typedefs.REPOSITORY_REGEX)
-UBER_HTTPS_GITOLITE_URL = 'https://%s/%s/%s' % \
-    (UBER_HOST, typedefs.USER_REGEX, typedefs.REPOSITORY_REGEX)
-DEFAULT_BRANCH = 'master'
+UBER_HOST = "(?P<host>code\\.uber\\.internal)"
+UBER_CONFIG_HOST = "(?P<host>config\\.uber\\.internal)"
+UBER_SSH_GITOLITE_URL = "gitolite@%s:%s" % (
+    UBER_HOST,
+    typedefs.REPOSITORY_REGEX,
+)
+UBER_SSH_CONFIG_GITOLITE_URL = "gitolite@%s:%s" % (
+    UBER_CONFIG_HOST,
+    typedefs.REPOSITORY_REGEX,
+)
+UBER_HTTPS_GITOLITE_URL = "https://%s/%s/%s" % (
+    UBER_HOST,
+    typedefs.USER_REGEX,
+    typedefs.REPOSITORY_REGEX,
+)
+DEFAULT_BRANCH = "master"
 
 
 class PhabricatorHost(typedefs.Host):
-    user: str = ''
-    repository: str = ''
+    user: str = ""
+    repository: str = ""
 
     def __init__(self) -> None:
-        self.phabricator_url = ''
-        self.repository_callsign = ''
-        self.default_branch = ''
+        self.phabricator_url = ""
+        self.repository_callsign = ""
+        self.default_branch = ""
 
     @staticmethod
     def create(git_config: typedefs.GitConfig) -> typedefs.Host:
         from git_browse import browse  # Fix circular import
+
         host = PhabricatorHost()
         host._parse_arcconfig(browse.get_repository_root())
         return host
@@ -35,33 +43,32 @@ class PhabricatorHost(typedefs.Host):
         return
 
     def _parse_arcconfig(self, repository_root: pathlib.Path) -> None:
-        arcconfig_file = repository_root / '.arcconfig'
+        arcconfig_file = repository_root / ".arcconfig"
         try:
-            with open(arcconfig_file, 'r') as handle:
+            with open(arcconfig_file, "r") as handle:
                 data = handle.read()
         except FileNotFoundError:
             raise FileNotFoundError(
                 'Cannot find a ".arcconfig" file to parse '
-                'for repository configuration.  Expected file at %s.' %
-                arcconfig_file
+                "for repository configuration.  Expected file at %s."
+                % arcconfig_file
             )
         try:
             arcconfig_data = json.loads(data)
         except json.decoder.JSONDecodeError:
             raise RuntimeError('Cannot parse ".arcconfig" file as json')
-        self.repository_callsign = arcconfig_data.get('repository.callsign')
+        self.repository_callsign = arcconfig_data.get("repository.callsign")
         if not self.repository_callsign:
-            raise RuntimeError('Cannot get repository callsign')
-        self.phabricator_url = arcconfig_data.get('phabricator.uri')
+            raise RuntimeError("Cannot get repository callsign")
+        self.phabricator_url = arcconfig_data.get("phabricator.uri")
         if not self.phabricator_url:
-            raise RuntimeError('Cannot get phabricator url')
-        self.phabricator_url = self.phabricator_url.rstrip('/')
+            raise RuntimeError("Cannot get phabricator url")
+        self.phabricator_url = self.phabricator_url.rstrip("/")
         default_branch = arcconfig_data.get(
-            'git.default-relative-commit',
-            DEFAULT_BRANCH
+            "git.default-relative-commit", DEFAULT_BRANCH
         )
-        if '/' in default_branch:
-            default_branch = default_branch.split('/', 1)[1]
+        if "/" in default_branch:
+            default_branch = default_branch.split("/", 1)[1]
         self.default_branch = default_branch
 
     def get_url(self, git_object: typedefs.GitObject) -> str:
@@ -75,12 +82,12 @@ class PhabricatorHost(typedefs.Host):
         repository_url = "%s/r%s%s" % (
             self.phabricator_url,
             self.repository_callsign,
-            focus_hash.identifier
+            focus_hash.identifier,
         )
         return repository_url
 
     def root_url(self, focus_object: typedefs.GitObject) -> str:
-        repository_url = '%s/diffusion/%s/repository/%s/' % (
+        repository_url = "%s/diffusion/%s/repository/%s/" % (
             self.phabricator_url,
             self.repository_callsign,
             self.default_branch,
@@ -92,6 +99,6 @@ class PhabricatorHost(typedefs.Host):
             self.phabricator_url,
             self.repository_callsign,
             self.default_branch,
-            focus_object.identifier
+            focus_object.identifier,
         )
         return repository_url
