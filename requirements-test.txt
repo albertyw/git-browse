@@ -1,5 +1,5 @@
 # Testing
-coverage==7.0.5                  # Test coverage
+coverage==7.2.1                  # Test coverage
 flake8==6.0.0                    # Python linting
 black==23.1.0                    # Python linting
 
