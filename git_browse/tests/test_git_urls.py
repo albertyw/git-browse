@@ -176,7 +176,6 @@ class TestGitURLs(unittest.TestCase):
 def generate_test(test_config: TestConfig) -> Callable[[], None]:
     @patch("git_browse.browse.get_git_config_data")
     def test(self: TestGitURLs, mock_get_git_config_data: MagicMock) -> None:
-
         mock_get_git_config_data.return_value = test_config.git_config
         host = browse.get_repository_host()
         focus_object = browse.get_git_object(
