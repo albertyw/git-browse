@@ -99,7 +99,7 @@ Development
 
 ```bash
 pip install -r requirements-test.txt
-flake8
+ruff check .
 mypy . --strict --ignore-missing-imports
 coverage run -m unittest
 coverage report

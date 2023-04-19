@@ -42,8 +42,6 @@ setup(
     py_modules=["git_browse.browse"],
     install_requires=[],
     test_suite="git_browse.tests",
-    # testing requires flake8 and coverage but they're listed separately
-    # because they need to wrap setup.py
     extras_require={
         "dev": [],
         "test": [],
