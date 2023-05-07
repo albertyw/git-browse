@@ -4,4 +4,4 @@ ruff==0.0.265                    # Python linter
 
 # Types
 mypy==1.2.0                      # Static typing
-types-setuptools==67.7.0.0       # Type stubs for setuptools package
+types-setuptools==67.7.0.1       # Type stubs for setuptools package
