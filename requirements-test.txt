@@ -1,5 +1,5 @@
 # Testing
-coverage==7.2.3                  # Test coverage
+coverage==7.2.5                  # Test coverage
 ruff==0.0.262                    # Python linter
 
 # Types
