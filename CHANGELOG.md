@@ -1,6 +1,14 @@
 Changelog
 =========
 
+v2.13.6 (2023-05-08)
+--------------------
+
+ - Update dependencies
+ - Explicitly support python 3.11
+ - Cleanup
+
+
 v2.13.5 (2022-10-05)
 --------------------
 
