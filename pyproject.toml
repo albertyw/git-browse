@@ -1,0 +1,25 @@
+[tool.ruff]
+select = ["E", "F", "B"]
+ignore = ["B010"]
+
+[tool.mypy]
+strict = true
+ignore_missing_imports = true
+exclude = [
+    "build",
+]
+
+[tool.coverage.run]
+source = [
+    ".",
+]
+omit = [
+    ".virtualenv",
+    "setup.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    'if __name__ == "__main__":',
+]

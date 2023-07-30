@@ -32,6 +32,7 @@ class Host(metaclass=ABCMeta):
         pass
 
     @user.setter
+    @abstractmethod
     def user(self, user: str) -> None:
         pass
 
@@ -41,6 +42,7 @@ class Host(metaclass=ABCMeta):
         pass
 
     @repository.setter
+    @abstractmethod
     def repository(self, repository: str) -> None:
         pass
 

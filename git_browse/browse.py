@@ -53,8 +53,8 @@ def copy_text_to_clipboard(text: str) -> None:
 
 
 def get_repository_root() -> pathlib.Path:
-    path = pathlib.Path.cwd()
-    for path in [path] + list(path.parents):
+    current_path = pathlib.Path.cwd()
+    for path in [current_path] + list(current_path.parents):
         git_config = path / ".git"
         if git_config.exists():
             return path
@@ -78,8 +78,8 @@ def get_git_config_data(git_config_file: pathlib.Path) -> typedefs.GitConfig:
     config.read(git_config_file)
     try:
         git_url = config['remote "origin"']["url"]
-    except KeyError:
-        raise RuntimeError("git config file not parseable")
+    except KeyError as err:
+        raise RuntimeError("git config file not parseable") from err
     branches = [b for b in config.keys() if 'branch "' in b]
     branches = [b.lstrip('branch "').rstrip('"') for b in branches]
     default_branch = "master"
@@ -97,8 +97,10 @@ def parse_git_url(
     use_sourcegraph: bool = False,
     use_godocs: bool = False,
 ) -> typedefs.Host:
-    for regex, host_class in HOST_REGEXES.items():
+    host_class = None
+    for regex, hc in HOST_REGEXES.items():
         if git_config.try_url_match(regex):
+            host_class = hc
             break
     else:
         raise ValueError("git url not parseable")
