@@ -47,16 +47,16 @@ class PhabricatorHost(typedefs.Host):
         try:
             with open(arcconfig_file, "r") as handle:
                 data = handle.read()
-        except FileNotFoundError:
+        except FileNotFoundError as err:
             raise FileNotFoundError(
                 'Cannot find a ".arcconfig" file to parse '
                 "for repository configuration.  Expected file at %s."
                 % arcconfig_file
-            )
+            ) from err
         try:
             arcconfig_data = json.loads(data)
-        except json.decoder.JSONDecodeError:
-            raise RuntimeError('Cannot parse ".arcconfig" file as json')
+        except json.decoder.JSONDecodeError as err:
+            raise RuntimeError('Cannot parse ".arcconfig" file as json') from err
         self.repository_callsign = arcconfig_data.get("repository.callsign")
         if not self.repository_callsign:
             raise RuntimeError("Cannot get repository callsign")
