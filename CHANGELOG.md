@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v2.13.7 (2023-10-15)
+--------------------
+
+ - Switch from setup.py to pyproject.toml
+ - Update dependencies
+
+
 v2.13.6 (2023-05-08)
 --------------------
 
