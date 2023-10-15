@@ -28,7 +28,7 @@ dynamic = ["version", "readme"]
 "Homepage" = "https://github.com/albertyw/git-browse"
 
 [project.scripts]
-git_browse = "git_browser.browse:main"
+git_browse = "git_browse.browse:main"
 
 [tool.setuptools.dynamic]
 version = {attr = "git_browse.browse.__version__"}
