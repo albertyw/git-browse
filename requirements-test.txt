@@ -3,5 +3,5 @@ coverage==7.3.2                  # Test coverage
 ruff==0.0.292                    # Python linter
 
 # Types
-mypy==1.6.0                      # Static typing
+mypy==1.6.1                      # Static typing
 types-setuptools==68.2.0.0       # Type stubs for setuptools package
