@@ -1,6 +1,6 @@
 # Testing
 coverage==7.3.2                  # Test coverage
-ruff==0.0.292                    # Python linter
+ruff==0.1.1                      # Python linter
 
 # Types
 mypy==1.6.1                      # Static typing
