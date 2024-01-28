@@ -40,14 +40,14 @@ class SourcegraphHost(unittest.TestCase):
         self.assertEqual(
             url,
             sourcegraph.UBER_SOURCEGRAPH_URL
-            + "code.uber.internal/asdf/-/commit/abcd",
+            + "code.uber.internal/uber-code/asdf/-/commit/abcd",
         )
 
     def test_get_url_root(self) -> None:
         git_object = typedefs.FocusObject(os.sep)
         url = self.obj.get_url(git_object)
         self.assertEqual(
-            url, sourcegraph.UBER_SOURCEGRAPH_URL + "code.uber.internal/asdf"
+            url, sourcegraph.UBER_SOURCEGRAPH_URL + "code.uber.internal/uber-code/asdf"
         )
 
     def test_get_url_directory(self) -> None:
@@ -56,7 +56,7 @@ class SourcegraphHost(unittest.TestCase):
         self.assertEqual(
             url,
             sourcegraph.UBER_SOURCEGRAPH_URL
-            + "code.uber.internal/asdf/-/tree/zxcv/",
+            + "code.uber.internal/uber-code/asdf/-/tree/zxcv/",
         )
 
     def test_get_url_file(self) -> None:
@@ -65,5 +65,5 @@ class SourcegraphHost(unittest.TestCase):
         self.assertEqual(
             url,
             sourcegraph.UBER_SOURCEGRAPH_URL
-            + "code.uber.internal/asdf/-/blob/zxcv",
+            + "code.uber.internal/uber-code/asdf/-/blob/zxcv",
         )
