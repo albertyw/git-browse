@@ -1,6 +1,12 @@
 Changelog
 =========
 
+v2.13.9 (2024-01-28)
+--------------------
+
+ - Switch from deprecated sourcegraph.uberinternal.com to sg.uberinternal.com
+
+
 v2.13.8 (2024-01-28)
 --------------------
 
