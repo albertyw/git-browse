@@ -2,19 +2,76 @@ import os
 import pathlib
 import unittest
 
-from git_browse import sourcegraph, phabricator, typedefs
+from git_browse import github, sourcegraph, phabricator, typedefs
 
 BASE_DIRECTORY = pathlib.Path(__file__).parents[2]
 
 
 class SourcegraphHost(unittest.TestCase):
     def setUp(self) -> None:
+        self.obj = sourcegraph.SourcegraphHost(
+            typedefs.GitConfig("", "master"),
+            "github.com",
+            "albertyw/git-browse",
+        )
         self.uber_obj = sourcegraph.SourcegraphHost(
             typedefs.GitConfig("", "master"),
             "code.uber.internal",
             "asdf/qwer",
         )
         self.uber_obj.host_class = phabricator.PhabricatorHost
+
+    def test_init(self) -> None:
+        self.assertEqual(self.obj.host, "github.com")
+        self.assertEqual(self.obj.repository, "albertyw/git-browse")
+
+    def test_create(self) -> None:
+        repo = "git@github.com:a/b"
+        git_config = typedefs.GitConfig(repo, "master")
+        git_config.try_url_match(github.GITHUB_SSH_URL)
+        obj = sourcegraph.SourcegraphHost.create(git_config)
+        self.assertEqual(obj.repository, "a/b")
+
+    def test_create_dot_git(self) -> None:
+        repo = "git@github.com:a/b.git"
+        git_config = typedefs.GitConfig(repo, "master")
+        git_config.try_url_match(github.GITHUB_SSH_URL)
+        obj = sourcegraph.SourcegraphHost.create(git_config)
+        self.assertEqual(obj.repository, "a/b")
+
+    def test_get_url_commit(self) -> None:
+        git_object = typedefs.FocusHash("abcd")
+        url = self.obj.get_url(git_object)
+        self.assertEqual(
+            url,
+            sourcegraph.PUBLIC_SOURCEGRAPH_URL
+            + "github.com/albertyw/git-browse/-/commit/abcd",
+        )
+
+    def test_get_url_root(self) -> None:
+        git_object = typedefs.FocusObject(os.sep)
+        url = self.obj.get_url(git_object)
+        self.assertEqual(
+            url, sourcegraph.PUBLIC_SOURCEGRAPH_URL + "github.com/albertyw/git-browse"
+        )
+
+    def test_get_url_directory(self) -> None:
+        git_object = typedefs.FocusObject("git_browse" + os.sep)
+        url = self.obj.get_url(git_object)
+        self.assertEqual(
+            url,
+            sourcegraph.PUBLIC_SOURCEGRAPH_URL
+            + "github.com/albertyw/git-browse/-/tree/git_browse/",
+        )
+
+    def test_get_url_file(self) -> None:
+        git_object = typedefs.FocusObject("README.md")
+        url = self.obj.get_url(git_object)
+        self.assertEqual(
+            url,
+            sourcegraph.PUBLIC_SOURCEGRAPH_URL
+            + "github.com/albertyw/git-browse/-/blob/README.md",
+        )
 
     def test_uber_init(self) -> None:
         self.assertEqual(self.uber_obj.host, "code.uber.internal")
