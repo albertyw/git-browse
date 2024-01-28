@@ -4,7 +4,7 @@ from git_browse import phabricator, typedefs
 
 
 PUBLIC_SOURCEGRAPH_URL = "https://sourcegraph.com/"
-UBER_SOURCEGRAPH_URL = "https://sourcegraph.uberinternal.com/"
+UBER_SOURCEGRAPH_URL = "https://sg.uberinternal.com/"
 
 
 class SourcegraphHost(typedefs.Host):
@@ -40,14 +40,18 @@ class SourcegraphHost(typedefs.Host):
         self.host_class = host_class
 
     def get_url(self, git_object: typedefs.GitObject) -> str:
-        sourcegraph_url = PUBLIC_SOURCEGRAPH_URL
         if self.host_class == phabricator.PhabricatorHost:
-            sourcegraph_url = UBER_SOURCEGRAPH_URL
-        repository_url = "%s%s/%s" % (
-            sourcegraph_url,
-            self.host,
-            self.repository,
-        )
+            repository_url = "%s%s/uber-code/%s" % (
+                UBER_SOURCEGRAPH_URL,
+                self.host,
+                self.repository.replace('/', '-'),
+            )
+        else:
+            repository_url = "%s%s/%s" % (
+                PUBLIC_SOURCEGRAPH_URL,
+                self.host,
+                self.repository,
+            )
         if git_object.is_commit_hash():
             return self.commit_hash_url(repository_url, git_object)
         if git_object.is_root():
