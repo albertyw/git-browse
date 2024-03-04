@@ -98,7 +98,7 @@ Development
 -----------
 
 ```bash
-pip install -r requirements-test.txt
+pip install -e .[test]
 ruff check .
 mypy . --strict --ignore-missing-imports
 coverage run -m unittest

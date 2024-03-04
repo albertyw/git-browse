@@ -25,6 +25,16 @@ classifiers = [
 dependencies = []
 dynamic = ["version", "readme"]
 
+[project.optional-dependencies]
+test = [
+    # Testing
+    "coverage==7.4.1",                  # Test coverage
+    "ruff==0.1.14",                     # Python linter
+
+    # Types
+    "mypy==1.8.0",                      # Static typing
+]
+
 [project.urls]
 "Homepage" = "https://github.com/albertyw/git-browse"
 
