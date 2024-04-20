@@ -44,7 +44,7 @@ class SourcegraphHost(typedefs.Host):
             repository_url = "%s%s/uber-code/%s" % (
                 UBER_SOURCEGRAPH_URL,
                 self.host,
-                self.repository.replace('/', '-'),
+                self.format_phabricator_repository(),
             )
         else:
             repository_url = "%s%s/%s" % (
@@ -86,3 +86,8 @@ class SourcegraphHost(typedefs.Host):
             focus_object.identifier,
         )
         return repository_url
+
+    def format_phabricator_repository(self) -> str:
+        if self.repository == "lm/fievel":
+            return "java-code"
+        return self.repository.replace("/", "-")
