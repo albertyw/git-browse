@@ -100,7 +100,7 @@ Development
 ```bash
 pip install -e .[test]
 ruff check .
-mypy . --strict --ignore-missing-imports
+mypy .
 coverage run -m unittest
 coverage report
 ```
