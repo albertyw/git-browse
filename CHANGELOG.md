@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v2.13.10 (2024-04-19)
+---------------------
+
+ - Fix reading uber java monorepo sourcegraph URLs
+ - Update dependencies
+
+
 v2.13.9 (2024-01-28)
 --------------------
 
