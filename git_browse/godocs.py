@@ -53,17 +53,17 @@ class GodocsHost(typedefs.Host):
         return self.file_url(repository_url, git_object)
 
     def commit_hash_url(
-        self, repository_url: str, focus_hash: typedefs.GitObject
+        self, repository_url: str, focus_hash: typedefs.GitObject,
     ) -> str:
         raise NotImplementedError("Cannot look up commits in godocs")
 
     def directory_url(
-        self, repository_url: str, focus_object: typedefs.GitObject
+        self, repository_url: str, focus_object: typedefs.GitObject,
     ) -> str:
         repository_url = "%s/%s" % (repository_url, focus_object.identifier)
         return repository_url
 
     def file_url(
-        self, repository_url: str, focus_object: typedefs.GitObject
+        self, repository_url: str, focus_object: typedefs.GitObject,
     ) -> str:
         raise NotImplementedError("Cannot look up individual files in godocs")

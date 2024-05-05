@@ -143,5 +143,5 @@ class TestPhabricatorHost(unittest.TestCase):
     def test_commit_hash_url(self) -> None:
         url = self.phabricator_host.commit_hash_url(self.focus_hash)
         self.assertEqual(
-            url, "https://example.com/rASDF%s" % test_util.get_tag()
+            url, "https://example.com/rASDF%s" % test_util.get_tag(),
         )

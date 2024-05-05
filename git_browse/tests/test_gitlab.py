@@ -34,14 +34,14 @@ class TestGitlabHost(unittest.TestCase):
         self.focus_object.identifier = "asdf/"
         url = self.host.directory_url(self.repository_url, self.focus_object)
         self.assertEqual(
-            url, "https://gitlab.com/albertyw/git-browse/-/tree/main/asdf/"
+            url, "https://gitlab.com/albertyw/git-browse/-/tree/main/asdf/",
         )
 
     def test_file_url(self) -> None:
         self.focus_object.identifier = "README.md"
         url = self.host.file_url(self.repository_url, self.focus_object)
         self.assertEqual(
-            url, "https://gitlab.com/albertyw/git-browse/-/blob/main/README.md"
+            url, "https://gitlab.com/albertyw/git-browse/-/blob/main/README.md",
         )
 
     def test_commit_hash_url(self) -> None:

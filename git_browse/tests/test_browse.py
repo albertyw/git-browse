@@ -175,7 +175,7 @@ class TestGetFocusObject(unittest.TestCase):
 
     def test_get_focus_hash(self) -> None:
         focus_object = browse.get_git_object(
-            test_util.get_tag(), pathlib.Path.cwd(), self.host
+            test_util.get_tag(), pathlib.Path.cwd(), self.host,
         )
         self.assertTrue(focus_object.__class__ is typedefs.FocusHash)
 
@@ -275,7 +275,7 @@ class FullTest(unittest.TestCase):
         self.check_main(sys_argv, expected, mock_open_url)
 
     def check_main(
-        self, sys_argv: list[str], expected: str, mock_open_url: MagicMock
+        self, sys_argv: list[str], expected: str, mock_open_url: MagicMock,
     ) -> None:
         sys.argv = sys_argv
         browse.main()
