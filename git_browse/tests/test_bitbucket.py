@@ -34,7 +34,7 @@ class TestBitbucketHost(unittest.TestCase):
         self.focus_object.identifier = "asdf/"
         url = self.host.directory_url(self.repository_url, self.focus_object)
         self.assertEqual(
-            url, "https://bitbucket.org/albertyw/git-browse/src/master/asdf/"
+            url, "https://bitbucket.org/albertyw/git-browse/src/master/asdf/",
         )
 
     def test_file_url(self) -> None:

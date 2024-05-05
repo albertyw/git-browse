@@ -51,7 +51,7 @@ class PhabricatorHost(typedefs.Host):
             raise FileNotFoundError(
                 'Cannot find a ".arcconfig" file to parse '
                 "for repository configuration.  Expected file at %s."
-                % arcconfig_file
+                % arcconfig_file,
             ) from err
         try:
             arcconfig_data = json.loads(data)
@@ -65,7 +65,7 @@ class PhabricatorHost(typedefs.Host):
             raise RuntimeError("Cannot get phabricator url")
         self.phabricator_url = self.phabricator_url.rstrip("/")
         default_branch = arcconfig_data.get(
-            "git.default-relative-commit", DEFAULT_BRANCH
+            "git.default-relative-commit", DEFAULT_BRANCH,
         )
         if "/" in default_branch:
             default_branch = default_branch.split("/", 1)[1]

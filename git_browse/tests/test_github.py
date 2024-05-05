@@ -36,22 +36,22 @@ class TestGithubHost(unittest.TestCase):
     def test_directory_url(self) -> None:
         self.focus_object.identifier = "asdf/"
         url = self.github_host.directory_url(
-            self.repository_url, self.focus_object
+            self.repository_url, self.focus_object,
         )
         self.assertEqual(
-            url, "https://github.com/albertyw/git-browse/tree/master/asdf/"
+            url, "https://github.com/albertyw/git-browse/tree/master/asdf/",
         )
 
     def test_file_url(self) -> None:
         self.focus_object.identifier = "README.md"
         url = self.github_host.file_url(self.repository_url, self.focus_object)
         self.assertEqual(
-            url, "https://github.com/albertyw/git-browse/blob/master/README.md"
+            url, "https://github.com/albertyw/git-browse/blob/master/README.md",
         )
 
     def test_commit_hash_url(self) -> None:
         url = self.github_host.commit_hash_url(
-            self.repository_url, self.focus_hash
+            self.repository_url, self.focus_hash,
         )
         self.assertEqual(
             url,

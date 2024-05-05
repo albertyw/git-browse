@@ -42,14 +42,14 @@ class TestGodocsHost(unittest.TestCase):
         git_object = typedefs.FocusObject(os.sep)
         url = self.obj.get_url(git_object)
         self.assertEqual(
-            url, godocs.PUBLIC_GODOCS_URL + "github.com/asdf/qwer"
+            url, godocs.PUBLIC_GODOCS_URL + "github.com/asdf/qwer",
         )
 
     def test_get_url_directory(self) -> None:
         git_object = typedefs.FocusObject("zxcv" + os.sep)
         url = self.obj.get_url(git_object)
         self.assertEqual(
-            url, godocs.PUBLIC_GODOCS_URL + "github.com/asdf/qwer/zxcv/"
+            url, godocs.PUBLIC_GODOCS_URL + "github.com/asdf/qwer/zxcv/",
         )
 
     def test_get_url_file(self) -> None:

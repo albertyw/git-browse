@@ -130,7 +130,7 @@ def get_repository_host(
 
 
 def get_git_object(
-    focus_object: str, path: pathlib.Path, host: typedefs.Host
+    focus_object: str, path: pathlib.Path, host: typedefs.Host,
 ) -> typedefs.GitObject:
     if not focus_object:
         return typedefs.FocusObject.default()
@@ -205,7 +205,7 @@ def main() -> None:
         help="Open objects in sourcegraph",
     )
     parser.add_argument(
-        "-g", "--godocs", action="store_true", help="Open objects in godocs"
+        "-g", "--godocs", action="store_true", help="Open objects in godocs",
     )
     parser.add_argument(
         "-v",

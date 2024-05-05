@@ -179,7 +179,7 @@ def generate_test(test_config: TestConfig) -> Callable[[], None]:
         mock_get_git_config_data.return_value = test_config.git_config
         host = browse.get_repository_host()
         focus_object = browse.get_git_object(
-            test_config.target_path, pathlib.Path(REPO_PATH), host
+            test_config.target_path, pathlib.Path(REPO_PATH), host,
         )
 
         url = host.get_url(focus_object)

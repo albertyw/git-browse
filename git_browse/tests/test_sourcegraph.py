@@ -58,7 +58,7 @@ class SourcegraphHost(unittest.TestCase):
         git_object = typedefs.FocusObject(os.sep)
         url = self.obj.get_url(git_object)
         self.assertEqual(
-            url, sourcegraph.PUBLIC_SOURCEGRAPH_URL + "github.com/albertyw/git-browse"
+            url, sourcegraph.PUBLIC_SOURCEGRAPH_URL + "github.com/albertyw/git-browse",
         )
 
     def test_get_url_directory(self) -> None:
@@ -111,7 +111,7 @@ class SourcegraphHost(unittest.TestCase):
         url = self.uber_obj.get_url(git_object)
         self.assertEqual(
             url, sourcegraph.UBER_SOURCEGRAPH_URL
-            + "code.uber.internal/uber-code/asdf-qwer"
+            + "code.uber.internal/uber-code/asdf-qwer",
         )
 
     def test_uber_get_url_directory(self) -> None:

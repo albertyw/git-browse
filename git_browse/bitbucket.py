@@ -57,7 +57,7 @@ class BitbucketHost(typedefs.Host):
         return self.file_url(repository_url, git_object)
 
     def commit_hash_url(
-        self, repository_url: str, focus_hash: "typedefs.GitObject"
+        self, repository_url: str, focus_hash: "typedefs.GitObject",
     ) -> str:
         repository_url = "%s/commits/%s" % (
             repository_url,
@@ -66,12 +66,12 @@ class BitbucketHost(typedefs.Host):
         return repository_url
 
     def root_url(
-        self, repository_url: str, focus_object: "typedefs.GitObject"
+        self, repository_url: str, focus_object: "typedefs.GitObject",
     ) -> str:
         return repository_url
 
     def directory_url(
-        self, repository_url: str, focus_object: "typedefs.GitObject"
+        self, repository_url: str, focus_object: "typedefs.GitObject",
     ) -> str:
         repository_url = "%s/src/%s/%s" % (
             repository_url,
@@ -81,7 +81,7 @@ class BitbucketHost(typedefs.Host):
         return repository_url
 
     def file_url(
-        self, repository_url: str, focus_object: "typedefs.GitObject"
+        self, repository_url: str, focus_object: "typedefs.GitObject",
     ) -> str:
         repository_url = "%s/src/%s/%s" % (
             repository_url,
