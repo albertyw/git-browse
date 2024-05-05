@@ -49,8 +49,8 @@ readme = {file = "README.md", content-type="text/markdown"}
 git_browse = ["py.typed"]
 
 [tool.ruff]
-select = ["E", "F", "B"]
-ignore = ["B010"]
+lint.select = ["E", "F", "B"]
+lint.ignore = ["B010"]
 
 [tool.mypy]
 strict = true
