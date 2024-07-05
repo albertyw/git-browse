@@ -6,7 +6,6 @@ Git Browse
 ![PyPI - License](https://img.shields.io/pypi/l/git-browse)
 
 [![Build Status](https://drone.albertyw.com/api/badges/albertyw/git-browse/status.svg)](https://drone.albertyw.com/albertyw/git-browse)
-[![Dependency Status](https://pyup.io/repos/github/albertyw/git-browse/shield.svg)](https://pyup.io/repos/github/albertyw/git-browse/)
 [![Code Climate](https://codeclimate.com/github/albertyw/git-browse/badges/gpa.svg)](https://codeclimate.com/github/albertyw/git-browse)
 [![Test Coverage](https://codeclimate.com/github/albertyw/git-browse/badges/coverage.svg)](https://codeclimate.com/github/albertyw/git-browse/coverage)
 
