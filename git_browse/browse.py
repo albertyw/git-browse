@@ -47,7 +47,7 @@ HOST_REGEXES: dict[str, type[typedefs.Host]] = {
 def copy_text_to_clipboard(text: str) -> None:
     stdin = text.encode("utf-8")
     try:
-        subprocess.run(["pbcopy", "w"], input=stdin, close_fds=True)
+        subprocess.run(["pbcopy", "w"], input=stdin, close_fds=True, check=False)
     except FileNotFoundError:
         pass
 
@@ -152,7 +152,7 @@ def get_commit_hash(identifier: str) -> Optional[typedefs.FocusHash]:
     process = subprocess.run(
         command,
         capture_output=True,
-        universal_newlines=True,
+        universal_newlines=True, check=False,
     )
     if process.returncode != 0:
         return None
