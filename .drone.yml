@@ -11,7 +11,7 @@ steps:
   - name: Test Python
     depends_on:
       - fetch
-    image: python:3.12
+    image: python:3.13
     commands:
       - curl -L "https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-$(dpkg --print-architecture)" > "${HOME}/bin/cc-test-reporter"
       - chmod +x "${HOME}/bin/cc-test-reporter"
@@ -28,7 +28,7 @@ steps:
       CC_TEST_REPORTER_ID: 3ed7f5ff3362f31338e19d26a3641748d004a598d0e68d67ecdcf4cb632b3cdb
 
   - name: Test Python Packaging
-    image: python:3.12
+    image: python:3.13
     commands:
       - pip install build twine
       - python -m build
@@ -43,7 +43,7 @@ steps:
         from_secret: twine_username
       TWINE_PASSWORD:
         from_secret: twine_password
-    image: python:3.12
+    image: python:3.13
     commands:
       - pip install build twine
       - python -m build
