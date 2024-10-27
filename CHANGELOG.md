@@ -1,6 +1,14 @@
 Changelog
 =========
 
+v2.13.11 (2024-10-26)
+---------------------
+
+ - Add support for python 3.13
+ - Update dependencies
+ - Remove pyup
+
+
 v2.13.10 (2024-04-19)
 ---------------------
 
