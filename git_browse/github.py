@@ -2,6 +2,7 @@ from git_browse import typedefs
 
 
 GITHUB_HOST = "(?P<host>github\\.com)"
+GITHUB_UBER_HOST = "(?P<host>code\\.uber\\.internal)"
 GITHUB_SSH_URL = "git@%s:%s/%s" % (
     GITHUB_HOST,
     typedefs.USER_REGEX,
@@ -9,6 +10,11 @@ GITHUB_SSH_URL = "git@%s:%s/%s" % (
 )
 GITHUB_HTTPS_URL = "https://%s/%s/%s" % (
     GITHUB_HOST,
+    typedefs.USER_REGEX,
+    typedefs.REPOSITORY_REGEX,
+)
+GITHUB_UBER_SSH_URL = "git@%s:%s/%s" % (
+    GITHUB_UBER_HOST,
     typedefs.USER_REGEX,
     typedefs.REPOSITORY_REGEX,
 )

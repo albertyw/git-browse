@@ -34,6 +34,7 @@ __version__ = "2.13.11"
 HOST_REGEXES: dict[str, type[typedefs.Host]] = {
     github.GITHUB_SSH_URL: github.GithubHost,
     github.GITHUB_HTTPS_URL: github.GithubHost,
+    github.GITHUB_UBER_SSH_URL: github.GithubHost,
     bitbucket.BITBUCKET_SSH_URL: bitbucket.BitbucketHost,
     bitbucket.BITBUCKET_HTTPS_URL: bitbucket.BitbucketHost,
     gitlab.GITLAB_SSH_URL: gitlab.GitlabHost,
