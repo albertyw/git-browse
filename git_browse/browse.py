@@ -41,6 +41,7 @@ HOST_REGEXES: dict[str, type[typedefs.Host]] = {
     phabricator.UBER_SSH_GITOLITE_URL: phabricator.PhabricatorHost,
     phabricator.UBER_SSH_CONFIG_GITOLITE_URL: phabricator.PhabricatorHost,
     phabricator.UBER_HTTPS_GITOLITE_URL: phabricator.PhabricatorHost,
+    phabricator.UBER_OC_URL: phabricator.PhabricatorHost,
 }
 
 

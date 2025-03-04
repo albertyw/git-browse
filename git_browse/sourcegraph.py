@@ -41,9 +41,9 @@ class SourcegraphHost(typedefs.Host):
 
     def get_url(self, git_object: typedefs.GitObject) -> str:
         if self.host_class == phabricator.PhabricatorHost:
-            repository_url = "%s%s/uber-code/%s" % (
+            repository_url = "%s%s/%s" % (
                 UBER_SOURCEGRAPH_URL,
-                self.host,
+                self.format_uber_host(self.host),
                 self.format_phabricator_repository(),
             )
         else:
@@ -87,7 +87,13 @@ class SourcegraphHost(typedefs.Host):
         )
         return repository_url
 
+    def format_uber_host(self, host: str) -> str:
+        if host == "objectconfig":
+            return "code.uber.internal/uber-objectconfig"
+        else:
+            return "%s/uber-code" % self.host
+
     def format_phabricator_repository(self) -> str:
         if self.repository == "lm/fievel":
             return "java-code"
-        return self.repository.replace("/", "-")
+        return self.repository.replace("/", "-").replace("@", "---")
