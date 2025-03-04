@@ -26,6 +26,12 @@ class SourcegraphHost(unittest.TestCase):
             "lm/fievel",
         )
         self.uber_obj_java.host_class = phabricator.PhabricatorHost
+        self.uber_objectconfig = sourcegraph.SourcegraphHost(
+            typedefs.GitConfig("", "master"),
+            "objectconfig",
+            "asdf@production",
+        )
+        self.uber_objectconfig.host_class = phabricator.PhabricatorHost
 
     def test_init(self) -> None:
         self.assertEqual(self.obj.host, "github.com")
@@ -139,4 +145,13 @@ class SourcegraphHost(unittest.TestCase):
             url,
             sourcegraph.UBER_SOURCEGRAPH_URL
             + "code.uber.internal/uber-code/java-code/-/blob/zxcv",
+        )
+
+    def test_uber_objectconfig(self) -> None:
+        git_object = typedefs.FocusObject(os.sep)
+        url = self.uber_objectconfig.get_url(git_object)
+        self.assertEqual(
+            url,
+            sourcegraph.UBER_SOURCEGRAPH_URL
+            + "code.uber.internal/uber-objectconfig/asdf---production",
         )
