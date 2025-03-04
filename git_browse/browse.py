@@ -30,7 +30,7 @@ from git_browse import (  # NOQA
 )
 
 
-__version__ = "2.13.11"
+__version__ = "2.14.0"
 HOST_REGEXES: dict[str, type[typedefs.Host]] = {
     github.GITHUB_SSH_URL: github.GithubHost,
     github.GITHUB_HTTPS_URL: github.GithubHost,

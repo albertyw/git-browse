@@ -1,6 +1,14 @@
 Changelog
 =========
 
+v2.14.0 (2025-03-03)
+--------------------
+
+ - Support browsing Uber Github URLs
+ - Support browsing Uber ObjectConfig URLs
+ - Update dependencies
+
+
 v2.13.11 (2024-10-26)
 ---------------------
 
