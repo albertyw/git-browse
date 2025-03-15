@@ -3,13 +3,12 @@ import unittest
 from git_browse import typedefs
 
 
-class GitObject(unittest.TestCase):
+class TestGitObject(unittest.TestCase):
     def test_is_directory(self) -> None:
         obj = typedefs.GitObject("/asdf")
         self.assertFalse(obj.is_directory())
 
-
-class FocusObject(unittest.TestCase):
+class TestFocusObject(unittest.TestCase):
     def test_init(self) -> None:
         obj = typedefs.FocusObject("/asdf")
         self.assertEqual(obj.identifier, "/asdf")
@@ -35,7 +34,7 @@ class FocusObject(unittest.TestCase):
         self.assertTrue(obj.is_root())
 
 
-class FocusHash(unittest.TestCase):
+class TestFocusHash(unittest.TestCase):
     def test_init(self) -> None:
         obj = typedefs.FocusHash("abcde")
         self.assertEqual(obj.identifier, "abcde")
