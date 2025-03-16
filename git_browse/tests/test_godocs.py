@@ -1,7 +1,8 @@
 import os
 import unittest
+from typing import cast
 
-from git_browse import github, godocs, typedefs
+from git_browse import github, godocs, phabricator, typedefs
 
 
 class TestGodocsHost(unittest.TestCase):
@@ -21,17 +22,32 @@ class TestGodocsHost(unittest.TestCase):
         repo = "git@github.com:asdf/qwer"
         git_config = typedefs.GitConfig(repo, "master")
         git_config.try_url_match(github.GITHUB_SSH_URL)
-        obj = github.GithubHost.create(git_config)
-        self.assertEqual(obj.user, "asdf")
-        self.assertEqual(obj.repository, "qwer")
+        obj = godocs.GodocsHost.create(git_config)
+        obj = cast(godocs.GodocsHost, obj)
+        self.assertEqual(obj.host, "github.com")
+        self.assertEqual(obj.repository, "asdf/qwer")
 
     def test_create_dot_git(self) -> None:
         repo = "git@github.com:asdf/qwer.git"
         git_config = typedefs.GitConfig(repo, "master")
         git_config.try_url_match(github.GITHUB_SSH_URL)
-        obj = github.GithubHost.create(git_config)
-        self.assertEqual(obj.user, "asdf")
-        self.assertEqual(obj.repository, "qwer")
+        obj = godocs.GodocsHost.create(git_config)
+        obj = cast(godocs.GodocsHost, obj)
+        self.assertEqual(obj.host, "github.com")
+        self.assertEqual(obj.repository, "asdf/qwer")
+
+    def test_create_no_user(self) -> None:
+        repo = "gitolite@code.uber.internal:asdf"
+        git_config = typedefs.GitConfig(repo, "master")
+        git_config.try_url_match(phabricator.UBER_SSH_GITOLITE_URL)
+        obj = godocs.GodocsHost.create(git_config)
+        obj = cast(godocs.GodocsHost, obj)
+        self.assertEqual(obj.host, "code.uber.internal")
+        self.assertEqual(obj.repository, "asdf")
+
+    def test_set_host_class(self) -> None:
+        self.obj.set_host_class(github.GithubHost)
+        self.assertEqual(self.obj.host_class, github.GithubHost)
 
     def test_get_url_commit(self) -> None:
         git_object = typedefs.FocusHash("abcd")
@@ -50,6 +66,19 @@ class TestGodocsHost(unittest.TestCase):
         url = self.obj.get_url(git_object)
         self.assertEqual(
             url, godocs.PUBLIC_GODOCS_URL + "github.com/asdf/qwer/zxcv/",
+        )
+
+    def test_get_url_uber(self) -> None:
+        git_object = typedefs.FocusObject("zxcv" + os.sep)
+        obj = godocs.GodocsHost(
+            typedefs.GitConfig("", "master"),
+            "code.uber.internal",
+            "asdf",
+        )
+        obj.host_class = phabricator.PhabricatorHost
+        url = obj.get_url(git_object)
+        self.assertEqual(
+            url, godocs.UBER_GODOCS_URL + "code.uber.internal/asdf/zxcv/",
         )
 
     def test_get_url_file(self) -> None:
