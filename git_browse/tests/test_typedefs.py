@@ -4,9 +4,18 @@ from git_browse import typedefs
 
 
 class TestGitObject(unittest.TestCase):
+    def test_is_commit_hash(self) -> None:
+        obj = typedefs.GitObject("abcde")
+        self.assertFalse(obj.is_commit_hash())
+
+    def test_is_root(self) -> None:
+        obj = typedefs.GitObject("/")
+        self.assertFalse(obj.is_root())
+
     def test_is_directory(self) -> None:
         obj = typedefs.GitObject("/asdf")
         self.assertFalse(obj.is_directory())
+
 
 class TestFocusObject(unittest.TestCase):
     def test_init(self) -> None:

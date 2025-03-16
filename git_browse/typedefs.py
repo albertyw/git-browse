@@ -28,35 +28,34 @@ class GitConfig(object):
 class Host(metaclass=ABCMeta):
     @property
     @abstractmethod
-    def user(self) -> str:
+    def user(self) -> str:  # pragma: no cover
         pass
-
     @user.setter
     @abstractmethod
-    def user(self, user: str) -> None:
+    def user(self, user: str) -> None:  # pragma: no cover
         pass
 
     @property
     @abstractmethod
-    def repository(self) -> str:
+    def repository(self) -> str:  # pragma: no cover
         pass
 
     @repository.setter
     @abstractmethod
-    def repository(self, repository: str) -> None:
+    def repository(self, repository: str) -> None:  # pragma: no cover
         pass
 
     @staticmethod
     @abstractmethod
-    def create(git_config: GitConfig) -> Host:
+    def create(git_config: GitConfig) -> Host:  # pragma: no cover
         pass
 
     @abstractmethod
-    def set_host_class(self, host_class: type[Host]) -> None:
+    def set_host_class(self, host_class: type[Host]) -> None:  # pragma: no cover
         pass
 
     @abstractmethod
-    def get_url(self, git_object: GitObject) -> str:
+    def get_url(self, git_object: GitObject) -> str:  # pragma: no cover
         pass
 
 
