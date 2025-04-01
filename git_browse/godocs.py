@@ -4,7 +4,7 @@ from git_browse import phabricator, typedefs
 
 
 PUBLIC_GODOCS_URL = "https://godocs.io/"
-UBER_GODOCS_URL = "https://eng.uberinternal.com/docs/api/go/pkg/"
+UBER_GODOCS_URL = "https://eng.uberinternal.com/docs/api/go/pkg"
 
 
 class GodocsHost(typedefs.Host):
@@ -41,9 +41,9 @@ class GodocsHost(typedefs.Host):
 
     def get_url(self, git_object: typedefs.GitObject) -> str:
         godocs_url = PUBLIC_GODOCS_URL
-        if self.host_class == phabricator.PhabricatorHost:
-            godocs_url = UBER_GODOCS_URL
         repository_url = "%s%s/%s" % (godocs_url, self.host, self.repository)
+        if self.host_class == phabricator.PhabricatorHost:
+            repository_url = UBER_GODOCS_URL
         if git_object.is_commit_hash():
             return self.commit_hash_url(repository_url, git_object)
         if git_object.is_root():
@@ -60,7 +60,10 @@ class GodocsHost(typedefs.Host):
     def directory_url(
         self, repository_url: str, focus_object: typedefs.GitObject,
     ) -> str:
-        repository_url = "%s/%s" % (repository_url, focus_object.identifier)
+        path = focus_object.identifier
+        if repository_url == UBER_GODOCS_URL:
+            path = '/'.join(path.split('/')[1:])
+        repository_url = "%s/%s" % (repository_url, path)
         return repository_url
 
     def file_url(
