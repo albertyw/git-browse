@@ -78,7 +78,20 @@ class TestGodocsHost(unittest.TestCase):
         obj.host_class = phabricator.PhabricatorHost
         url = obj.get_url(git_object)
         self.assertEqual(
-            url, godocs.UBER_GODOCS_URL + "code.uber.internal/asdf/zxcv/",
+            url, godocs.UBER_GODOCS_URL + "/",
+        )
+
+    def test_get_url_uber_with_path(self) -> None:
+        git_object = typedefs.FocusObject("zxcv/qwer" + os.sep)
+        obj = godocs.GodocsHost(
+            typedefs.GitConfig("", "master"),
+            "code.uber.internal",
+            "asdf",
+        )
+        obj.host_class = phabricator.PhabricatorHost
+        url = obj.get_url(git_object)
+        self.assertEqual(
+            url, godocs.UBER_GODOCS_URL + "/qwer/",
         )
 
     def test_get_url_file(self) -> None:
