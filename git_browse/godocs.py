@@ -4,7 +4,7 @@ from git_browse import phabricator, typedefs
 
 
 PUBLIC_GODOCS_URL = "https://godocs.io/"
-UBER_GODOCS_URL = "https://eng.uberinternal.com/docs/api/go/pkg"
+UBER_GODOCS_URL = "https://engdocs.uberinternal.com/api/go/pkg"
 
 
 class GodocsHost(typedefs.Host):
