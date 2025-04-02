@@ -1,6 +1,14 @@
 Changelog
 =========
 
+v2.14.1 (2025-04-01)
+--------------------
+
+ - Fix opening uber godocs URLs
+ - Update dependencies
+ - Backfill test coverage
+
+
 v2.14.0 (2025-03-03)
 --------------------
 
