@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v2.14.2 (2025-06-08)
+--------------------
+
+ - Support reading Uber arcconfig files with `conduit.uri`s
+ - Update dependencies
+
+
 v2.14.1 (2025-04-01)
 --------------------
 
