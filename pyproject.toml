@@ -33,7 +33,7 @@ test = [
     "ruff==0.11.2",           # Python linter
 
     # Types
-    "mypy==1.15.0",           # Static typing
+    "mypy==1.16.0",           # Static typing
 ]
 
 [project.urls]
