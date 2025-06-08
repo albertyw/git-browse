@@ -90,6 +90,17 @@ class TestPhabricatorHost(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             self.phabricator_host._parse_arcconfig(self.temp_dir_name)
 
+    def test_parse_arcconfig_conduit_uri(self) -> None:
+        self.arcconfig_data["conduit_uri"] = self.phabricator_url
+        del self.arcconfig_data["phabricator.uri"]
+        with open(self.arcconfig_file, "w") as handle:
+            handle.write(json.dumps(self.arcconfig_data))
+        self.phabricator_host._parse_arcconfig(self.temp_dir_name)
+        self.assertEqual(
+            self.phabricator_host.phabricator_url,
+            self.phabricator_url,
+        )
+
     def test_parse_arcconfig_no_url(self) -> None:
         del self.arcconfig_data["phabricator.uri"]
         with open(self.arcconfig_file, "w") as handle:
