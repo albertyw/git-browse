@@ -13,19 +13,16 @@ steps:
       - fetch
     image: python:3.13
     commands:
-      - curl -L "https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-$(dpkg --print-architecture)" > "${HOME}/bin/cc-test-reporter"
-      - chmod +x "${HOME}/bin/cc-test-reporter"
+      - curl https://qlty.sh | sh
       - pip install -e .[test]
       - ruff check .
       - mypy .
-      - cc-test-reporter before-build
       - coverage run -m unittest
-      - exitcode="$?"
       - coverage report -m
-      - coverage xml
-      - cc-test-reporter after-build --exit-code "$exitcode"
+      - coverage lcov -o .coverage.lcov
+      - ~/.qlty/bin/qlty coverage publish .coverage.lcov --override-commit-sha "$DRONE_COMMIT_SHA" --override-branch "$DRONE_BRANCH" --override-build-id "$DRONE_BUILD_NUMBER"
     environment:
-      CC_TEST_REPORTER_ID: 3ed7f5ff3362f31338e19d26a3641748d004a598d0e68d67ecdcf4cb632b3cdb
+      QLTY_COVERAGE_TOKEN: qltcp_JTdhvfxYWFWQ7gmW
 
   - name: Test Python Packaging
     image: python:3.13
