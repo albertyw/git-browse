@@ -11,7 +11,7 @@ steps:
   - name: Test Python
     depends_on:
       - fetch
-    image: python:3.13
+    image: python:3.14
     commands:
       - curl https://qlty.sh | sh
       - pip install -e .[test]
