@@ -25,7 +25,7 @@ steps:
       QLTY_COVERAGE_TOKEN: qltcp_JTdhvfxYWFWQ7gmW
 
   - name: Test Python Packaging
-    image: python:3.13
+    image: python:3.14
     commands:
       - pip install build twine
       - python -m build
