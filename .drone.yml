@@ -11,7 +11,7 @@ steps:
   - name: Test Python
     depends_on:
       - fetch
-    image: python:3.13
+    image: python:3.14
     commands:
       - curl https://qlty.sh | sh
       - pip install -e .[test]
@@ -25,7 +25,7 @@ steps:
       QLTY_COVERAGE_TOKEN: qltcp_JTdhvfxYWFWQ7gmW
 
   - name: Test Python Packaging
-    image: python:3.13
+    image: python:3.14
     commands:
       - pip install build twine
       - python -m build
@@ -40,7 +40,7 @@ steps:
         from_secret: twine_username
       TWINE_PASSWORD:
         from_secret: twine_password
-    image: python:3.13
+    image: python:3.14
     commands:
       - pip install build twine
       - python -m build
