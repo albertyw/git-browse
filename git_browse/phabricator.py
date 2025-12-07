@@ -38,7 +38,8 @@ class PhabricatorHost(typedefs.Host):
 
     @staticmethod
     def create(git_config: typedefs.GitConfig) -> typedefs.Host:
-        from git_browse import browse  # Fix circular import
+        # Fix circular import
+        from git_browse import browse  # noqa: PLC0415
 
         host = PhabricatorHost()
         host._parse_arcconfig(browse.get_repository_root())
