@@ -18,7 +18,7 @@ GITHUB_UBER_SSH_URL = "git@%s:%s/%s" % (
     typedefs.USER_REGEX,
     typedefs.REPOSITORY_REGEX,
 )
-GITHUB_URL = "https://github.com/"
+GITHUB_URL = "https://github.com/%s/%s"
 
 
 class GithubHost(typedefs.Host):
@@ -48,7 +48,7 @@ class GithubHost(typedefs.Host):
         return
 
     def get_url(self, git_object: typedefs.GitObject) -> str:
-        repository_url = "%s%s/%s" % (GITHUB_URL, self.user, self.repository)
+        repository_url = GITHUB_URL % (self.user, self.repository)
         if git_object.is_commit_hash():
             return self.commit_hash_url(repository_url, git_object)
         if git_object.is_root():
