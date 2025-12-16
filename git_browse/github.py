@@ -48,13 +48,14 @@ class GithubHost(typedefs.Host):
         assert git_config.url_regex_match
         repository = git_config.url_regex_match.group("repository")
         repository = repository.replace("/", "-")
+        repository = repository.replace("@", "---")
         if repository[-4:] == ".git":
             repository = repository[:-4]
         host = git_config.url_regex_match.group("host")
         if host == "code.uber.internal":
             user = "uber-code"
         elif host == "objectconfig":
-            user = "uber-config"
+            user = "uber-objectconfig"
         else:
             user = git_config.url_regex_match.group("user")
         return GithubHost(git_config, user, repository)

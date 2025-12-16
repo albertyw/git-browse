@@ -150,7 +150,7 @@ GIT_URLS: list[TestConfig] = [
     TestConfig(
         GitConfig("oc://objectconfig/a", "master"),
         "",
-        "https://github.com/uber-config/a",
+        "https://github.com/uber-objectconfig/a",
     ),
 ]
 
