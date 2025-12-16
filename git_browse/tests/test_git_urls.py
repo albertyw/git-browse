@@ -147,6 +147,11 @@ GIT_URLS: list[TestConfig] = [
         "README.md",
         "https://github.com/uber-code/a-b/blob/master/README.md",
     ),
+    TestConfig(
+        GitConfig("oc://objectconfig/a", "master"),
+        "",
+        "https://github.com/uber-config/a",
+    ),
 ]
 
 

@@ -38,37 +38,32 @@ class GithubHost(typedefs.Host):
         git_config: typedefs.GitConfig,
         user: str,
         repository: str,
-        uber: bool = False,
     ) -> None:
         self.git_config = git_config
         self.user = user
         self.repository = repository
-        self.uber = uber
 
     @staticmethod
     def create(git_config: typedefs.GitConfig) -> typedefs.Host:
         assert git_config.url_regex_match
         repository = git_config.url_regex_match.group("repository")
+        repository = repository.replace("/", "-")
         if repository[-4:] == ".git":
             repository = repository[:-4]
-        if git_config.url_regex_match.group("host") == "code.uber.internal":
-            uber = True
-            user = ""
+        host = git_config.url_regex_match.group("host")
+        if host == "code.uber.internal":
+            user = "uber-code"
+        elif host == "objectconfig":
+            user = "uber-config"
         else:
-            uber = False
             user = git_config.url_regex_match.group("user")
-        return GithubHost(git_config, user, repository, uber)
+        return GithubHost(git_config, user, repository)
 
     def set_host_class(self, host_class: type[typedefs.Host]) -> None:
         return
 
     def get_url(self, git_object: typedefs.GitObject) -> str:
-        user = self.user
-        repository = self.repository
-        if self.uber:
-            repository = self.repository.replace("/", "-")
-            user = "uber-code"
-        repository_url = GITHUB_URL % (user, repository)
+        repository_url = GITHUB_URL % (self.user, self.repository)
         if git_object.is_commit_hash():
             return self.commit_hash_url(repository_url, git_object)
         if git_object.is_root():
