@@ -87,6 +87,7 @@ class GetGitConfigData(unittest.TestCase):
         git_config_data = browse.get_git_config_data(config_file_name)
         expected = "git@github.com:albertyw/git-browse"
         self.assertEqual(git_config_data.git_url.replace(".git", ""), expected)
+        config_file.close()
 
 
 class ParseGitURL(unittest.TestCase):
