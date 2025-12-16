@@ -200,9 +200,11 @@ class TestGetCommitHash(unittest.TestCase):
 
 class TestOpenURL(unittest.TestCase):
     @patch("builtins.print", autospec=True)
-    def test_open_url(self, mock_print: MagicMock) -> None:
+    @patch("webbrowser.open")
+    def test_open_url(self, mock_print: MagicMock, mock_open: MagicMock) -> None:
         browse.open_url("asdf")
         mock_print.assert_called_with("asdf")
+        mock_open.assert_called_with("asdf")
 
 
 class FullTest(unittest.TestCase):
