@@ -54,6 +54,8 @@ class GithubHost(typedefs.Host):
         host = git_config.url_regex_match.group("host")
         if host == "code.uber.internal":
             user = "uber-code"
+            if repository == "lm-fievel":
+                repository = "java-code"
         elif host == "objectconfig":
             user = "uber-objectconfig"
         else:
