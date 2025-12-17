@@ -119,37 +119,38 @@ GIT_URLS: list[TestConfig] = [
     TestConfig(
         GitConfig("gitolite@code.uber.internal:a/b", ""),
         "",
-        "https://example.com/diffusion/ABCD/repository/master/",
+        "https://github.com/uber-code/a-b",
     ),
     TestConfig(
-        GitConfig("gitolite@config.uber.internal:a/b", ""),
-        "",
-        "https://example.com/diffusion/ABCD/repository/master/",
-    ),
-    TestConfig(
-        GitConfig("gitolite@code.uber.internal:a/b", ""),
+        GitConfig("gitolite@code.uber.internal:a/b", "master"),
         "README.md",
-        "https://example.com/diffusion/ABCD/browse/master/README.md",
+        "https://github.com/uber-code/a-b/blob/master/README.md",
     ),
     TestConfig(
-        GitConfig("gitolite@code.uber.internal:a/b", ""),
+        GitConfig("gitolite@code.uber.internal:a/b", "master"),
         TEST_DIR,
-        "https://example.com/diffusion/ABCD/browse/master/testdir/",
+        "https://github.com/uber-code/a-b/tree/master/testdir/",
     ),
     TestConfig(
         GitConfig("gitolite@code.uber.internal:a/b", ""),
         test_util.get_tag(),
-        "https://example.com/rABCD" + test_util.get_tag_commit_hash(),
+        "https://github.com/uber-code/a-b/commit/"
+        + test_util.get_tag_commit_hash(),
     ),
     TestConfig(
-        GitConfig("gitolite@code.uber.internal:a", ""),
+        GitConfig("gitolite@code.uber.internal:a", "master"),
         "README.md",
-        "https://example.com/diffusion/ABCD/browse/master/README.md",
+        "https://github.com/uber-code/a/blob/master/README.md",
     ),
     TestConfig(
-        GitConfig("https://code.uber.internal/x/y", ""),
+        GitConfig("https://code.uber.internal/a/b", "master"),
         "README.md",
-        "https://example.com/diffusion/ABCD/browse/master/README.md",
+        "https://github.com/uber-code/a-b/blob/master/README.md",
+    ),
+    TestConfig(
+        GitConfig("oc://objectconfig/a", "master"),
+        "",
+        "https://github.com/uber-objectconfig/a",
     ),
 ]
 

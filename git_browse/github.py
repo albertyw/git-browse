@@ -3,6 +3,7 @@ from git_browse import typedefs
 
 GITHUB_HOST = "(?P<host>github\\.com)"
 GITHUB_UBER_HOST = "(?P<host>code\\.uber\\.internal)"
+GITHUB_UBER_CONFIG_HOST = "(?P<host>objectconfig)"
 GITHUB_SSH_URL = "git@%s:%s/%s" % (
     GITHUB_HOST,
     typedefs.USER_REGEX,
@@ -13,9 +14,16 @@ GITHUB_HTTPS_URL = "https://%s/%s/%s" % (
     typedefs.USER_REGEX,
     typedefs.REPOSITORY_REGEX,
 )
-GITHUB_UBER_SSH_URL = "git@%s:%s/%s" % (
+GITHUB_UBER_SSH_URL = "gitolite@%s:%s" % (
     GITHUB_UBER_HOST,
-    typedefs.USER_REGEX,
+    typedefs.REPOSITORY_REGEX,
+)
+GITHUB_UBER_HTTPS_URL = "https://%s/%s" % (
+    GITHUB_UBER_HOST,
+    typedefs.REPOSITORY_REGEX,
+)
+GITHUB_UBER_OC_URL = "oc://%s/%s" % (
+    GITHUB_UBER_CONFIG_HOST,
     typedefs.REPOSITORY_REGEX,
 )
 GITHUB_URL = "https://github.com/%s/%s"
@@ -39,9 +47,19 @@ class GithubHost(typedefs.Host):
     def create(git_config: typedefs.GitConfig) -> typedefs.Host:
         assert git_config.url_regex_match
         repository = git_config.url_regex_match.group("repository")
+        repository = repository.replace("/", "-")
+        repository = repository.replace("@", "---")
         if repository[-4:] == ".git":
             repository = repository[:-4]
-        user = git_config.url_regex_match.group("user")
+        host = git_config.url_regex_match.group("host")
+        if host == "code.uber.internal":
+            user = "uber-code"
+            if repository == "lm-fievel":
+                repository = "java-code"
+        elif host == "objectconfig":
+            user = "uber-objectconfig"
+        else:
+            user = git_config.url_regex_match.group("user")
         return GithubHost(git_config, user, repository)
 
     def set_host_class(self, host_class: type[typedefs.Host]) -> None:
