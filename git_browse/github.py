@@ -3,6 +3,7 @@ from git_browse import typedefs
 
 GITHUB_HOST = "(?P<host>github\\.com)"
 GITHUB_UBER_HOST = "(?P<host>code\\.uber\\.internal)"
+GITHUB_UBER_CONFIG_HOST = "(?P<host>objectconfig)"
 GITHUB_SSH_URL = "git@%s:%s/%s" % (
     GITHUB_HOST,
     typedefs.USER_REGEX,
@@ -13,9 +14,16 @@ GITHUB_HTTPS_URL = "https://%s/%s/%s" % (
     typedefs.USER_REGEX,
     typedefs.REPOSITORY_REGEX,
 )
-GITHUB_UBER_SSH_URL = "git@%s:%s/%s" % (
+GITHUB_UBER_SSH_URL = "gitolite@%s:%s" % (
     GITHUB_UBER_HOST,
-    typedefs.USER_REGEX,
+    typedefs.REPOSITORY_REGEX,
+)
+GITHUB_UBER_HTTPS_URL = "https://%s/%s" % (
+    GITHUB_UBER_HOST,
+    typedefs.REPOSITORY_REGEX,
+)
+GITHUB_UBER_OC_URL = "oc://%s/%s" % (
+    GITHUB_UBER_CONFIG_HOST,
     typedefs.REPOSITORY_REGEX,
 )
 GITHUB_URL = "https://github.com/%s/%s"
@@ -30,10 +38,12 @@ class GithubHost(typedefs.Host):
         git_config: typedefs.GitConfig,
         user: str,
         repository: str,
+        uber: bool = False,
     ) -> None:
         self.git_config = git_config
         self.user = user
         self.repository = repository
+        self.uber = uber
 
     @staticmethod
     def create(git_config: typedefs.GitConfig) -> typedefs.Host:
@@ -41,14 +51,24 @@ class GithubHost(typedefs.Host):
         repository = git_config.url_regex_match.group("repository")
         if repository[-4:] == ".git":
             repository = repository[:-4]
-        user = git_config.url_regex_match.group("user")
-        return GithubHost(git_config, user, repository)
+        if git_config.url_regex_match.group("host") == "code.uber.internal":
+            uber = True
+            user = ""
+        else:
+            uber = False
+            user = git_config.url_regex_match.group("user")
+        return GithubHost(git_config, user, repository, uber)
 
     def set_host_class(self, host_class: type[typedefs.Host]) -> None:
         return
 
     def get_url(self, git_object: typedefs.GitObject) -> str:
-        repository_url = GITHUB_URL % (self.user, self.repository)
+        user = self.user
+        repository = self.repository
+        if self.uber:
+            repository = self.repository.replace("/", "-")
+            user = "uber-code"
+        repository_url = GITHUB_URL % (user, repository)
         if git_object.is_commit_hash():
             return self.commit_hash_url(repository_url, git_object)
         if git_object.is_root():
