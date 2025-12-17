@@ -122,11 +122,6 @@ GIT_URLS: list[TestConfig] = [
         "https://example.com/diffusion/ABCD/repository/master/",
     ),
     TestConfig(
-        GitConfig("gitolite@config.uber.internal:a/b", ""),
-        "",
-        "https://example.com/diffusion/ABCD/repository/master/",
-    ),
-    TestConfig(
         GitConfig("gitolite@code.uber.internal:a/b", ""),
         "README.md",
         "https://example.com/diffusion/ABCD/browse/master/README.md",

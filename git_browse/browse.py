@@ -40,7 +40,6 @@ HOST_REGEXES: dict[str, type[typedefs.Host]] = {
     gitlab.GITLAB_SSH_URL: gitlab.GitlabHost,
     gitlab.GITLAB_HTTPS_URL: gitlab.GitlabHost,
     phabricator.UBER_SSH_GITOLITE_URL: phabricator.PhabricatorHost,
-    phabricator.UBER_SSH_CONFIG_GITOLITE_URL: phabricator.PhabricatorHost,
     phabricator.UBER_HTTPS_GITOLITE_URL: phabricator.PhabricatorHost,
     phabricator.UBER_OC_URL: phabricator.PhabricatorHost,
 }

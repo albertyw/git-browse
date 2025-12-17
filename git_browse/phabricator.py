@@ -5,14 +5,9 @@ from git_browse import typedefs
 
 
 UBER_HOST = "(?P<host>code\\.uber\\.internal)"
-UBER_CONFIG_HOST = "(?P<host>config\\.uber\\.internal)"
-UBER_CONFIG_HOST2 = "(?P<host>objectconfig)"
+UBER_CONFIG_HOST = "(?P<host>objectconfig)"
 UBER_SSH_GITOLITE_URL = "gitolite@%s:%s" % (
     UBER_HOST,
-    typedefs.REPOSITORY_REGEX,
-)
-UBER_SSH_CONFIG_GITOLITE_URL = "gitolite@%s:%s" % (
-    UBER_CONFIG_HOST,
     typedefs.REPOSITORY_REGEX,
 )
 UBER_HTTPS_GITOLITE_URL = "https://%s/%s/%s" % (
@@ -21,7 +16,7 @@ UBER_HTTPS_GITOLITE_URL = "https://%s/%s/%s" % (
     typedefs.REPOSITORY_REGEX,
 )
 UBER_OC_URL = "oc://%s/%s" % (
-    UBER_CONFIG_HOST2,
+    UBER_CONFIG_HOST,
     typedefs.REPOSITORY_REGEX,
 )
 DEFAULT_BRANCH = "master"
