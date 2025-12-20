@@ -1,6 +1,16 @@
 Changelog
 =========
 
+v2.15.0 (2025-12-17)
+--------------------
+
+ - Support opening Uber Phabricator repositories in Github
+ - Add support for python 3.14
+ - Update dependencies
+ - Fix test warnings/deprecations
+ - Switch from codeclimate to qlty
+
+
 v2.14.2 (2025-06-08)
 --------------------
 
