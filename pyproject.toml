@@ -42,6 +42,9 @@ test = [
 [project.scripts]
 git_browse = "git_browse.browse:main"
 
+[tool.setuptools]
+packages = ["git_browse"]
+
 [tool.setuptools.dynamic]
 version = {attr = "git_browse.browse.__version__"}
 readme = {file = "README.md", content-type="text/markdown"}
