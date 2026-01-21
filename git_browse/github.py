@@ -108,3 +108,7 @@ class GithubHost(typedefs.Host):
             focus_object.identifier,
         )
         return repository_url
+
+
+class UberGithubHost(GithubHost):
+    pass
