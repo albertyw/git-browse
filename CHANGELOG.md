@@ -1,6 +1,14 @@
 Changelog
 =========
 
+v2.15.1 (2026-01-22)
+--------------------
+
+ - Fix links for opening uber repositories in internal sourcegraph
+ - Fix packaging
+ - Update dependencies
+
+
 v2.15.0 (2025-12-17)
 --------------------
 
