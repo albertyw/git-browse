@@ -19,19 +19,19 @@ class SourcegraphHost(unittest.TestCase):
             "code.uber.internal",
             "asdf/qwer",
         )
-        self.uber_obj.host_class = phabricator.PhabricatorHost
+        self.uber_obj.host_class = github.UberGithubHost
         self.uber_obj_java = sourcegraph.SourcegraphHost(
             typedefs.GitConfig("", "master"),
             "code.uber.internal",
             "lm/fievel",
         )
-        self.uber_obj_java.host_class = phabricator.PhabricatorHost
+        self.uber_obj_java.host_class = github.UberGithubHost
         self.uber_objectconfig = sourcegraph.SourcegraphHost(
             typedefs.GitConfig("", "master"),
             "objectconfig",
             "asdf@production",
         )
-        self.uber_objectconfig.host_class = phabricator.PhabricatorHost
+        self.uber_objectconfig.host_class = github.UberGithubHost
 
     def test_init(self) -> None:
         self.assertEqual(self.obj.host, "github.com")

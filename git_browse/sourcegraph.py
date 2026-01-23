@@ -1,6 +1,6 @@
 from typing import Optional
 
-from git_browse import phabricator, typedefs
+from git_browse import github, phabricator, typedefs
 
 
 PUBLIC_SOURCEGRAPH_URL = "https://sourcegraph.com/"
@@ -40,7 +40,7 @@ class SourcegraphHost(typedefs.Host):
         self.host_class = host_class
 
     def get_url(self, git_object: typedefs.GitObject) -> str:
-        if self.host_class == phabricator.PhabricatorHost:
+        if self.host_class in [github.UberGithubHost, phabricator.PhabricatorHost]:
             repository_url = "%s%s/%s" % (
                 UBER_SOURCEGRAPH_URL,
                 self.format_uber_host(self.host),
