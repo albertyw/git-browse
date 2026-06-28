@@ -30,7 +30,7 @@ dynamic = ["version", "readme"]
 test = [
     # Testing
     "coverage==7.14.3",       # Test coverage
-    "ruff==0.15.12",          # Python linter
+    "ruff==0.15.20",          # Python linter
 
     # Types
     "mypy==2.1.0",            # Static typing
