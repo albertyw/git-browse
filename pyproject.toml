@@ -38,6 +38,10 @@ test = [
 
 [project.urls]
 "Homepage" = "https://github.com/albertyw/git-browse"
+"Repository" = "https://github.com/albertyw/git-browse"
+"Documentation" = "https://github.com/albertyw/git-browse/blob/master/README.md"
+"Changelog" = "https://github.com/albertyw/git-browse/blob/master/CHANGELOG.md"
+"Issues" = "https://github.com/albertyw/git-browse/issues"
 
 [project.scripts]
 git_browse = "git_browse.browse:main"
