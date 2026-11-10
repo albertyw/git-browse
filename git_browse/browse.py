@@ -218,8 +218,7 @@ def main() -> None:
     )
     args = parser.parse_args()
     if args.sourcegraph and args.godocs:
-        print("Sourcegraph and Godocs flags are mutually exclusive")
-        return
+        parser.error("Sourcegraph and Godocs flags are mutually exclusive")
 
     host = get_repository_host(args.sourcegraph, args.godocs)
     path = pathlib.Path.cwd().joinpath(args.path)

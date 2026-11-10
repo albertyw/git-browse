@@ -207,6 +207,24 @@ class TestOpenURL(unittest.TestCase):
         mock_open.assert_called_with("asdf")
 
 
+class TestMutuallyExclusiveFlags(unittest.TestCase):
+    def setUp(self) -> None:
+        self.original_sys_argv = sys.argv
+
+    def tearDown(self) -> None:
+        sys.argv = self.original_sys_argv
+
+    @patch("sys.stderr.write")
+    def test_sourcegraph_and_godocs_fails(
+        self, mock_stderr_write: MagicMock,
+    ) -> None:
+        sys.argv = ["git-browse", "-s", "-g"]
+        with self.assertRaises(SystemExit) as context:
+            browse.main()
+        self.assertEqual(context.exception.code, 2)
+        self.assertTrue(mock_stderr_write.called)
+
+
 class FullTest(unittest.TestCase):
     def setUp(self) -> None:
         self.original_sys_argv = sys.argv
