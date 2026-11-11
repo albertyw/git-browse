@@ -201,13 +201,14 @@ def main() -> None:
         action="store_true",
         help="Copy url to clipboard, if available",
     )
-    parser.add_argument(
+    host_group = parser.add_mutually_exclusive_group()
+    host_group.add_argument(
         "-s",
         "--sourcegraph",
         action="store_true",
         help="Open objects in sourcegraph",
     )
-    parser.add_argument(
+    host_group.add_argument(
         "-g", "--godocs", action="store_true", help="Open objects in godocs",
     )
     parser.add_argument(
@@ -217,8 +218,6 @@ def main() -> None:
         version=__version__,
     )
     args = parser.parse_args()
-    if args.sourcegraph and args.godocs:
-        parser.error("Sourcegraph and Godocs flags are mutually exclusive")
 
     host = get_repository_host(args.sourcegraph, args.godocs)
     path = pathlib.Path.cwd().joinpath(args.path)

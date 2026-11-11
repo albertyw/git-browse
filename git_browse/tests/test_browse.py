@@ -1,3 +1,4 @@
+import io
 import os
 import pathlib
 import re
@@ -214,15 +215,13 @@ class TestMutuallyExclusiveFlags(unittest.TestCase):
     def tearDown(self) -> None:
         sys.argv = self.original_sys_argv
 
-    @patch("sys.stderr.write")
-    def test_sourcegraph_and_godocs_fails(
-        self, mock_stderr_write: MagicMock,
-    ) -> None:
+    @patch("sys.stderr", new_callable=io.StringIO)
+    def test_sourcegraph_and_godocs_fails(self, mock_stderr: io.StringIO) -> None:
         sys.argv = ["git-browse", "-s", "-g"]
         with self.assertRaises(SystemExit) as context:
             browse.main()
         self.assertEqual(context.exception.code, 2)
-        self.assertTrue(mock_stderr_write.called)
+        self.assertIn("not allowed with argument", mock_stderr.getvalue())
 
 
 class FullTest(unittest.TestCase):
